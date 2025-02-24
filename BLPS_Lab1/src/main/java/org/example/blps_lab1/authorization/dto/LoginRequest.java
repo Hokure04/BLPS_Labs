@@ -6,4 +6,5 @@ import lombok.Data;
 public class LoginRequest {
     private String email;
     private String password;
+    private String companyName;//NOTE: nullable field, validating only if client specified 
 }
