@@ -20,11 +20,15 @@ public class UserController {
     private UserEnrollmentService userEnrollmentService;
     private ApplicationService applicationService;
 
+    // curl -X POST "http://localhost:8080/api/v1/user/application/123"
+
     @PostMapping("/application/{courseId}")
-    public void createApplication(Long courseId){
+    public void createApplication(@PathVariable Long courseId){
         applicationService.save(courseId);
     }
-
+    
+    // curl -X PUT "http://localhost:8080/api/v1/user/application/456/APPROVED" \
+    //  -H "Authorization: Bearer YOUR_ACCESS_TOKEN"
     @PutMapping("/application/{id}/{status}")
     public void updateApplicationStatus(@PathVariable Long id, @PathVariable String status) {
         userEnrollmentService.processEnrolment(id, ApplicationStatus.valueOf(status.toUpperCase().trim()));

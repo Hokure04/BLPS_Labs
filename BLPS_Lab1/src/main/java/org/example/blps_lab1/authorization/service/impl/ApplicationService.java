@@ -12,9 +12,10 @@ import org.example.blps_lab1.courseSignUp.service.CourseService;
 import org.springframework.stereotype.Service;
 
 import jakarta.transaction.Transactional;
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
-@Service @Transactional @Slf4j
+@Service @Transactional @Slf4j @AllArgsConstructor
 public class ApplicationService {
     private ApplicationRepository repository;
     private AuthService authService;
@@ -23,12 +24,14 @@ public class ApplicationService {
     public Application save(Long courseId){
         var userEntity = authService.getCurrentUser();
         var courseEntity = courseService.find(courseId);
+        var app = Application.builder()
+        .course(courseEntity)
+        .user(userEntity)
+        .status(ApplicationStatus.PENDING)
+        .build();
+        log.debug("attempt to create application: {}", app);
         return repository.save(
-            Application.builder()
-            .course(courseEntity)
-            .user(userEntity)
-            .status(ApplicationStatus.PENDING)
-            .build()
+            app
         );
 
     }
