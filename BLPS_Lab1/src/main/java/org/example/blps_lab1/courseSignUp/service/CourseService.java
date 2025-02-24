@@ -43,6 +43,10 @@ public class CourseService {
         log.info("Course deleted: {}", id);
     }
 
+    public boolean isExist(final Long id){
+        return courseRepository.findById(id).isPresent();
+    }
+
     public List<Course> getAllCourses(){
         var list = courseRepository.findAll();
         log.info("Get courses list {}", list.size());

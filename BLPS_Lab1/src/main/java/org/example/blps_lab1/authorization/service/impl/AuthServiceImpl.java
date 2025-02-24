@@ -14,6 +14,7 @@ import org.example.blps_lab1.authorization.models.User;
 import org.example.blps_lab1.authorization.service.AuthService;
 import org.example.blps_lab1.authorization.service.CompanyService;
 import org.example.blps_lab1.authorization.service.UserService;
+import org.example.blps_lab1.common.exceptions.FieldNotSpecifiedException;
 import org.example.blps_lab1.common.exceptions.ObjectAlreadyExistException;
 import org.example.blps_lab1.common.exceptions.ObjectNotExistException;
 import org.example.blps_lab1.config.security.services.JwtService;
@@ -30,7 +31,7 @@ import lombok.extern.slf4j.Slf4j;
 public class AuthServiceImpl implements AuthService {
 
     private CompanyService companyService;
-    private CourseService CourseService;
+    private CourseService courseService;
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
     private final UserService userService;
@@ -61,11 +62,16 @@ public class AuthServiceImpl implements AuthService {
             userBuilder.role(Role.LEGAL_COMPANY);
         }
 
-        if (request.getCourseId() != null) {
+        if (request.getCourseId() == null) {
+            log.warn("Course id is not specified", request);
+            throw new FieldNotSpecifiedException("Не указан id курса");
+        }
+        if(!courseService.isExist(request.getCourseId())){
             log.warn("Course with id: {} not found", request.getCourseId());
             throw new ObjectNotExistException("Курс с id: " + request.getCourseId() + " не найден");
         }
-        var courseEntity = CourseService.getCourseById(request.getCourseId());
+
+        var courseEntity = courseService.getCourseById(request.getCourseId());
         userBuilder.courseList(List.of(courseEntity));
         
         resultBuilder.description(courseEntity.getCourseDescription());
@@ -75,7 +81,7 @@ public class AuthServiceImpl implements AuthService {
         
         var user = userBuilder.build();
 
-        if(userService.isUserExists(user.getUsername())){
+        if(userService.isExist(user.getUsername())){
             log.warn("User with username: {} exist", user.getUsername());
             throw new ObjectAlreadyExistException("Пользователь с именем: " + user.getUsername() + " уже существует");
         }
