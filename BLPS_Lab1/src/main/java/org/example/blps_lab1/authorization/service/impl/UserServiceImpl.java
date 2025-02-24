@@ -6,7 +6,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.example.blps_lab1.authorization.models.User;
 import org.example.blps_lab1.authorization.repository.UserRepository;
 import org.example.blps_lab1.authorization.service.UserService;
-
+import org.example.blps_lab1.common.exceptions.ObjectNotExistException;
+import org.example.blps_lab1.courseSignUp.models.Course;
+import org.example.blps_lab1.courseSignUp.service.CourseService;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
@@ -23,6 +25,7 @@ import java.util.Optional;
 @Transactional
 public class UserServiceImpl implements UserService {
     private UserRepository userRepository;
+    private CourseService courseService;
 
     @Override
     public User add(final User user) {
@@ -67,5 +70,23 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserDetailsService getUserDetailsService() {
         return this::getUserByEmail;
+    }
+
+    @Override
+    public void enrollUser(User user, Course course) {
+        var userOptional = userRepository.findByEmail(user.getEmail());
+        if(userOptional.isEmpty()){
+            log.warn("User with email {} does not exist, impossible to enroll to the course: {}", user.getEmail(), course.getCourseName());
+            throw new ObjectNotExistException("Нет пользователя с email: " + user.getEmail() + ", невозможно зачислить на курс");
+        }
+        var userEntity = userOptional.get();
+        userEntity.getCourseList().add(course);
+        userRepository.save(userEntity);
+    }
+
+    @Override
+    public void enrollUser(User user, Long courseId) {
+        var course = courseService.find(courseId);
+        enrollUser(user, course);
     }
 }
