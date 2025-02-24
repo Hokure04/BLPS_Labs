@@ -23,6 +23,10 @@ public class CourseService {
         log.info("Created course: {}", newCourse);
     }
 
+    public List<Course> saveAll(List<Course> courses){
+        return courseRepository.saveAll(courses);
+    }
+
     public Course getCourseById(final Long id){
         Optional<Course> course = courseRepository.findById(id);
         if(course.isEmpty()){

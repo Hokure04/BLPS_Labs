@@ -20,7 +20,7 @@ run:
 	$(JAVA_CMD)
 
 down:
-	$(DOCKER_COMPOSE_CMD) down
+	$(DOCKER_COMPOSE_CMD) down -v
 
 test:
 	$(MVN_CMD)

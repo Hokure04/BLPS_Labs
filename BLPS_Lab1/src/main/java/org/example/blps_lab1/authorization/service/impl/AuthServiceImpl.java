@@ -95,8 +95,9 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public JwtAuthenticationResponse signIn(LoginRequest request) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'signIn'");
+        var user = userService.getUserByEmail(request.getEmail());
+        var jwt = jwtService.generateToken(user);
+        return new JwtAuthenticationResponse(jwt);
     }
     
 }

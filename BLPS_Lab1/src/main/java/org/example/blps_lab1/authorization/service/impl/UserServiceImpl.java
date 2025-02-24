@@ -14,16 +14,16 @@ import org.springframework.stereotype.Service;
 
 import jakarta.transaction.Transactional;
 
-
+import java.util.List;
 import java.util.Optional;
 
 @Service
 @Slf4j
 @AllArgsConstructor
+@Transactional
 public class UserServiceImpl implements UserService {
     private UserRepository userRepository;
 
-    @Transactional
     @Override
     public User add(final User user) {
         user.setPassword(user.getPassword());
@@ -32,7 +32,11 @@ public class UserServiceImpl implements UserService {
         return newUser;
     }
 
-    @Transactional
+    @Override
+    public List<User> addAll(final List<User> users) {
+        return userRepository.saveAll(users);
+    }
+
     @Override
     public User updateUser(final User user) {
         User newUser = userRepository.save(user);
