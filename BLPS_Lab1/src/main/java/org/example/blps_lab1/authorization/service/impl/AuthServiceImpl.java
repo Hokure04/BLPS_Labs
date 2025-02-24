@@ -7,7 +7,7 @@ import org.example.blps_lab1.authorization.dto.ApplicationResponseDto;
 import org.example.blps_lab1.authorization.dto.JwtAuthenticationResponse;
 import org.example.blps_lab1.authorization.dto.LoginRequest;
 import org.example.blps_lab1.authorization.dto.RegistrationRequestDto;
-import org.example.blps_lab1.authorization.models.Company;
+
 import org.example.blps_lab1.authorization.models.Role;
 import org.example.blps_lab1.courseSignUp.service.CourseService;
 import org.example.blps_lab1.authorization.models.User;
@@ -54,8 +54,7 @@ public class AuthServiceImpl implements AuthService {
             if(companyService.isExist(request.getCompanyName())){
                 log.warn("Company with name: {} not found", request.getCompanyName());
                 //FIXME: send email to user
-                throw new NotImplementedException("Необходимо добавить, что если компания не зарегестрирована, то ошибка"+ 
-                "присылается пользователю в виде письма на почту");
+                throw new ObjectNotExistException("Компания с именем: " + request.getCompanyName() + " не зарегистрирована");
             }
             var companyEntity = companyService.getByName(request.getCompanyName());
             userBuilder.company(companyEntity);
