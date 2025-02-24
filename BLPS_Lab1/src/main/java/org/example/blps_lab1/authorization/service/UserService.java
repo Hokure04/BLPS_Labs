@@ -16,8 +16,11 @@ public interface UserService {
 
     boolean isExist(String username);
 
+
     void enrollUser(User user, Course course);
     void enrollUser(User user,Long courseId);
+
+
 
     UserDetailsService getUserDetailsService();
 }

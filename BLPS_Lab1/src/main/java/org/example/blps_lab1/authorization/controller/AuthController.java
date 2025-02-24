@@ -2,7 +2,9 @@ package org.example.blps_lab1.authorization.controller;
 
 import org.apache.commons.lang3.NotImplementedException;
 import org.example.blps_lab1.authorization.dto.ApplicationResponseDto;
+
 import org.example.blps_lab1.authorization.dto.JwtAuthenticationResponse;
+
 import org.example.blps_lab1.authorization.dto.LoginRequest;
 import org.example.blps_lab1.authorization.dto.RegistrationRequestDto;
 import org.example.blps_lab1.authorization.service.AuthService;
@@ -26,8 +28,10 @@ public class AuthController {
     }
 
     @PostMapping("/sign-in")
+
     public JwtAuthenticationResponse signIn(@RequestBody LoginRequest request){
         return authService.signIn(request);
+
     }
 
 }

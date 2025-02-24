@@ -1,7 +1,9 @@
 package org.example.blps_lab1.authorization.service.impl;
 
 
+
 import java.util.List;
+
 
 import org.example.blps_lab1.authorization.dto.CompanyDto;
 import org.example.blps_lab1.authorization.mapper.CompanyMapper;
@@ -30,6 +32,7 @@ public class CompanyServiceImpl implements CompanyService {
     }
 
     @Override
+
     public List<Company> saveAll(List<Company> companies) {
         return companyRepository.saveAll(companies);
     }

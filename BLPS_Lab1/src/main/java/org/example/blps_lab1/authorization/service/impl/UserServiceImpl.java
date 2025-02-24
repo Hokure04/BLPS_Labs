@@ -19,10 +19,7 @@ import jakarta.transaction.Transactional;
 import java.util.List;
 import java.util.Optional;
 
-@Service
-@Slf4j
-@AllArgsConstructor
-@Transactional
+@Service @Slf4j @AllArgsConstructor @Transactional
 public class UserServiceImpl implements UserService {
     private UserRepository userRepository;
     private CourseService courseService;

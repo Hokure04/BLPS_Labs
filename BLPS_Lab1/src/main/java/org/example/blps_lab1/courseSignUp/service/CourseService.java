@@ -23,6 +23,7 @@ public class CourseService {
         log.info("Created course: {}", newCourse);
     }
 
+
     public Course find(final String courseName){
         return courseRepository.findByCourseName(courseName);
     }
@@ -39,6 +40,7 @@ public class CourseService {
     public List<Course> saveAll(List<Course> courses){
         return courseRepository.saveAll(courses);
     }
+
 
     public Course getCourseById(final Long id){
         Optional<Course> course = courseRepository.findById(id);
