@@ -23,7 +23,7 @@ public class CertificateManagerService {
 
     public void getCertificate(User user, Long courseId) {
         var course = courseService.getCourseById(courseId);
-        var certificatePdf = certificateExporter.generateCertificate(user.getEmail(), course.getCourseName(), null);
+        var certificatePdf = certificateExporter.generateCertificate(course.getCourseName(), user.getEmail(), null);
         saveToMinio(user, course, certificatePdf);
         sendToUser(user, certificatePdf);
     }
