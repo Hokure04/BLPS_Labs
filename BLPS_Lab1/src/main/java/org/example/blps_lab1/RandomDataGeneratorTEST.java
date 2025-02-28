@@ -21,7 +21,7 @@ import jakarta.persistence.EntityManager;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 
-/*@Service
+@Service
 
 @AllArgsConstructor
 public class RandomDataGeneratorTEST implements ApplicationRunner {
@@ -40,7 +40,7 @@ public class RandomDataGeneratorTEST implements ApplicationRunner {
         List<Course> courses = new ArrayList<>();
         List<User> users = new ArrayList<>();
 
-        for (int i = 0; i < 1_000; i++) {
+        for (int i = 0; i < 1; i++) {
 
             var course = Course.builder()
             .courseName(UUID.randomUUID().toString())
@@ -90,5 +90,5 @@ public class RandomDataGeneratorTEST implements ApplicationRunner {
         System.out.println("all saved");
 
     }
-}*/
+}
 
