@@ -40,14 +40,5 @@ public class AuthController {
     public JwtAuthenticationResponse signIn(@RequestBody LoginRequest request){
         return authService.signIn(request);
     }
-
-
-    @PostMapping("get-certificate")
-    public String postMethodName() {
-        var file = certificateExporter.generateCertificate("1", "Jumshooot", "/Users/jaba/Documents/life/learning_extra/BLPS_Labs/BLPS_Lab1/подпись.png");
-        minioService.uploadFile("Jumshot", "file", file);
-        return "";
-    }
-    
     
 }

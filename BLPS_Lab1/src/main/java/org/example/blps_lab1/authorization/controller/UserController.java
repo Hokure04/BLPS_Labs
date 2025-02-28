@@ -12,6 +12,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import lombok.AllArgsConstructor;
+import org.springframework.web.bind.annotation.RequestParam;
+
 
 @RestController
 @RequestMapping("/api/v1/user")
@@ -36,5 +38,15 @@ public class UserController {
     public String ping(){
         return "Pong";
     }
+
+    @GetMapping("/certificate/{course_id}")
+    public String getMethodName(@RequestParam Long course_id) {
+
+        // var file = certificateExporter.generateCertificate("1", "Jumshooot", "");
+        // minioService.uploadFile(, "file", file);
+        return "";
+
+    }
+    
 
 }
