@@ -135,7 +135,7 @@ public class MinioService  {
     }
 
     private String getNewFileName(String username, String filename) {
-        return username.trim() + "/" + filename.trim();
+        return username.trim() + "/" + filename.trim() + ".pdf";
     }
 
     private void ensureBucketExists() {
