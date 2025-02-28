@@ -28,6 +28,10 @@ minio:
       JABA_SUPER_USER_MINIO
     pwd:
       jaba127!368601NO
+    access_key:
+      JABA_SUPER_USER_MINIO
+    secret_key:
+      jaba127!368601NO
   # database-platform: org.hibernate.dialect.PostgreSQLDialect
 token:
   signing:

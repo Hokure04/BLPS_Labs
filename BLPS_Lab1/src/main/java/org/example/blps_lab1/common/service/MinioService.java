@@ -17,9 +17,9 @@ import java.util.List;
 
 @Service
 @Slf4j
-public class MinioServiceImpl  {
+public class MinioService  {
 
-    private final String BUCKET_NAME = "import-files";
+    private final String BUCKET_NAME = "certificates";
 
     @Value("${minio.root.username}")
     private String username;
@@ -27,12 +27,16 @@ public class MinioServiceImpl  {
     @Value("${minio.root.pwd}")
     private String password;
 
+    private String accessKey = "JABA_SUPER_USER_MINIO";
+
+    private String secretKey = "jaba127!368601NO";//NOTE: почему-то не отрабатывает нормально @value
+
     private final MinioClient minioClient;
 
-    public MinioServiceImpl() {
+    public MinioService() {
         this.minioClient = MinioClient.builder()
                 .endpoint("http://localhost:9000")
-                .credentials("JABA_SUPER_USER_MINIO", "jaba127!368601NO")
+                .credentials(accessKey, secretKey)
                 .build();
         ensureBucketExists();
     }
