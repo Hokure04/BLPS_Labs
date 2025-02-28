@@ -24,7 +24,7 @@ import lombok.extern.slf4j.Slf4j;
 public class CertificateExporter {
     private final String DEFAULT_SIGNATURE_PATH = "/Users/jaba/Documents/life/learning_extra/BLPS_Labs/BLPS_Lab1/подпись.png";
 
-    public File generateCertificate(final String courseName, final String userName, String signaturePath) {
+    public File generateCertificate(final String courseName, final String userName, String signaturePath) throws Exception {
         try {
             if (signaturePath == null || signaturePath.isEmpty()) {
                 signaturePath = DEFAULT_SIGNATURE_PATH;
@@ -66,7 +66,7 @@ public class CertificateExporter {
             return file;
         } catch (IOException e) {
             log.error("Error while generating the certificate", e);
-            return null;
+            throw new Exception("Ошибка при генерации отчета");
         }
     }
 }

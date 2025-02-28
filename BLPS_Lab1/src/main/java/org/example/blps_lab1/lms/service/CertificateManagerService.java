@@ -23,9 +23,15 @@ public class CertificateManagerService {
 
     public void getCertificate(User user, Long courseId) {
         var course = courseService.getCourseById(courseId);
-        var certificatePdf = certificateExporter.generateCertificate(course.getCourseName(), user.getEmail(), null);
-        saveToMinio(user, course, certificatePdf);
-        sendToUser(user, certificatePdf);
+        
+        try{
+            var certificatePdf = certificateExporter.generateCertificate(course.getCourseName(), user.getEmail(), null);
+            saveToMinio(user, course, certificatePdf);
+            sendToUser(user, certificatePdf);
+        }catch(Exception e){
+            log.error("Error while creating the certificate", e);
+            sendAboutException(user.getEmail());
+        }
     }
 
 
@@ -36,7 +42,15 @@ public class CertificateManagerService {
     private void saveToMinio(User user, Course course, File file){
         StringBuilder filename = new StringBuilder();
         filename.append(user.getEmail()).append(course.getCourseName());
-        minioService.uploadFile(user.getUsername(), filename.toString(), file);
-        
+        try{
+            minioService.uploadFile(user.getUsername(), filename.toString(), file);
+        }catch(Exception e){
+            log.error("Error while uploading file to minio");
+        }
+    }
+
+    private void sendAboutException(String email){
+        //TODO: нужно добавить ошибку 
+        throw new RuntimeException("Ошибка сервиса при создании отчета");//ошибку эту оставить, необходимо, чтобы оно сработала даже в случае успешного письма пользователю об ошибке
     }
 }
