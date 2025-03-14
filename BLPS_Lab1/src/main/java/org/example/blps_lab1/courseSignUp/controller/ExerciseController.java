@@ -1,6 +1,5 @@
 package org.example.blps_lab1.courseSignUp.controller;
 
-import com.google.gson.Gson;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.example.blps_lab1.courseSignUp.dto.ExerciseDto;

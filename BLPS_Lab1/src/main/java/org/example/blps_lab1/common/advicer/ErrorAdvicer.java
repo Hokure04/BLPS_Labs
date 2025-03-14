@@ -41,12 +41,6 @@ public class ErrorAdvicer {
         return new ExceptionWrapper(e);
     }
 
-    @ExceptionHandler(Exception.class)
-    public String handleException(Exception e) {
-        e.printStackTrace();
-        return e.getMessage();
-    }
-
     @ExceptionHandler(RuntimeException.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public String handleRuntimeException(RuntimeException e) {
