@@ -4,12 +4,11 @@ package org.example.blps_lab1.authorization.controller;
 import org.example.blps_lab1.authorization.models.ApplicationStatus;
 import org.example.blps_lab1.authorization.service.impl.ApplicationService;
 import org.example.blps_lab1.authorization.service.impl.UserEnrollmentService;
-import org.springframework.http.ResponseEntity;
+
 import org.springframework.web.bind.annotation.*;
 
 import lombok.AllArgsConstructor;
 
-import java.util.Map;
 
 
 @RestController
@@ -27,8 +26,7 @@ public class UserController {
     }
     
     @PatchMapping("/application/status/{id}")
-    public void updateApplicationStatus(@PathVariable Long id, @RequestBody Map<String, String> status) {
-
+    public void updateApplicationStatus(@PathVariable Long id, @RequestBody String status) {
         ApplicationStatus applicationStatus = ApplicationStatus.valueOf(status.toUpperCase().trim());
         userEnrollmentService.processEnrolment(id, applicationStatus);
     }
