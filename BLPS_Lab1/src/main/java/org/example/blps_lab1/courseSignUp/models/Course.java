@@ -49,6 +49,9 @@ public class Course {
     @Column
     private LocalDateTime creationTime;
 
+    @Column
+    private Boolean isCompleted = false;
+
     @ManyToMany(mappedBy = "courseList")
     private List<User> userList;
 
@@ -60,5 +63,7 @@ public class Course {
     )
     private List<Course> additionalCourseList;
 
+    @OneToMany(mappedBy = "course", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Module> modules;
 
 }
