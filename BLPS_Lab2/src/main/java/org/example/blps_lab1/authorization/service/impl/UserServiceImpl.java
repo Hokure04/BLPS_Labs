@@ -9,27 +9,48 @@ import org.example.blps_lab1.authorization.service.UserService;
 import org.example.blps_lab1.common.exceptions.ObjectNotExistException;
 import org.example.blps_lab1.courseSignUp.models.Course;
 import org.example.blps_lab1.courseSignUp.service.CourseService;
+import org.jetbrains.annotations.NotNull;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
 import org.springframework.stereotype.Service;
 
 import jakarta.transaction.Transactional;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.TransactionDefinition;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.TransactionCallback;
+import org.springframework.transaction.support.TransactionCallbackWithoutResult;
+import org.springframework.transaction.support.TransactionTemplate;
 
 import java.util.List;
 import java.util.Optional;
 
-@Service @Slf4j @AllArgsConstructor @Transactional
+@Service
+@Slf4j
 public class UserServiceImpl implements UserService {
-    private UserRepository userRepository;
-    private CourseService courseService;
+    private final UserRepository userRepository;
+    private final CourseService courseService;
+    private final TransactionTemplate transactionTemplate;
+
+    @Autowired
+    public UserServiceImpl(UserRepository userRepository, CourseService courseService, PlatformTransactionManager transactionManager) {
+        this.userRepository = userRepository;
+        this.courseService = courseService;
+        this.transactionTemplate = new TransactionTemplate(transactionManager);
+    }
 
     @Override
     public User add(final User user) {
+//        transactionTemplate.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRED);
+        //transactionTemplate.execute(status -> {
         user.setPassword(user.getPassword());
-        User newUser = userRepository.save(user);
+        User savedUser = userRepository.save(user);
         log.info("{} registered successfully", user.getUsername());
-        return newUser;
+        return savedUser;
+//        });
+//        return newUser;
     }
 
     @Override
@@ -72,7 +93,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public void enrollUser(User user, Course course) {
         var userOptional = userRepository.findByEmail(user.getEmail());
-        if(userOptional.isEmpty()){
+        if (userOptional.isEmpty()) {
             log.warn("User with email {} does not exist, impossible to enroll to the course: {}", user.getEmail(), course.getCourseName());
             throw new ObjectNotExistException("Нет пользователя с email: " + user.getEmail() + ", невозможно зачислить на курс");
         }
