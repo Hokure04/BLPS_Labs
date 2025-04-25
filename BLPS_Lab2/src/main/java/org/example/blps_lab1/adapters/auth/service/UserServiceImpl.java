@@ -8,6 +8,7 @@ import org.example.blps_lab1.core.admin.UserService;
 import org.example.blps_lab1.common.exceptions.ObjectNotExistException;
 import org.example.blps_lab1.courseSignUp.models.Course;
 import org.example.blps_lab1.courseSignUp.service.CourseService;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -26,13 +27,11 @@ import java.util.Optional;
 // transactional OK
 public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
-    private final CourseService courseService;
     private final TransactionTemplate transactionTemplate;
 
     @Autowired
-    public UserServiceImpl(UserRepository userRepository, CourseService courseService, PlatformTransactionManager transactionManager) {
+    public UserServiceImpl(UserRepository userRepository, PlatformTransactionManager transactionManager) {
         this.userRepository = userRepository;
-        this.courseService = courseService;
         this.transactionTemplate = new TransactionTemplate(transactionManager);
     }
 
@@ -81,7 +80,7 @@ public class UserServiceImpl implements UserService {
     public void enrollUser(User user, Course course) {
         transactionTemplate.execute(new TransactionCallbackWithoutResult() {
             @Override
-            protected void doInTransactionWithoutResult(TransactionStatus status) {
+            protected void doInTransactionWithoutResult(@NotNull TransactionStatus status) {
                 var userOptional = userRepository.findByEmail(user.getEmail());
                 var userEntity = userOptional.orElseThrow(() -> new ObjectNotExistException("Нет пользователя с email: " + user.getEmail() + ", невозможно зачислить на курс"));
                 userEntity.getCourseList().add(course);
