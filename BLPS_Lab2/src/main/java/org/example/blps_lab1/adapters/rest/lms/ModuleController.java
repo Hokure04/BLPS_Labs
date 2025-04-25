@@ -2,8 +2,9 @@ package org.example.blps_lab1.adapters.rest.lms;
 
 import lombok.AllArgsConstructor;
 import org.example.blps_lab1.adapters.course.dto.ModuleDto;
+import org.example.blps_lab1.adapters.course.mapper.ModuleMapper;
 import org.example.blps_lab1.core.domain.course.Module;
-import org.example.blps_lab1.adapters.course.service.ModuleService;
+import org.example.blps_lab1.core.ports.course.ModuleService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -22,7 +23,7 @@ public class ModuleController {
     public ResponseEntity<Map<String, Object>> getAllModules(){
         Map<String, Object> response = new HashMap<>();
         List<Module> moduleList = moduleService.getAllModules();
-        List<ModuleDto> moduleDto = moduleService.convertToModelDto(moduleList);
+        List<ModuleDto> moduleDto = ModuleMapper.convertToModelDto(moduleList);
         response.put("modules_list", moduleDto);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
@@ -31,7 +32,7 @@ public class ModuleController {
     public ResponseEntity<Map<String, Object>> getModuleById(@PathVariable Long id){
         Map<String, Object> response = new HashMap<>();
         Module module = moduleService.getModuleById(id);
-        ModuleDto moduleDto = moduleService.convertToModelDto(module);
+        ModuleDto moduleDto = ModuleMapper.convertToModelDto(module);
         response.put("module", moduleDto);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }

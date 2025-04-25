@@ -3,8 +3,9 @@ package org.example.blps_lab1.adapters.rest.cms;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.example.blps_lab1.adapters.course.dto.ModuleDto;
+import org.example.blps_lab1.adapters.course.mapper.ModuleMapper;
 import org.example.blps_lab1.core.domain.course.Module;
-import org.example.blps_lab1.adapters.course.service.ModuleService;
+import org.example.blps_lab1.core.ports.course.ModuleService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -24,7 +25,7 @@ public class ModuleController {
     public ResponseEntity<Map<String, Object>> createModule(@Valid @RequestBody Module module){
         Map<String, Object> response = new HashMap<>();
         Module createdModule = moduleService.createModule(module);
-        ModuleDto moduleDto = moduleService.convertToModelDto(createdModule);
+        ModuleDto moduleDto = ModuleMapper.convertToModelDto(createdModule);
         response.put("created_module", moduleDto);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
