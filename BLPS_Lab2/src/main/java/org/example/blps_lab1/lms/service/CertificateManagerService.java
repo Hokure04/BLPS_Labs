@@ -3,7 +3,7 @@ package org.example.blps_lab1.lms.service;
 import java.io.File;
 import java.util.UUID;
 
-import org.example.blps_lab1.authorization.models.User;
+import org.example.blps_lab1.core.domain.User;
 import org.example.blps_lab1.common.exceptions.ObjectNotExistException;
 import org.example.blps_lab1.common.service.MinioService;
 import org.example.blps_lab1.courseSignUp.models.Course;

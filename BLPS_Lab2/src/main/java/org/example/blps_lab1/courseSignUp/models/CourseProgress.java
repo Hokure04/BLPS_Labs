@@ -4,7 +4,7 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.example.blps_lab1.authorization.models.User;
+import org.example.blps_lab1.core.domain.User;
 
 @Entity
 @Data

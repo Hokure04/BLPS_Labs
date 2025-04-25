@@ -1,7 +1,7 @@
 package org.example.blps_lab1.common.advicer;
 
 import lombok.extern.slf4j.Slf4j;
-import org.example.blps_lab1.authorization.exception.AuthorizeException;
+import org.example.blps_lab1.core.exception.auth.AuthorizeException;
 import org.example.blps_lab1.common.exceptions.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.mail.MailAuthenticationException;

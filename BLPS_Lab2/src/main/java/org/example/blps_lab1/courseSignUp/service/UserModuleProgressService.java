@@ -1,7 +1,7 @@
 package org.example.blps_lab1.courseSignUp.service;
 
 import lombok.RequiredArgsConstructor;
-import org.example.blps_lab1.authorization.models.User;
+import org.example.blps_lab1.core.domain.User;
 import org.example.blps_lab1.courseSignUp.models.Module;
 import org.example.blps_lab1.courseSignUp.models.UserModuleProgress;
 import org.example.blps_lab1.courseSignUp.repository.UserModuleProgressRepository;

@@ -1,6 +1,6 @@
 package org.example.blps_lab1.courseSignUp.repository;
 
-import org.example.blps_lab1.authorization.models.User;
+import org.example.blps_lab1.core.domain.User;
 import org.example.blps_lab1.courseSignUp.models.Exercise;
 import org.example.blps_lab1.courseSignUp.models.UserExerciseProgress;
 import org.springframework.data.jpa.repository.JpaRepository;

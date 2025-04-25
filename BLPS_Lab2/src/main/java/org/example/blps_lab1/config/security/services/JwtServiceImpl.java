@@ -7,7 +7,7 @@ import javax.crypto.SecretKey;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import io.jsonwebtoken.JwtException;
-import org.example.blps_lab1.authorization.models.User;
+import org.example.blps_lab1.core.domain.User;
 import org.example.blps_lab1.config.security.exception.JwtTokenExpiredException;
 import org.springframework.beans.factory.annotation.Value;
 

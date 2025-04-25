@@ -1,6 +1,6 @@
 package org.example.blps_lab1.courseSignUp.repository;
 
-import org.example.blps_lab1.authorization.models.User;
+import org.example.blps_lab1.core.domain.User;
 import org.example.blps_lab1.courseSignUp.models.Course;
 import org.example.blps_lab1.courseSignUp.models.CourseProgress;
 import org.example.blps_lab1.courseSignUp.models.CourseProgressId;

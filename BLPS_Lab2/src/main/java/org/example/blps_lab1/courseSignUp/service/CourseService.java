@@ -1,8 +1,8 @@
 package org.example.blps_lab1.courseSignUp.service;
 
 import lombok.extern.slf4j.Slf4j;
-import org.example.blps_lab1.authorization.models.User;
-import org.example.blps_lab1.authorization.repository.UserRepository;
+import org.example.blps_lab1.core.domain.User;
+import org.example.blps_lab1.adapters.db.UserRepository;
 import org.example.blps_lab1.common.exceptions.CourseNotExistException;
 import org.example.blps_lab1.common.exceptions.ObjectNotExistException;
 import org.example.blps_lab1.common.exceptions.ObjectNotFoundException;
@@ -23,7 +23,6 @@ import org.springframework.transaction.support.TransactionTemplate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 @Service
 @Slf4j
