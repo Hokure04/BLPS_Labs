@@ -9,7 +9,6 @@ import org.example.blps_lab1.core.exception.common.ObjectNotFoundException;
 import org.example.blps_lab1.adapters.course.dto.CourseDto;
 import org.example.blps_lab1.core.domain.course.Course;
 import org.example.blps_lab1.adapters.db.course.CourseRepository;
-import org.example.blps_lab1.adapters.mail.EmailServiceImpl;
 import org.example.blps_lab1.core.ports.course.CourseService;
 import org.example.blps_lab1.core.ports.email.EmailService;
 import org.jetbrains.annotations.NotNull;
@@ -17,8 +16,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.transaction.support.TransactionTemplate;
 
