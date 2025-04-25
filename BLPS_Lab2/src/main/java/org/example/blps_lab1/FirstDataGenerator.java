@@ -8,7 +8,7 @@ import org.example.blps_lab1.adapters.auth.dto.RegistrationRequestDto;
 import org.example.blps_lab1.core.ports.auth.AuthService;
 import org.example.blps_lab1.core.domain.course.Course;
 import org.example.blps_lab1.core.domain.course.Topic;
-import org.example.blps_lab1.adapters.course.service.CourseService;
+import org.example.blps_lab1.core.ports.course.CourseService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.ApplicationArguments;

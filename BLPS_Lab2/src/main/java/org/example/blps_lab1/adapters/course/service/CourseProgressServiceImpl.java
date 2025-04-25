@@ -23,6 +23,7 @@ import java.util.UUID;
 
 @Service
 @Slf4j
+// transactional OK
 public class CourseProgressServiceImpl implements CourseProgressService {
 
     private final CourseRepository courseRepository;

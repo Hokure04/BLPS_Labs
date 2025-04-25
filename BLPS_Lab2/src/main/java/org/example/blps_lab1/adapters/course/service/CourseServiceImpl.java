@@ -10,6 +10,8 @@ import org.example.blps_lab1.adapters.course.dto.CourseDto;
 import org.example.blps_lab1.core.domain.course.Course;
 import org.example.blps_lab1.adapters.db.course.CourseRepository;
 import org.example.blps_lab1.adapters.mail.EmailServiceImpl;
+import org.example.blps_lab1.core.ports.course.CourseService;
+import org.example.blps_lab1.core.ports.email.EmailService;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -27,33 +29,25 @@ import java.util.UUID;
 @Service
 @Slf4j
 // transactional OK
-public class CourseService {
+public class CourseServiceImpl implements CourseService {
     private final CourseRepository courseRepository;
     private final UserRepository userRepository;
-    private final EmailServiceImpl emailService;
+    private final EmailService emailService;
     private final TransactionTemplate transactionTemplate;
 
     @Autowired
-    public CourseService(CourseRepository courseRepository, UserRepository userRepository,
-                         EmailServiceImpl emailService, PlatformTransactionManager platformTransactionManager) {
+    public CourseServiceImpl(CourseRepository courseRepository, UserRepository userRepository,
+                             EmailService emailService, PlatformTransactionManager platformTransactionManager) {
         this.courseRepository = courseRepository;
         this.userRepository = userRepository;
         this.emailService = emailService;
         this.transactionTemplate = new TransactionTemplate(platformTransactionManager);
     }
 
-
-//    public Course createCourse(final CourseDto courseDto){
-//    }
-
     public Course createCourse(final Course course) {
         Course newCourse = courseRepository.save(course);
         log.info("Created course: {}", newCourse);
         return newCourse;
-    }
-
-    public Course find(final String courseName) {
-        return courseRepository.findByCourseName(courseName);
     }
 
     public Course find(final UUID id) {
@@ -107,7 +101,6 @@ public class CourseService {
         });
     }
 
-    @Transactional(propagation = Propagation.REQUIRED)
     public List<Course> enrollUser(Long userId, UUID courseUUID) {
         return transactionTemplate.execute(status -> {
             User user = userRepository.findById(userId)
@@ -140,7 +133,7 @@ public class CourseService {
     }
 
     /**
-     * Утилитарная функция для записи на дополнительные курсы, связанные с основными
+     * Утилитарная функция-транзакция для записи на дополнительные курсы, связанные с основными
      * например, если вы проходите курс "Бухгалтер будущего", и к этому курсу закреплен курс "Python для чайников",
      * то пользователя автоматически должно записать на курс по Python
      *

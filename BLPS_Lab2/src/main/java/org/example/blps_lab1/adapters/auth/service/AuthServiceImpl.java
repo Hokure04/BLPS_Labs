@@ -9,15 +9,16 @@ import org.example.blps_lab1.adapters.auth.dto.RegistrationRequestDto;
 import org.example.blps_lab1.core.exception.auth.AuthorizeException;
 import org.example.blps_lab1.core.domain.auth.Role;
 import org.example.blps_lab1.core.exception.course.CourseNotExistException;
-import org.example.blps_lab1.adapters.course.service.CourseService;
 import org.example.blps_lab1.core.domain.auth.User;
+import org.example.blps_lab1.core.ports.auth.ApplicationService;
 import org.example.blps_lab1.core.ports.auth.AuthService;
 import org.example.blps_lab1.core.ports.auth.UserService;
 import org.example.blps_lab1.core.exception.common.FieldNotSpecifiedException;
 
 import org.example.blps_lab1.core.exception.common.ObjectNotExistException;
+import org.example.blps_lab1.core.ports.course.CourseService;
+import org.example.blps_lab1.core.ports.email.EmailService;
 import org.example.blps_lab1.core.ports.security.JwtService;
-import org.example.blps_lab1.adapters.mail.EmailServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -25,13 +26,11 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.support.TransactionTemplate;
 
 @Service
-@AllArgsConstructor
 @Slf4j
 // transactional OK
 public class AuthServiceImpl implements AuthService {
@@ -40,14 +39,14 @@ public class AuthServiceImpl implements AuthService {
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
     private final UserService userService;
-    private final ApplicationServiceImpl applicationService;
-    private final EmailServiceImpl emailService; // FIXME: temporary killed, need to enable and check
+    private final ApplicationService applicationService;
+    private final EmailService emailService; // FIXME: temporary killed, need to enable and check
     private final TransactionTemplate transactionTemplate;
 
     @Autowired
     public AuthServiceImpl(CourseService courseService, PasswordEncoder passwordEncoder,
                            JwtService jwtService, UserService userService,
-                           ApplicationServiceImpl applicationService, EmailServiceImpl emailService,
+                           ApplicationService applicationService, EmailService emailService,
                            PlatformTransactionManager transactionManager) {
         this.courseService = courseService;
         this.passwordEncoder = passwordEncoder;

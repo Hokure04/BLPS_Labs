@@ -5,7 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.example.blps_lab1.adapters.course.dto.CourseDto;
 import org.example.blps_lab1.adapters.course.mapper.CourseMapper;
 import org.example.blps_lab1.core.domain.course.Course;
-import org.example.blps_lab1.adapters.course.service.CourseService;
+import org.example.blps_lab1.core.ports.course.CourseService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

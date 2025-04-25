@@ -2,8 +2,8 @@ package org.example.blps_lab1.adapters.rest.cms;
 
 import lombok.AllArgsConstructor;
 import org.example.blps_lab1.core.domain.course.Course;
-import org.example.blps_lab1.adapters.course.service.CourseService;
 
+import org.example.blps_lab1.core.ports.course.CourseService;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;

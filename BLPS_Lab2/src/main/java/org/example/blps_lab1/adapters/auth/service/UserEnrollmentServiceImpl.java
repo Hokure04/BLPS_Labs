@@ -5,8 +5,8 @@ import org.example.blps_lab1.core.domain.auth.ApplicationStatus;
 import org.example.blps_lab1.core.ports.auth.AuthService;
 import org.example.blps_lab1.core.ports.auth.UserService;
 
+import org.example.blps_lab1.core.ports.course.CourseService;
 import org.example.blps_lab1.core.ports.email.EmailService;
-import org.example.blps_lab1.adapters.course.service.CourseService;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

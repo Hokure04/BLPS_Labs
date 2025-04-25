@@ -11,7 +11,7 @@ import org.example.blps_lab1.adapters.db.auth.ApplicationRepository;
 import org.example.blps_lab1.core.ports.auth.UserService;
 import org.example.blps_lab1.core.exception.common.ObjectNotExistException;
 import org.example.blps_lab1.core.exception.auth.ApplicationStatusAlreadySetException;
-import org.example.blps_lab1.adapters.course.service.CourseService;
+import org.example.blps_lab1.core.ports.course.CourseService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;

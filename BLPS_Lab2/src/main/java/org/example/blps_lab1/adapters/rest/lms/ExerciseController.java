@@ -20,6 +20,7 @@ public class ExerciseController {
 
     @GetMapping
     public ResponseEntity<Map<String, Object>> getAllExercises(){
+        //TODO если останутся силы и время -> создать Facade для обертки всей этой истории с глаз долой
         Map<String, Object> response = new HashMap<>();
         List<Exercise> exerciseList = exerciseService.getAllExercises();
         List<ExerciseDto> exerciseDtoList = exerciseService.convertToExerciseDto(exerciseList);
@@ -39,7 +40,7 @@ public class ExerciseController {
     @PostMapping("/{id}/submit")
     public ResponseEntity<Map<String, Object>> submitAnswer(@PathVariable Long id, @RequestBody Map<String, String> userAnswer){
         String answer = userAnswer.get("answer");
-        boolean isCorrect = exerciseService.submitAnswer(id, answer);
+        Boolean isCorrect = exerciseService.submitAnswer(id, answer);
         Map<String, Object> response = new HashMap<>();
         response.put("exercise_id", id);
         response.put("is_correct", isCorrect);

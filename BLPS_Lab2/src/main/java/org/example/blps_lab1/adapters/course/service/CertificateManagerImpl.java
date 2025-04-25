@@ -9,7 +9,9 @@ import org.example.blps_lab1.core.domain.course.Course;
 import org.example.blps_lab1.core.domain.course.CourseProgress;
 import org.example.blps_lab1.core.domain.course.CourseProgressId;
 import org.example.blps_lab1.adapters.db.course.CourseProgressRepository;
+import org.example.blps_lab1.core.ports.course.CertificateGenerator;
 import org.example.blps_lab1.core.ports.course.CertificateManager;
+import org.example.blps_lab1.core.ports.course.CourseService;
 import org.example.blps_lab1.core.ports.email.EmailService;
 import org.example.blps_lab1.core.ports.sss.SimpleStorageService;
 import org.springframework.stereotype.Service;
@@ -21,7 +23,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @AllArgsConstructor
 public class CertificateManagerImpl implements CertificateManager {
-    private CertificatePdfGenerator certificateExporter;
+    private CertificateGenerator certificateGenerator;
     private CourseService courseService;
     private SimpleStorageService simpleStorageService;
     private EmailService emailService;
@@ -45,7 +47,7 @@ public class CertificateManagerImpl implements CertificateManager {
         courseProgressRepository.save(courseProgress);
 
         try {
-            var certificatePdf = certificateExporter.generateCertificate(course.getCourseName(), user.getEmail(), null);
+            var certificatePdf = certificateGenerator.generateCertificate(course.getCourseName(), user.getEmail(), null);
             saveToSimpleStorageService(user, course, certificatePdf);
             emailService.sendCertificateToUser(user.getEmail(), certificatePdf);
         } catch (Exception e) {
