@@ -7,7 +7,7 @@ import org.example.blps_lab1.adapters.auth.dto.JwtAuthenticationResponse;
 
 import org.example.blps_lab1.adapters.auth.dto.LoginRequest;
 import org.example.blps_lab1.adapters.auth.dto.RegistrationRequestDto;
-import org.example.blps_lab1.core.ports.admin.AuthService;
+import org.example.blps_lab1.core.ports.auth.AuthService;
 import org.springframework.web.bind.annotation.*;
 
 import lombok.AllArgsConstructor;

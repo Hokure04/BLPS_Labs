@@ -3,7 +3,7 @@ package org.example.blps_lab1.adapters.admin;
 import java.util.Objects;
 
 import org.example.blps_lab1.core.domain.auth.Role;
-import org.example.blps_lab1.core.ports.admin.UserService;
+import org.example.blps_lab1.core.ports.auth.UserService;
 
 import org.example.blps_lab1.core.ports.admin.AdminPanelService;
 import org.jetbrains.annotations.NotNull;

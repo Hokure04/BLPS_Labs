@@ -21,7 +21,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import java.io.IOException;
 
 import org.apache.commons.lang3.StringUtils;
-import org.example.blps_lab1.core.ports.admin.UserService;
+import org.example.blps_lab1.core.ports.auth.UserService;
 import org.example.blps_lab1.common.exceptions.ExceptionWrapper;
 import org.example.blps_lab1.core.exception.security.JwtTokenExpiredException;
 import org.example.blps_lab1.core.ports.security.JwtService;

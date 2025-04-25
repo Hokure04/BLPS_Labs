@@ -4,7 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 
 import org.example.blps_lab1.core.domain.auth.User;
 import org.example.blps_lab1.adapters.db.auth.UserRepository;
-import org.example.blps_lab1.core.ports.admin.UserService;
+import org.example.blps_lab1.core.ports.auth.UserService;
 import org.example.blps_lab1.common.exceptions.ObjectNotExistException;
 import org.example.blps_lab1.core.domain.course.Course;
 import org.jetbrains.annotations.NotNull;

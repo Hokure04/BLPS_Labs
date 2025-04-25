@@ -1,4 +1,4 @@
-package org.example.blps_lab1.core.ports.admin;
+package org.example.blps_lab1.core.ports.auth;
 
 import org.example.blps_lab1.core.domain.auth.User;
 import org.example.blps_lab1.core.domain.course.Course;

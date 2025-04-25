@@ -1,9 +1,9 @@
 package org.example.blps_lab1.adapters.auth.service;
 
-import org.example.blps_lab1.core.ports.admin.UserEnrollmentService;
+import org.example.blps_lab1.core.ports.auth.UserEnrollmentService;
 import org.example.blps_lab1.core.domain.auth.ApplicationStatus;
-import org.example.blps_lab1.core.ports.admin.AuthService;
-import org.example.blps_lab1.core.ports.admin.UserService;
+import org.example.blps_lab1.core.ports.auth.AuthService;
+import org.example.blps_lab1.core.ports.auth.UserService;
 
 import org.example.blps_lab1.core.ports.email.EmailService;
 import org.example.blps_lab1.adapters.course.service.CourseService;

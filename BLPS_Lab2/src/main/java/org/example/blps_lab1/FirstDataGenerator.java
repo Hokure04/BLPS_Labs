@@ -5,7 +5,7 @@ import java.util.*;
 
 import org.example.blps_lab1.adapters.admin.AdminPanelServiceImpl;
 import org.example.blps_lab1.adapters.auth.dto.RegistrationRequestDto;
-import org.example.blps_lab1.core.ports.admin.AuthService;
+import org.example.blps_lab1.core.ports.auth.AuthService;
 import org.example.blps_lab1.core.domain.course.Course;
 import org.example.blps_lab1.core.domain.course.Topic;
 import org.example.blps_lab1.adapters.course.service.CourseService;

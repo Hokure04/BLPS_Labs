@@ -1,6 +1,6 @@
 package org.example.blps_lab1.adapters.security;
 
-import org.example.blps_lab1.core.ports.admin.UserService;
+import org.example.blps_lab1.core.ports.auth.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

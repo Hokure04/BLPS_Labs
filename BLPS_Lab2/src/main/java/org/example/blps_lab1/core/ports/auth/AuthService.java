@@ -1,4 +1,4 @@
-package org.example.blps_lab1.core.ports.admin;
+package org.example.blps_lab1.core.ports.auth;
 
 import org.example.blps_lab1.adapters.auth.dto.ApplicationResponseDto;
 import org.example.blps_lab1.adapters.auth.dto.JwtAuthenticationResponse;

@@ -4,7 +4,7 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.example.blps_lab1.core.domain.auth.User;
-import org.example.blps_lab1.core.ports.admin.AuthService;
+import org.example.blps_lab1.core.ports.auth.AuthService;
 import org.example.blps_lab1.common.exceptions.ObjectNotExistException;
 import org.example.blps_lab1.common.exceptions.ObjectNotFoundException;
 import org.example.blps_lab1.adapters.course.dto.ExerciseDto;

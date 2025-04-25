@@ -11,8 +11,8 @@ import org.example.blps_lab1.core.domain.auth.Role;
 import org.example.blps_lab1.common.exceptions.CourseNotExistException;
 import org.example.blps_lab1.adapters.course.service.CourseService;
 import org.example.blps_lab1.core.domain.auth.User;
-import org.example.blps_lab1.core.ports.admin.AuthService;
-import org.example.blps_lab1.core.ports.admin.UserService;
+import org.example.blps_lab1.core.ports.auth.AuthService;
+import org.example.blps_lab1.core.ports.auth.UserService;
 import org.example.blps_lab1.common.exceptions.FieldNotSpecifiedException;
 
 import org.example.blps_lab1.common.exceptions.ObjectNotExistException;
