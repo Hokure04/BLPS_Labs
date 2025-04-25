@@ -12,6 +12,7 @@ import org.example.blps_lab1.adapters.db.course.CourseProgressRepository;
 import org.example.blps_lab1.core.ports.course.CertificateGenerator;
 import org.example.blps_lab1.core.ports.course.CertificateManager;
 import org.example.blps_lab1.core.ports.course.CourseService;
+import org.example.blps_lab1.core.ports.course.UserModuleProgressService;
 import org.example.blps_lab1.core.ports.email.EmailService;
 import org.example.blps_lab1.core.ports.sss.SimpleStorageService;
 import org.springframework.stereotype.Service;
