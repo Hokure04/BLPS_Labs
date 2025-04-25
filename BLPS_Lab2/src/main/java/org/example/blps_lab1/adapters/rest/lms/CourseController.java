@@ -17,7 +17,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-@RestController
+@RestController("lmsCourseController")
 @RequestMapping("/api/v1/courses")
 @AllArgsConstructor
 @Slf4j

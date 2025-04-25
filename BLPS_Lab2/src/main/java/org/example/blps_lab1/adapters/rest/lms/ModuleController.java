@@ -14,7 +14,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-@RestController
+@RestController("lmsModuleController")
 @RequestMapping("/api/v1/modules")
 @AllArgsConstructor
 public class ModuleController {

@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 import java.util.UUID;
 
-@RestController
+@RestController("cmsEnrollmentController")
 @RequestMapping("api/v1/enrollment")
 @AllArgsConstructor
 public class EnrollmentController {

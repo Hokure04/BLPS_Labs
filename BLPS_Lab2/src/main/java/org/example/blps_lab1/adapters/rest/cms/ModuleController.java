@@ -14,7 +14,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-@RestController
+@RestController("cmsModuleController")
 @RequestMapping("/api/v1/modules")
 @AllArgsConstructor
 @PreAuthorize("hasRole('ROLE_ADMIN')")
