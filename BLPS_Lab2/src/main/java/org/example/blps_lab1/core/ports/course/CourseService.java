@@ -17,5 +17,4 @@ public interface CourseService {
     List<Course> enrollUser(Long userId, UUID courseUUID);
     Course addAdditionalCourses(UUID courseUUID, UUID additionalCourseUUID);
     Course addListOfCourses(UUID uuid, List<Course> additionalCourses);
-
 }

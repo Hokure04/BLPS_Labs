@@ -3,8 +3,9 @@ package org.example.blps_lab1.adapters.rest.cms;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.example.blps_lab1.adapters.course.dto.ExerciseDto;
+import org.example.blps_lab1.adapters.course.mapper.ExerciseMapper;
 import org.example.blps_lab1.core.domain.course.Exercise;
-import org.example.blps_lab1.adapters.course.service.ExerciseService;
+import org.example.blps_lab1.core.ports.course.ExerciseService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -24,7 +25,7 @@ public class ExerciseController {
     public ResponseEntity<Map<String, Object>> createExercise(@Valid @RequestBody ExerciseDto exerciseDto){
         Map<String, Object> response = new HashMap<>();
         Exercise createdExercise = exerciseService.createExercise(exerciseDto);
-        ExerciseDto newExerciseDto = exerciseService.convertToExerciseDto(createdExercise);
+        ExerciseDto newExerciseDto = ExerciseMapper.convertToExerciseDto(createdExercise);
         response.put("created_exercise", newExerciseDto);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }

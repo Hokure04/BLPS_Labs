@@ -1,7 +1,6 @@
 package org.example.blps_lab1.adapters.course.service;
 
 import jakarta.transaction.Transactional;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.example.blps_lab1.core.domain.auth.User;
 import org.example.blps_lab1.core.ports.auth.AuthService;
@@ -17,6 +16,7 @@ import org.example.blps_lab1.adapters.db.course.ModuleExerciseRepository;
 import org.example.blps_lab1.adapters.db.course.ModuleRepository;
 import org.example.blps_lab1.adapters.db.course.UserExerciseProgressRepository;
 import org.example.blps_lab1.core.ports.course.CourseProgressService;
+import org.example.blps_lab1.core.ports.course.ExerciseService;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.PlatformTransactionManager;
@@ -26,13 +26,12 @@ import org.springframework.transaction.support.TransactionTemplate;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
 @Slf4j
 @Transactional
-public class ExerciseService {
+public class ExerciseServiceImpl implements ExerciseService {
 
     private final ExerciseRepository exerciseRepository;
     private final ModuleRepository moduleRepository;
@@ -42,11 +41,11 @@ public class ExerciseService {
     private final UserExerciseProgressRepository userExerciseProgressRepository;
     private final TransactionTemplate transactionTemplate;
 
-    public ExerciseService(ExerciseRepository exerciseRepository, ModuleRepository moduleRepository,
-                           ModuleExerciseRepository moduleExerciseRepository,
-                           CourseProgressService courseProgressService,
-                           AuthService authService, PlatformTransactionManager platformTransactionManager,
-                           UserExerciseProgressRepository userExerciseProgressRepository) {
+    public ExerciseServiceImpl(ExerciseRepository exerciseRepository, ModuleRepository moduleRepository,
+                               ModuleExerciseRepository moduleExerciseRepository,
+                               CourseProgressService courseProgressService,
+                               AuthService authService, PlatformTransactionManager platformTransactionManager,
+                               UserExerciseProgressRepository userExerciseProgressRepository) {
         this.exerciseRepository = exerciseRepository;
         this.moduleRepository = moduleRepository;
         this.moduleExerciseRepository = moduleExerciseRepository;
@@ -159,23 +158,5 @@ public class ExerciseService {
     }
 
 
-    public List<ExerciseDto> convertToExerciseDto(List<Exercise> exercises) {
-        return exercises.stream()
-                .map(this::convertToExerciseDto)
-                .collect(Collectors.toList());
-    }
 
-    public ExerciseDto convertToExerciseDto(Exercise exercise) {
-        Long moduleId = (exercise.getModuleExercises() != null && !exercise.getModuleExercises().isEmpty())
-                ? exercise.getModuleExercises().get(0).getModule().getId() : null;
-
-        return new ExerciseDto(
-                exercise.getName(),
-                exercise.getDescription(),
-                moduleId,
-                exercise.getDifficultyLevel(),
-                exercise.getAnswer(),
-                exercise.getLocalDateTime()
-        );
-    }
 }
