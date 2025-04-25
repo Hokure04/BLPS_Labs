@@ -4,9 +4,9 @@ import java.util.List;
 
 import org.example.blps_lab1.adapters.auth.dto.CompanyDto;
 import org.example.blps_lab1.adapters.auth.mapper.CompanyMapper;
-import org.example.blps_lab1.core.domain.Company;
-import org.example.blps_lab1.adapters.db.CompanyRepository;
-import org.example.blps_lab1.core.admin.CompanyService;
+import org.example.blps_lab1.core.domain.auth.Company;
+import org.example.blps_lab1.adapters.db.auth.CompanyRepository;
+import org.example.blps_lab1.core.ports.admin.CompanyService;
 import org.example.blps_lab1.common.exceptions.ObjectNotExistException;
 import org.springframework.stereotype.Service;
 

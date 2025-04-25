@@ -5,10 +5,10 @@ import java.util.*;
 
 import org.example.blps_lab1.adapters.admin.AdminPanelServiceImpl;
 import org.example.blps_lab1.adapters.auth.dto.RegistrationRequestDto;
-import org.example.blps_lab1.core.admin.AuthService;
-import org.example.blps_lab1.courseSignUp.models.Course;
-import org.example.blps_lab1.courseSignUp.models.Topic;
-import org.example.blps_lab1.courseSignUp.service.CourseService;
+import org.example.blps_lab1.core.ports.admin.AuthService;
+import org.example.blps_lab1.core.domain.course.Course;
+import org.example.blps_lab1.core.domain.course.Topic;
+import org.example.blps_lab1.adapters.course.service.CourseService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.ApplicationArguments;

@@ -1,7 +1,7 @@
 package org.example.blps_lab1.adapters.auth.mapper;
 
 import org.example.blps_lab1.adapters.auth.dto.CompanyDto;
-import org.example.blps_lab1.core.domain.Company;
+import org.example.blps_lab1.core.domain.auth.Company;
 
 @Deprecated
 public class CompanyMapper {

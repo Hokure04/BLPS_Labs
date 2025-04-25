@@ -2,7 +2,7 @@ package org.example.blps_lab1.adapters.rest.lms;
 
 import lombok.AllArgsConstructor;
 
-import org.example.blps_lab1.core.admin.AuthService;
+import org.example.blps_lab1.core.ports.admin.AuthService;
 import org.example.blps_lab1.lms.service.CertificateManagerService;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;

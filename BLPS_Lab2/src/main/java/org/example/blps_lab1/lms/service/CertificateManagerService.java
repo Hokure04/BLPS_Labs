@@ -3,16 +3,17 @@ package org.example.blps_lab1.lms.service;
 import java.io.File;
 import java.util.UUID;
 
-import org.example.blps_lab1.core.domain.User;
+import org.example.blps_lab1.adapters.mail.EmailServiceImpl;
+import org.example.blps_lab1.core.domain.auth.User;
 import org.example.blps_lab1.common.exceptions.ObjectNotExistException;
-import org.example.blps_lab1.common.service.MinioService;
-import org.example.blps_lab1.courseSignUp.models.Course;
-import org.example.blps_lab1.courseSignUp.models.CourseProgress;
-import org.example.blps_lab1.courseSignUp.models.CourseProgressId;
-import org.example.blps_lab1.courseSignUp.repository.CourseProgressRepository;
-import org.example.blps_lab1.courseSignUp.service.CourseService;
-import org.example.blps_lab1.courseSignUp.service.UserModuleProgressService;
-import org.example.blps_lab1.export.certificate.CertificateExporter;
+import org.example.blps_lab1.adapters.sss.MinioServiceImpl;
+import org.example.blps_lab1.core.domain.course.Course;
+import org.example.blps_lab1.core.domain.course.CourseProgress;
+import org.example.blps_lab1.core.domain.course.CourseProgressId;
+import org.example.blps_lab1.adapters.db.course.CourseProgressRepository;
+import org.example.blps_lab1.adapters.course.service.CourseService;
+import org.example.blps_lab1.adapters.course.service.UserModuleProgressService;
+import org.example.blps_lab1.export.certificate.CertificatePdfGenerator;
 import org.springframework.stereotype.Service;
 
 import lombok.AllArgsConstructor;
@@ -22,10 +23,10 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @AllArgsConstructor
 public class CertificateManagerService {
-    private CertificateExporter certificateExporter;
+    private CertificatePdfGenerator certificateExporter;
     private CourseService courseService;
-    private MinioService minioService;
-    private EmailService emailService;
+    private MinioServiceImpl minioService;
+    private EmailServiceImpl emailService;
     private CourseProgressRepository courseProgressRepository;
     private UserModuleProgressService userModuleProgressService;
 

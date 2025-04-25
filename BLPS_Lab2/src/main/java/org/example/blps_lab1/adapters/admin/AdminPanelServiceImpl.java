@@ -2,10 +2,10 @@ package org.example.blps_lab1.adapters.admin;
 
 import java.util.Objects;
 
-import org.example.blps_lab1.core.domain.Role;
-import org.example.blps_lab1.core.admin.UserService;
+import org.example.blps_lab1.core.domain.auth.Role;
+import org.example.blps_lab1.core.ports.admin.UserService;
 
-import org.example.blps_lab1.core.admin.AdminPanelService;
+import org.example.blps_lab1.core.ports.admin.AdminPanelService;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

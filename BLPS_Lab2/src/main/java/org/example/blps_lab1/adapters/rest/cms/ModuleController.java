@@ -2,16 +2,15 @@ package org.example.blps_lab1.adapters.rest.cms;
 
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
-import org.example.blps_lab1.courseSignUp.dto.ModuleDto;
-import org.example.blps_lab1.courseSignUp.models.Module;
-import org.example.blps_lab1.courseSignUp.service.ModuleService;
+import org.example.blps_lab1.adapters.course.dto.ModuleDto;
+import org.example.blps_lab1.core.domain.course.Module;
+import org.example.blps_lab1.adapters.course.service.ModuleService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 @RestController("cmsModuleController")

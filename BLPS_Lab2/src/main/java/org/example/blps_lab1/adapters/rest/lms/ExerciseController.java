@@ -1,13 +1,11 @@
 package org.example.blps_lab1.adapters.rest.lms;
 
-import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
-import org.example.blps_lab1.courseSignUp.dto.ExerciseDto;
-import org.example.blps_lab1.courseSignUp.models.Exercise;
-import org.example.blps_lab1.courseSignUp.service.ExerciseService;
+import org.example.blps_lab1.adapters.course.dto.ExerciseDto;
+import org.example.blps_lab1.core.domain.course.Exercise;
+import org.example.blps_lab1.adapters.course.service.ExerciseService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;

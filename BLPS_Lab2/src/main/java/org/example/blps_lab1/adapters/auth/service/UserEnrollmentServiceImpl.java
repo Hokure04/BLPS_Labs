@@ -1,12 +1,12 @@
 package org.example.blps_lab1.adapters.auth.service;
 
-import org.example.blps_lab1.core.admin.UserEnrollmentService;
-import org.example.blps_lab1.core.domain.ApplicationStatus;
-import org.example.blps_lab1.core.admin.AuthService;
-import org.example.blps_lab1.core.admin.UserService;
+import org.example.blps_lab1.core.ports.admin.UserEnrollmentService;
+import org.example.blps_lab1.core.domain.auth.ApplicationStatus;
+import org.example.blps_lab1.core.ports.admin.AuthService;
+import org.example.blps_lab1.core.ports.admin.UserService;
 
-import org.example.blps_lab1.courseSignUp.service.CourseService;
-import org.example.blps_lab1.lms.service.EmailService;
+import org.example.blps_lab1.core.ports.email.EmailService;
+import org.example.blps_lab1.adapters.course.service.CourseService;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

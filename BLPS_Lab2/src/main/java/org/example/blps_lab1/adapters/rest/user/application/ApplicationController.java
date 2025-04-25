@@ -1,7 +1,7 @@
 package org.example.blps_lab1.adapters.rest.user.application;
 
 import lombok.extern.slf4j.Slf4j;
-import org.example.blps_lab1.core.domain.ApplicationStatus;
+import org.example.blps_lab1.core.domain.auth.ApplicationStatus;
 import org.example.blps_lab1.adapters.auth.service.ApplicationServiceImpl;
 import org.example.blps_lab1.adapters.auth.service.UserEnrollmentServiceImpl;
 

@@ -7,17 +7,17 @@ import org.example.blps_lab1.adapters.auth.dto.JwtAuthenticationResponse;
 import org.example.blps_lab1.adapters.auth.dto.LoginRequest;
 import org.example.blps_lab1.adapters.auth.dto.RegistrationRequestDto;
 import org.example.blps_lab1.core.exception.auth.AuthorizeException;
-import org.example.blps_lab1.core.domain.Role;
+import org.example.blps_lab1.core.domain.auth.Role;
 import org.example.blps_lab1.common.exceptions.CourseNotExistException;
-import org.example.blps_lab1.courseSignUp.service.CourseService;
-import org.example.blps_lab1.core.domain.User;
-import org.example.blps_lab1.core.admin.AuthService;
-import org.example.blps_lab1.core.admin.UserService;
+import org.example.blps_lab1.adapters.course.service.CourseService;
+import org.example.blps_lab1.core.domain.auth.User;
+import org.example.blps_lab1.core.ports.admin.AuthService;
+import org.example.blps_lab1.core.ports.admin.UserService;
 import org.example.blps_lab1.common.exceptions.FieldNotSpecifiedException;
 
 import org.example.blps_lab1.common.exceptions.ObjectNotExistException;
-import org.example.blps_lab1.config.security.services.JwtService;
-import org.example.blps_lab1.lms.service.EmailService;
+import org.example.blps_lab1.core.ports.security.JwtService;
+import org.example.blps_lab1.adapters.mail.EmailServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -41,13 +41,13 @@ public class AuthServiceImpl implements AuthService {
     private final JwtService jwtService;
     private final UserService userService;
     private final ApplicationServiceImpl applicationService;
-    private final EmailService emailService; // FIXME: temporary killed, need to enable and check
+    private final EmailServiceImpl emailService; // FIXME: temporary killed, need to enable and check
     private final TransactionTemplate transactionTemplate;
 
     @Autowired
     public AuthServiceImpl(CourseService courseService, PasswordEncoder passwordEncoder,
                            JwtService jwtService, UserService userService,
-                           ApplicationServiceImpl applicationService, EmailService emailService,
+                           ApplicationServiceImpl applicationService, EmailServiceImpl emailService,
                            PlatformTransactionManager transactionManager) {
         this.courseService = courseService;
         this.passwordEncoder = passwordEncoder;

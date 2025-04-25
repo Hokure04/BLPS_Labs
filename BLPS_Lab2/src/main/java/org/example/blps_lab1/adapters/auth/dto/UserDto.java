@@ -4,7 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.example.blps_lab1.core.domain.Role;
+import org.example.blps_lab1.core.domain.auth.Role;
 
 @Data
 @Builder
