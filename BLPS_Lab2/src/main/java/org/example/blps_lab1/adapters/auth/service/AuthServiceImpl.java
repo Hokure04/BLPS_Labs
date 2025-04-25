@@ -8,14 +8,14 @@ import org.example.blps_lab1.adapters.auth.dto.LoginRequest;
 import org.example.blps_lab1.adapters.auth.dto.RegistrationRequestDto;
 import org.example.blps_lab1.core.exception.auth.AuthorizeException;
 import org.example.blps_lab1.core.domain.auth.Role;
-import org.example.blps_lab1.common.exceptions.CourseNotExistException;
+import org.example.blps_lab1.core.exception.course.CourseNotExistException;
 import org.example.blps_lab1.adapters.course.service.CourseService;
 import org.example.blps_lab1.core.domain.auth.User;
 import org.example.blps_lab1.core.ports.auth.AuthService;
 import org.example.blps_lab1.core.ports.auth.UserService;
-import org.example.blps_lab1.common.exceptions.FieldNotSpecifiedException;
+import org.example.blps_lab1.core.exception.common.FieldNotSpecifiedException;
 
-import org.example.blps_lab1.common.exceptions.ObjectNotExistException;
+import org.example.blps_lab1.core.exception.common.ObjectNotExistException;
 import org.example.blps_lab1.core.ports.security.JwtService;
 import org.example.blps_lab1.adapters.mail.EmailServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;

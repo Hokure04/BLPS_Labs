@@ -3,7 +3,7 @@ package org.example.blps_lab1.adapters.rest.lms;
 import lombok.AllArgsConstructor;
 
 import org.example.blps_lab1.core.ports.auth.AuthService;
-import org.example.blps_lab1.lms.service.CertificateManagerService;
+import org.example.blps_lab1.core.ports.course.CertificateManager;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -18,7 +18,7 @@ import java.util.UUID;
 public class CertificateController {
 
     private AuthService authService;
-    private CertificateManagerService certificateManagerService;
+    private CertificateManager certificateManagerService;
     
 
     @GetMapping("/{courseUUID}")

@@ -1,4 +1,4 @@
-package org.example.blps_lab1.export.certificate;
+package org.example.blps_lab1.adapters.course.service;
 
 import com.itextpdf.kernel.colors.ColorConstants;
 import com.itextpdf.kernel.geom.PageSize;
@@ -17,7 +17,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 
 import org.example.blps_lab1.core.ports.course.CertificateGenerator;
-import org.springframework.beans.factory.UnsatisfiedDependencyException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 

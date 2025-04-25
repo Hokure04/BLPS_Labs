@@ -4,8 +4,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.example.blps_lab1.core.domain.auth.User;
 import org.example.blps_lab1.core.ports.auth.AuthService;
-import org.example.blps_lab1.common.exceptions.ObjectNotExistException;
-import org.example.blps_lab1.common.exceptions.ObjectNotFoundException;
+import org.example.blps_lab1.core.exception.common.ObjectNotExistException;
+import org.example.blps_lab1.core.exception.common.ObjectNotFoundException;
 import org.example.blps_lab1.adapters.course.dto.ModuleDto;
 import org.example.blps_lab1.core.domain.course.*;
 import org.example.blps_lab1.core.domain.course.Module;
@@ -14,6 +14,7 @@ import org.example.blps_lab1.adapters.db.course.ModuleRepository;
 import org.example.blps_lab1.adapters.db.course.UserExerciseProgressRepository;
 import org.example.blps_lab1.adapters.db.course.UserModuleProgressRepository;
 import org.example.blps_lab1.adapters.mail.EmailServiceImpl;
+import org.example.blps_lab1.core.ports.course.CourseProgressService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

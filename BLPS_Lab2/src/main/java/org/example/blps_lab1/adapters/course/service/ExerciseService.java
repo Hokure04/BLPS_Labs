@@ -5,8 +5,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.example.blps_lab1.core.domain.auth.User;
 import org.example.blps_lab1.core.ports.auth.AuthService;
-import org.example.blps_lab1.common.exceptions.ObjectNotExistException;
-import org.example.blps_lab1.common.exceptions.ObjectNotFoundException;
+import org.example.blps_lab1.core.exception.common.ObjectNotExistException;
+import org.example.blps_lab1.core.exception.common.ObjectNotFoundException;
 import org.example.blps_lab1.adapters.course.dto.ExerciseDto;
 import org.example.blps_lab1.core.domain.course.Exercise;
 import org.example.blps_lab1.core.domain.course.Module;
@@ -16,6 +16,7 @@ import org.example.blps_lab1.adapters.db.course.ExerciseRepository;
 import org.example.blps_lab1.adapters.db.course.ModuleExerciseRepository;
 import org.example.blps_lab1.adapters.db.course.ModuleRepository;
 import org.example.blps_lab1.adapters.db.course.UserExerciseProgressRepository;
+import org.example.blps_lab1.core.ports.course.CourseProgressService;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;

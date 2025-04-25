@@ -1,4 +1,4 @@
-package org.example.blps_lab1.common.exceptions;
+package org.example.blps_lab1.core.exception.common;
 
 //NOTE: Используется, если обязательное поле в запросе не было указаноы
 public class FieldNotSpecifiedException extends RuntimeException{

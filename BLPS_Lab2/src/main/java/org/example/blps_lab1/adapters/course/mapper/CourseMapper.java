@@ -1,7 +1,7 @@
 package org.example.blps_lab1.adapters.course.mapper;
 
 import lombok.extern.slf4j.Slf4j;
-import org.example.blps_lab1.common.exceptions.FailedToMapException;
+import org.example.blps_lab1.core.exception.common.FailedToMapException;
 import org.example.blps_lab1.adapters.course.dto.CourseDto;
 import org.example.blps_lab1.core.domain.course.Course;
 

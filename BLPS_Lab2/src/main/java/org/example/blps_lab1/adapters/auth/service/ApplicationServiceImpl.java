@@ -9,8 +9,8 @@ import org.example.blps_lab1.core.domain.auth.ApplicationStatus;
 import org.example.blps_lab1.core.domain.auth.User;
 import org.example.blps_lab1.adapters.db.auth.ApplicationRepository;
 import org.example.blps_lab1.core.ports.auth.UserService;
-import org.example.blps_lab1.common.exceptions.ObjectNotExistException;
-import org.example.blps_lab1.common.exceptions.StatusAlreadySetException;
+import org.example.blps_lab1.core.exception.common.ObjectNotExistException;
+import org.example.blps_lab1.core.exception.auth.ApplicationStatusAlreadySetException;
 import org.example.blps_lab1.adapters.course.service.CourseService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -68,7 +68,7 @@ public class ApplicationServiceImpl implements ApplicationService {
             }
             var entity = oldEntityOptional.get();
             if (entity.getStatus() != ApplicationStatus.PENDING) {
-                throw new StatusAlreadySetException("Нельзя изменить статус уже сформированной заявки");
+                throw new ApplicationStatusAlreadySetException("Нельзя изменить статус уже сформированной заявки");
             }
             entity.setStatus(applicationStatus);
 

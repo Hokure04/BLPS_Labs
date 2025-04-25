@@ -1,4 +1,4 @@
-package org.example.blps_lab1.common.exceptions;
+package org.example.blps_lab1.adapters.rest.advicer;
 
 import java.time.LocalDateTime;
 

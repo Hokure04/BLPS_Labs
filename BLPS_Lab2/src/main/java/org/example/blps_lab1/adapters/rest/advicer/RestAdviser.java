@@ -1,8 +1,12 @@
-package org.example.blps_lab1.common.advicer;
+package org.example.blps_lab1.adapters.rest.advicer;
 
 import lombok.extern.slf4j.Slf4j;
 import org.example.blps_lab1.core.exception.auth.AuthorizeException;
-import org.example.blps_lab1.common.exceptions.*;
+import org.example.blps_lab1.core.exception.auth.ApplicationStatusAlreadySetException;
+import org.example.blps_lab1.core.exception.common.FieldNotSpecifiedException;
+import org.example.blps_lab1.core.exception.common.ObjectAlreadyExistException;
+import org.example.blps_lab1.core.exception.common.ObjectNotExistException;
+import org.example.blps_lab1.core.exception.common.ObjectNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.mail.MailAuthenticationException;
 import org.springframework.mail.MailSendException;
@@ -14,9 +18,9 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 @RestControllerAdvice
 @Slf4j
-public class ErrorAdvicer {
+public class RestAdviser {
     @ExceptionHandler({FieldNotSpecifiedException.class, IllegalArgumentException.class,
-        MailAuthenticationException.class, MailSendException.class, StatusAlreadySetException.class})
+        MailAuthenticationException.class, MailSendException.class, ApplicationStatusAlreadySetException.class})
     @ResponseStatus(value = HttpStatus.BAD_REQUEST)
     public ExceptionWrapper handleFieldNotSpecifiedException(RuntimeException e) {
         return new ExceptionWrapper(e);
@@ -65,11 +69,5 @@ public class ErrorAdvicer {
         return new ExceptionWrapper(new Exception("У вас недостаточно прав"));
     }
 
-
-    @ExceptionHandler(NotFinishedException.class)
-    @ResponseStatus(HttpStatus.CONFLICT)
-    public ExceptionWrapper handleNotFinishedException(NotFinishedException e){
-        return new ExceptionWrapper(e);
-    }
 }
 
