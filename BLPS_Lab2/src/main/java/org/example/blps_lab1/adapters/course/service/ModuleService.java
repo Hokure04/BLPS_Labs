@@ -15,6 +15,7 @@ import org.example.blps_lab1.adapters.db.course.UserExerciseProgressRepository;
 import org.example.blps_lab1.adapters.db.course.UserModuleProgressRepository;
 import org.example.blps_lab1.adapters.mail.EmailServiceImpl;
 import org.example.blps_lab1.core.ports.course.CourseProgressService;
+import org.example.blps_lab1.core.ports.email.EmailService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -33,7 +34,7 @@ public class ModuleService {
     private final ModuleRepository moduleRepository;
     private final CourseProgressService courseProgressService;
     private final ModuleExerciseRepository moduleExerciseRepository;
-    private final EmailServiceImpl emailService;
+    private final EmailService emailService;
     private final UserModuleProgressRepository userModuleProgressRepository;
     private final AuthService authService;
     private final UserExerciseProgressRepository userExerciseProgressRepository;

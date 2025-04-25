@@ -1,6 +1,5 @@
 package org.example.blps_lab1.adapters.course.service;
 
-import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.example.blps_lab1.core.domain.auth.User;
 import org.example.blps_lab1.core.ports.auth.AuthService;
@@ -26,11 +25,10 @@ import org.springframework.transaction.support.TransactionTemplate;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @Slf4j
-@Transactional
+// transactional OK
 public class ExerciseServiceImpl implements ExerciseService {
 
     private final ExerciseRepository exerciseRepository;
