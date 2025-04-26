@@ -22,6 +22,7 @@ import org.example.blps_lab1.core.ports.course.CourseService;
 import org.example.blps_lab1.core.ports.email.EmailService;
 import org.example.blps_lab1.core.ports.security.JwtService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -30,12 +31,17 @@ import org.springframework.stereotype.Service;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.TransactionDefinition;
+import org.springframework.transaction.TransactionManager;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.DefaultTransactionDefinition;
 import org.springframework.transaction.support.TransactionTemplate;
 
 @Service
 @Slf4j
 public class AuthServiceImpl implements AuthService {
 
+    private final DataSourceTransactionManager transactionManager;
     private CourseService courseService;
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
@@ -44,18 +50,21 @@ public class AuthServiceImpl implements AuthService {
     public static final Pattern VALID_EMAIL_ADDRESS_REGEX =
             Pattern.compile("^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,6}$", Pattern.CASE_INSENSITIVE);
     private final TransactionTemplate transactionTemplate;
+    private final PlatformTransactionManager platformtransactionManager;
 
     @Autowired
     public AuthServiceImpl(CourseService courseService, PasswordEncoder passwordEncoder,
                            JwtService jwtService, UserService userService,
                            ApplicationService applicationService,
-                           PlatformTransactionManager transactionManager) {
+                           PlatformTransactionManager platformtransactionManager, DataSourceTransactionManager transactionManager) {
         this.courseService = courseService;
         this.passwordEncoder = passwordEncoder;
         this.jwtService = jwtService;
         this.userService = userService;
         this.applicationService = applicationService;
         this.transactionTemplate = new TransactionTemplate(transactionManager);
+        this.platformtransactionManager = platformtransactionManager;
+        this.transactionManager = transactionManager;
     }
 
     /**
@@ -99,12 +108,20 @@ public class AuthServiceImpl implements AuthService {
      */
     @Override
     public JwtAuthenticationResponse signUp(RegistrationRequestDto request) {
-        return transactionTemplate.execute(status -> {
+        DefaultTransactionDefinition definition = new DefaultTransactionDefinition();
+        definition.setName("signUpWithoutId");
+        definition.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRED);
+        TransactionStatus status = platformtransactionManager.getTransaction(definition);
+        try{
             var user = getUserOrThrow(request);
             userService.add(user);
             var jwt = jwtService.generateToken(user);
+            platformtransactionManager.commit(status);
             return new JwtAuthenticationResponse(jwt);
-        });
+        }catch (Exception e){
+            platformtransactionManager.rollback(status);
+            throw new RuntimeException(e);
+        }
     }
 
     /**
@@ -119,7 +136,11 @@ public class AuthServiceImpl implements AuthService {
      */
     @Override
     public ApplicationResponseDto signUp(RegistrationRequestDto request, UUID courseUUID) {
-        return transactionTemplate.execute(status -> {
+        DefaultTransactionDefinition definition = new DefaultTransactionDefinition();
+        definition.setName("signUpWihId");
+        definition.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRED);
+        TransactionStatus status = platformtransactionManager.getTransaction(definition);
+        try{
             var resultBuilder = ApplicationResponseDto.builder();
             var user = getUserOrThrow(request);
             if (courseUUID == null) {
@@ -138,8 +159,12 @@ public class AuthServiceImpl implements AuthService {
 
             var jwt = jwtService.generateToken(user);
             resultBuilder.jwt(new JwtAuthenticationResponse(jwt));
+            platformtransactionManager.commit(status);
             return resultBuilder.build();
-        });
+        } catch (Exception e){
+            platformtransactionManager.rollback(status);
+            throw new RuntimeException(e);
+        }
     }
 
 

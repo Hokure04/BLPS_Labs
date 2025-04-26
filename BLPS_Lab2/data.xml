@@ -14,4 +14,11 @@
         <email>jaba@jaba.jaba</email>
         <phoneNumber>+7800553535</phoneNumber>
     </user>
+    <user>
+        <id>3</id>
+        <firstName>Sasha</firstName>
+        <lastName>Potter</lastName>
+        <email>turkeyhokure@gmail.gm</email>
+        <phoneNumber>+1234567890</phoneNumber>
+    </user>
 </users>

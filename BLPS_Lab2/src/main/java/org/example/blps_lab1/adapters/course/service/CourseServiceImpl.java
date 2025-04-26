@@ -13,9 +13,10 @@ import org.example.blps_lab1.core.ports.course.CourseService;
 import org.example.blps_lab1.core.ports.email.EmailService;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.PlatformTransactionManager;
-import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.*;
+import org.springframework.transaction.support.DefaultTransactionDefinition;
 import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.transaction.support.TransactionTemplate;
 
@@ -30,14 +31,18 @@ public class CourseServiceImpl implements CourseService {
     private final UserRepository userRepository;
     private final EmailService emailService;
     private final TransactionTemplate transactionTemplate;
+    private final DataSourceTransactionManager transactionManager;
+    private final PlatformTransactionManager platformTransactionManager;
 
     @Autowired
     public CourseServiceImpl(CourseRepository courseRepository, UserRepository userRepository,
-                             EmailService emailService, PlatformTransactionManager platformTransactionManager) {
+                             EmailService emailService, PlatformTransactionManager platformTransactionManager, DataSourceTransactionManager transactionManager) {
         this.courseRepository = courseRepository;
         this.userRepository = userRepository;
         this.emailService = emailService;
         this.transactionTemplate = new TransactionTemplate(platformTransactionManager);
+        this.transactionManager = transactionManager;
+        this.platformTransactionManager = platformTransactionManager;
     }
 
     public Course createCourse(final Course course) {
@@ -61,14 +66,19 @@ public class CourseServiceImpl implements CourseService {
     }
 
     public void deleteCourse(final UUID courseUUID) {
-        transactionTemplate.execute(new TransactionCallbackWithoutResult() {
-            @Override
-            protected void doInTransactionWithoutResult(@NotNull TransactionStatus status) {
-                courseRepository.findById(courseUUID).orElseThrow(() -> new CourseNotExistException("Курс с таким id не существует"));
-                courseRepository.deleteById(courseUUID);
-                log.info("Course deleted: {}", courseUUID);
-            }
-        });
+        DefaultTransactionDefinition definition = new DefaultTransactionDefinition();
+        definition.setName("deleteCourse");
+        definition.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRED);
+        TransactionStatus status = transactionManager.getTransaction(definition);
+        try{
+            courseRepository.findById(courseUUID).orElseThrow(() -> new CourseNotExistException("Курс с таким id не существует"));
+            courseRepository.deleteById(courseUUID);
+            log.info("Course deleted: {}", courseUUID);
+            transactionManager.commit(status);
+        }catch (Exception e){
+            transactionManager.rollback(status);
+            throw new RuntimeException("Откат");
+        }
     }
 
     public List<Course> getAllCourses() {
@@ -136,7 +146,11 @@ public class CourseServiceImpl implements CourseService {
      * @return основной курс(тот, что с UUID: {@code courseUUID}
      */
     public Course addAdditionalCourses(UUID courseUUID, UUID additionalCourseUUID) {
-        return transactionTemplate.execute(status -> {
+        DefaultTransactionDefinition definition = new DefaultTransactionDefinition();
+        definition.setName("addAdditionalCourses");
+        definition.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRED);
+        TransactionStatus status = transactionManager.getTransaction(definition);
+        try{
             Course course = courseRepository.findById(courseUUID)
                     .orElseThrow(() -> new ObjectNotFoundException("Курс с id " + courseUUID + " не найден"));
 
@@ -150,12 +164,20 @@ public class CourseServiceImpl implements CourseService {
             } else {
                 log.warn("Курс {} уже есть в дополнительных курсах для {}", additionalCourseUUID, courseUUID);
             }
+            transactionManager.commit(status);
             return course;
-        });
+        }catch (Exception e){
+            transactionManager.rollback(status);
+            throw new RuntimeException(e);
+        }
     }
 
     public Course addListOfCourses(UUID uuid, List<Course> additionalCourses) {
-        return transactionTemplate.execute(status -> {
+        DefaultTransactionDefinition definition = new DefaultTransactionDefinition();
+        definition.setName("addListOfCourses");
+        definition.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRED);
+        TransactionStatus status = transactionManager.getTransaction(definition);
+        try{
             Course course = courseRepository.findById(uuid)
                     .orElseThrow(() -> new ObjectNotFoundException("Курс с uuid " + uuid + " не найден"));
 
@@ -167,7 +189,11 @@ public class CourseServiceImpl implements CourseService {
             course.getAdditionalCourseList().addAll(additionalCourses);
             courseRepository.save(course);
             log.info("Курсы добавлены в дополнительные курсы для курса с uuid {}", uuid);
+            transactionManager.commit(status);
             return course;
-        });
+        }catch (Exception e){
+            transactionManager.rollback(status);
+            throw new RuntimeException(e);
+        }
     }
 }
