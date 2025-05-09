@@ -3,6 +3,7 @@ package org.example.blps_lab1.core.domain.course.nw;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.example.blps_lab1.core.domain.course.DifficultyLevel;
@@ -14,6 +15,7 @@ import java.util.UUID;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 public class NewExercise {
 
     @Id
@@ -35,7 +37,7 @@ public class NewExercise {
     private DifficultyLevel difficultyLevel;
 
     @Column
-    private LocalDateTime localDateTime;
+    private LocalDateTime createdAt;
 
     //todo
 //    public int getPointsForDifficulty(){
@@ -45,4 +47,9 @@ public class NewExercise {
 //            case EASY -> 5;
 //        };
 //    }
+
+    @PrePersist
+    public void prePersist(){
+        createdAt = LocalDateTime.now();
+    }
 }

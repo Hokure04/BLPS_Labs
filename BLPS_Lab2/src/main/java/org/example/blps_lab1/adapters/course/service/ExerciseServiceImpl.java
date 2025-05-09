@@ -1,6 +1,7 @@
 package org.example.blps_lab1.adapters.course.service;
 
 import lombok.extern.slf4j.Slf4j;
+import org.example.blps_lab1.adapters.course.service.nw.NewExerciseServiceImpl;
 import org.example.blps_lab1.core.ports.auth.AuthService;
 import org.example.blps_lab1.core.exception.common.ObjectNotExistException;
 import org.example.blps_lab1.core.exception.common.ObjectNotFoundException;
@@ -14,7 +15,6 @@ import org.example.blps_lab1.adapters.db.course.ModuleExerciseRepository;
 import org.example.blps_lab1.adapters.db.course.ModuleRepository;
 import org.example.blps_lab1.adapters.db.course.UserExerciseProgressRepository;
 import org.example.blps_lab1.core.ports.course.CourseProgressService;
-import org.example.blps_lab1.core.ports.course.ExerciseService;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.PlatformTransactionManager;
@@ -27,7 +27,12 @@ import java.util.List;
 
 @Service
 @Slf4j
-public class ExerciseServiceImpl implements ExerciseService {
+@Deprecated(forRemoval = true)
+/**
+ * Используй {@link NewExerciseServiceImpl}
+ */
+public class ExerciseServiceImpl {
+// implements ExerciseService {
 
     private final ExerciseRepository exerciseRepository;
     private final ModuleRepository moduleRepository;
@@ -141,7 +146,7 @@ public class ExerciseServiceImpl implements ExerciseService {
                     return false;
                 }
                 courseProgressService.addPoints(user.getId(),
-                       listExercises.get(0).getModule().getCourse().getCourseId(),
+                        listExercises.get(0).getModule().getCourse().getCourseId(),
                         points);
 
                 log.info("Exercise {} завершено пользователем {}", exerciseId, user.getId());
@@ -152,7 +157,6 @@ public class ExerciseServiceImpl implements ExerciseService {
             return false;
         });
     }
-
 
 
 }

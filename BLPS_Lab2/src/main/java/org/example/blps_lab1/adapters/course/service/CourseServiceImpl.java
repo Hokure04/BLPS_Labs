@@ -2,15 +2,13 @@ package org.example.blps_lab1.adapters.course.service;
 
 import lombok.extern.slf4j.Slf4j;
 import org.example.blps_lab1.adapters.db.auth.ApplicationRepository;
-import org.example.blps_lab1.core.domain.auth.User;
 import org.example.blps_lab1.core.domain.auth.UserXml;
-import org.example.blps_lab1.core.exception.course.CourseNotExistException;
+import org.example.blps_lab1.core.exception.course.NotExistException;
 import org.example.blps_lab1.core.exception.common.ObjectNotExistException;
 import org.example.blps_lab1.core.exception.common.ObjectNotFoundException;
 import org.example.blps_lab1.adapters.course.dto.CourseDto;
 import org.example.blps_lab1.core.domain.course.Course;
 import org.example.blps_lab1.adapters.db.course.CourseRepository;
-import org.example.blps_lab1.core.ports.auth.ApplicationService;
 import org.example.blps_lab1.core.ports.course.CourseService;
 import org.example.blps_lab1.core.ports.db.UserDatabase;
 import org.example.blps_lab1.core.ports.email.EmailService;
@@ -24,7 +22,6 @@ import org.springframework.transaction.support.TransactionTemplate;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 @Service
 @Slf4j
@@ -45,7 +42,6 @@ public class CourseServiceImpl implements CourseService {
         this.emailService = emailService;
         this.transactionTemplate = new TransactionTemplate(platformTransactionManager);
     }
-
     public Course createCourse(final Course course) {
         Course newCourse = courseRepository.save(course);
         log.info("Created course: {}", newCourse);
@@ -75,7 +71,7 @@ public class CourseServiceImpl implements CourseService {
         transactionTemplate.execute(new TransactionCallbackWithoutResult() {
             @Override
             protected void doInTransactionWithoutResult(@NotNull TransactionStatus status) {
-                courseRepository.findById(courseUUID).orElseThrow(() -> new CourseNotExistException("Курс с таким id не существует"));
+                courseRepository.findById(courseUUID).orElseThrow(() -> new NotExistException("Курс с таким id не существует"));
                 var applicationListToDelete = applicationRepository.findByCourseCourseId(courseUUID);
                 applicationRepository.deleteAll(applicationListToDelete);
                 courseRepository.deleteById(courseUUID);
@@ -113,10 +109,10 @@ public class CourseServiceImpl implements CourseService {
     public List<Course> enrollUser(Long userId, Long courseUUID) {
         return transactionTemplate.execute(status -> {
             UserXml user = userRepository.findById(userId)
-                    .orElseThrow(() -> new CourseNotExistException("user not found in enroll"));
+                    .orElseThrow(() -> new NotExistException("user not found in enroll"));
 
             courseRepository.findById(courseUUID)
-                    .orElseThrow(() -> new CourseNotExistException("course not found in enroll"));
+                    .orElseThrow(() -> new NotExistException("course not found in enroll"));
 
             List<Course> enrolledCourses = new ArrayList<>();
 

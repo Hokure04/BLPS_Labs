@@ -3,7 +3,7 @@ package org.example.blps_lab1.adapters.course.service;
 import jakarta.persistence.EntityManager;
 import lombok.extern.slf4j.Slf4j;
 import org.example.blps_lab1.adapters.db.course.*;
-import org.example.blps_lab1.core.exception.course.CourseNotExistException;
+import org.example.blps_lab1.core.exception.course.NotExistException;
 import org.example.blps_lab1.core.ports.auth.AuthService;
 import org.example.blps_lab1.core.exception.common.ObjectNotExistException;
 import org.example.blps_lab1.core.exception.common.ObjectNotFoundException;
@@ -67,7 +67,7 @@ public class ModuleServiceImpl implements ModuleService {
                         throw new IllegalArgumentException("Модуль с таким порядковым номером уже существует в данном курсе");
                     });
             courseRepository.findById(module.getCourse().getCourseId()).orElseThrow(
-                    () -> new CourseNotExistException("Невозможно создать модуль, так как курс не существует")
+                    () -> new NotExistException("Невозможно создать модуль, так как курс не существует")
             );
             Course course = module.getCourse();
             em.flush();

@@ -14,7 +14,7 @@ import org.example.blps_lab1.core.domain.course.Course;
 import org.example.blps_lab1.core.domain.course.nw.Student;
 import org.example.blps_lab1.core.exception.auth.AuthorizeException;
 import org.example.blps_lab1.core.domain.auth.Role;
-import org.example.blps_lab1.core.exception.course.CourseNotExistException;
+import org.example.blps_lab1.core.exception.course.NotExistException;
 import org.example.blps_lab1.core.domain.auth.User;
 import org.example.blps_lab1.core.ports.auth.ApplicationService;
 import org.example.blps_lab1.core.ports.auth.AuthService;
@@ -135,7 +135,7 @@ public class AuthServiceImpl implements AuthService {
      *
      * @param request    включает в себя поля для регистрации поля
      * @param courseUUID uuid курса, на который записывается пользователь.
-     *                   Если курса не существует, выбрасывает ошибку {@link CourseNotExistException}
+     *                   Если курса не существует, выбрасывает ошибку {@link NotExistException}
      *                   Если uuid не указан, выбрасывает ошибку {@link FieldNotSpecifiedException}
      * @return {@link ApplicationResponseDto}, который включает в себя
      * jwt токен {@link JwtAuthenticationResponse} и информацию о заявке(цену и описание)
@@ -156,7 +156,7 @@ public class AuthServiceImpl implements AuthService {
                 courseEntity = courseService.getCourseByID(courseUUID);
             } catch (ObjectNotExistException e) {
                 log.warn("course with uuid: {} not found", courseUUID);
-                throw new CourseNotExistException("ошибка при создании заявки: данного курса больше не существует");
+                throw new NotExistException("ошибка при создании заявки: данного курса больше не существует");
             }
             var userEntity = userService.add(user);
             var applicationEntity = applicationService.add(courseUUID, userEntity);
