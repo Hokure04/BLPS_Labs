@@ -3,6 +3,7 @@ spring:
     active: "dev"
   jta:
     enabled: true
+
   application:
     name: BLPS_Lab1
   datasource:
@@ -13,6 +14,7 @@ spring:
   jpa:
     hibernate:
       ddl-auto: create-drop
+    show-sql: true
   mail:
     host: smtp.mail.ru
     port: 465

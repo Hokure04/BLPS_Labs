@@ -39,16 +39,20 @@ public class NewExerciseServiceImpl implements NewExerciseService {
     @Override
     public NewExercise createNewExercise(NewExerciseDto exerciseDto) {
         if (exerciseDto == null) {
-            log.error("exercise dto somehow is nil");
+            log.warn("exercise dto somehow is nil");
             throw new InvalidFieldException("Не хватает информации для создания курса");
         }
         if (exerciseDto.getName().isEmpty()
                 || exerciseDto.getDescription().isEmpty()
                 || exerciseDto.getAnswer().isEmpty()
-                || exerciseDto.getDifficultyLevel() == null
+                || exerciseDto.getPoints() == null
         ) {
-            log.error("user not specified some of the fields");
-            throw new InvalidFieldException("Поля name, description, answer и difficultyLevel обязательны");
+            log.warn("user not specified some of the fields");
+            throw new InvalidFieldException("Поля name, description, answer и points обязательны");
+        }
+        if(exerciseDto.getPoints() < 0) {
+            log.warn("user try to specify negative value for points: {}", exerciseDto.getPoints());
+            throw new InvalidFieldException("Поля points должно быть целым положительным числом");
         }
 
         return newExerciseRepository.save(

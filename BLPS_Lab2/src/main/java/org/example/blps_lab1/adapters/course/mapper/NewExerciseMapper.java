@@ -10,7 +10,7 @@ public class NewExerciseMapper {
                 .name(dto.getName())
                 .description(dto.getDescription())
                 .answer(dto.getAnswer())
-                .difficultyLevel(dto.getDifficultyLevel())
+                .points(dto.getPoints())
                 // NOTE: difficulty level was skipped
                 .build();
     }
@@ -21,7 +21,7 @@ public class NewExerciseMapper {
                 .name(entity.getName())
                 .description(entity.getDescription())
                 .answer(entity.getAnswer())
-                .difficultyLevel(entity.getDifficultyLevel())
+                .points(entity.getPoints())
                 .build();
     }
 }

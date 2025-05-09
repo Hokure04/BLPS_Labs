@@ -3,14 +3,18 @@ package org.example.blps_lab1.core.domain.course.nw;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
+@Data
 @Entity
 public class NewModule {
 
@@ -25,16 +29,16 @@ public class NewModule {
     private String description;
 
     @Column(nullable = false)
-    // чтобы модуль считался пройденным, должно быть >70% * totalPoints
-    private Integer totalPoints;
-
-    @Column(nullable = false)
     private LocalDateTime createdAt;
 
 
-    @ManyToOne
-    @JoinColumn(name = "exercises_uuid")
-    private NewExercise exercises;
+    @ManyToMany
+    @JoinTable(
+            name = "new_module_exercises",
+            joinColumns = @JoinColumn(name = "module_uuid"),
+            inverseJoinColumns = @JoinColumn(name = "new_exercise_uuid")
+    )
+    private List<NewExercise> exercises = new ArrayList<>();
 
 
     @PrePersist

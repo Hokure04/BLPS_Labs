@@ -32,21 +32,11 @@ public class NewExercise {
     @Column(nullable = false)
     private String answer;
 
-
-    @Enumerated(EnumType.STRING)
-    private DifficultyLevel difficultyLevel;
+    // количество очков, которое дает упражнение
+    private Integer points;
 
     @Column
     private LocalDateTime createdAt;
-
-    //todo
-//    public int getPointsForDifficulty(){
-//        return switch (difficultyLevel){
-//            case HARD -> 25;
-//            case MEDIUM -> 10;
-//            case EASY -> 5;
-//        };
-//    }
 
     @PrePersist
     public void prePersist(){

@@ -11,7 +11,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @Entity
-@Table(name = "module")
+@Table(name = "old_module")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor

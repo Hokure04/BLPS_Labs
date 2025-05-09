@@ -27,6 +27,7 @@ import java.util.Optional;
 
 @Service
 @Slf4j
+@Deprecated(forRemoval = true)
 public class ModuleServiceImpl implements ModuleService {
 
     private final ModuleRepository moduleRepository;
