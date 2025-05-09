@@ -34,8 +34,8 @@ public class NewModule {
 
     @ManyToMany
     @JoinTable(
-            name = "new_module_exercises",
-            joinColumns = @JoinColumn(name = "module_uuid"),
+            name = "new_module_new_exercises",
+            joinColumns = @JoinColumn(name = "new_module_uuid"),
             inverseJoinColumns = @JoinColumn(name = "new_exercise_uuid")
     )
     private List<NewExercise> exercises = new ArrayList<>();

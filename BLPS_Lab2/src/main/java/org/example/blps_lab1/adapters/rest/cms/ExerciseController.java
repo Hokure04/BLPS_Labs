@@ -56,7 +56,7 @@ public class ExerciseController {
         var res = allExercises
                 .stream()
                 .map(NewExerciseMapper::toDto)
-                .toArray();
+                .toList();
         response.put("exercise", res);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }

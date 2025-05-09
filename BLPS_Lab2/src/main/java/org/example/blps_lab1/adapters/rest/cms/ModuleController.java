@@ -54,7 +54,7 @@ public class ModuleController {
         var toRet = newModuleService.getAllModules()
                 .stream()
                 .map(NewModuleMapper::toDto)
-                .toArray();
+                .toList();
         response.put("update_module", toRet);
         return new ResponseEntity<>(response, HttpStatus.ACCEPTED);
     }
