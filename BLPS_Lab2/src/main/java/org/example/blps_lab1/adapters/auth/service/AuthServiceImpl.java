@@ -7,7 +7,11 @@ import org.example.blps_lab1.adapters.auth.dto.ApplicationResponseDto;
 import org.example.blps_lab1.adapters.auth.dto.JwtAuthenticationResponse;
 import org.example.blps_lab1.adapters.auth.dto.LoginRequest;
 import org.example.blps_lab1.adapters.auth.dto.RegistrationRequestDto;
+import org.example.blps_lab1.adapters.db.auth.UserXmlRepository;
+import org.example.blps_lab1.adapters.db.course.StudentRepository;
 import org.example.blps_lab1.core.domain.auth.UserXml;
+import org.example.blps_lab1.core.domain.course.Course;
+import org.example.blps_lab1.core.domain.course.nw.Student;
 import org.example.blps_lab1.core.exception.auth.AuthorizeException;
 import org.example.blps_lab1.core.domain.auth.Role;
 import org.example.blps_lab1.core.exception.course.CourseNotExistException;
@@ -35,11 +39,14 @@ import org.springframework.transaction.support.TransactionTemplate;
 @Slf4j
 public class AuthServiceImpl implements AuthService {
 
+    private final UserXmlRepository userXmlRepository;
     private CourseService courseService;
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
     private final UserService userService;
     private final ApplicationService applicationService;
+    private final StudentRepository studentRepository;
+
     public static final Pattern VALID_EMAIL_ADDRESS_REGEX =
             Pattern.compile("^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,6}$", Pattern.CASE_INSENSITIVE);
     private final TransactionTemplate transactionTemplate;
@@ -47,14 +54,16 @@ public class AuthServiceImpl implements AuthService {
     @Autowired
     public AuthServiceImpl(CourseService courseService, PasswordEncoder passwordEncoder,
                            JwtService jwtService, UserService userService,
-                           ApplicationService applicationService,
-                           PlatformTransactionManager transactionManager) {
+                           ApplicationService applicationService, StudentRepository studentRepository,
+                           PlatformTransactionManager transactionManager, UserXmlRepository userXmlRepository) {
         this.courseService = courseService;
         this.passwordEncoder = passwordEncoder;
         this.jwtService = jwtService;
         this.userService = userService;
         this.applicationService = applicationService;
+        this.studentRepository = studentRepository;
         this.transactionTemplate = new TransactionTemplate(transactionManager);
+        this.userXmlRepository = userXmlRepository;
     }
 
     /**
@@ -63,11 +72,10 @@ public class AuthServiceImpl implements AuthService {
      * @param request RegistrationRequestDto
      * @return {@link User}, которого можно сохранять в бд
      * @throws AuthorizeException, если пользователь с таким именем существует
-     *          {@link }
      */
     private UserXml getUserOrThrow(RegistrationRequestDto request) {
         Matcher matcher = VALID_EMAIL_ADDRESS_REGEX.matcher(request.getEmail());
-        if (!matcher.matches()){
+        if (!matcher.matches()) {
             log.error("error, email expect domain, got {}", request.getEmail());
             throw new IllegalArgumentException("Email должен включать в себя домен");
         }
@@ -90,6 +98,21 @@ public class AuthServiceImpl implements AuthService {
     }
 
     /**
+     * Возвращает готового студента, который будет привязан к пользователю.
+     * Важно данный метод подготавливает, но не сохраняет в бд данного студента.
+     * Предполагается предварительный вызов метода {@code private UserXml getUserOrThrow(RegistrationRequestDto request)}
+     *
+     * @param userXml пользователь формата user xml(специфика второй лабораторной работы
+     * @return готовый к сохранению в бд {@link Student}
+     */
+    private Student getStudentOrThrow(UserXml userXml) {
+        var stud = Student.builder()
+                .user_id(userXml.getId());
+        return stud.build();
+    }
+
+
+    /**
      * Регистрация пользователя без записи на курс
      *
      * @param request включает в себя поля для регистрации поля
@@ -100,6 +123,8 @@ public class AuthServiceImpl implements AuthService {
         return transactionTemplate.execute(status -> {
             var user = getUserOrThrow(request);
             userService.add(user);
+            var student = getStudentOrThrow(user);
+            studentRepository.save(student);
             var jwt = jwtService.generateToken(user);
             return new JwtAuthenticationResponse(jwt);
         });
@@ -124,8 +149,11 @@ public class AuthServiceImpl implements AuthService {
                 log.warn("course id is not specified, request: {}", request);
                 throw new FieldNotSpecifiedException("Не указан id курса");
             }
+            var student = getStudentOrThrow(user);
+            studentRepository.save(student);
+            Course courseEntity;
             try {
-                courseService.getCourseByID(courseUUID);
+                courseEntity = courseService.getCourseByID(courseUUID);
             } catch (ObjectNotExistException e) {
                 log.warn("course with uuid: {} not found", courseUUID);
                 throw new CourseNotExistException("ошибка при создании заявки: данного курса больше не существует");
@@ -133,6 +161,10 @@ public class AuthServiceImpl implements AuthService {
             var userEntity = userService.add(user);
             var applicationEntity = applicationService.add(courseUUID, userEntity);
             resultBuilder.applicationID(applicationEntity.getId());
+
+            resultBuilder
+                    .price(courseEntity.getCoursePrice())
+                    .description(courseEntity.getCourseDescription());
 
             var jwt = jwtService.generateToken(user);
             resultBuilder.jwt(new JwtAuthenticationResponse(jwt));
