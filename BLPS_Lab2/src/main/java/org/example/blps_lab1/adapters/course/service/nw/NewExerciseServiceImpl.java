@@ -1,8 +1,10 @@
 package org.example.blps_lab1.adapters.course.service.nw;
 
-import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.NotImplementedException;
+
 import org.example.blps_lab1.adapters.course.dto.nw.NewExerciseDto;
+import org.example.blps_lab1.adapters.course.mapper.ExerciseMapper;
 import org.example.blps_lab1.adapters.course.mapper.NewExerciseMapper;
 import org.example.blps_lab1.adapters.db.course.NewExerciseRepository;
 import org.example.blps_lab1.core.domain.course.nw.NewExercise;
@@ -10,15 +12,22 @@ import org.example.blps_lab1.core.exception.course.InvalidFieldException;
 import org.example.blps_lab1.core.exception.course.NotExistException;
 import org.example.blps_lab1.core.ports.course.nw.NewExerciseService;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.support.TransactionTemplate;
 
 import java.util.List;
 import java.util.UUID;
 
 @Service
-@AllArgsConstructor
 @Slf4j
 public class NewExerciseServiceImpl implements NewExerciseService {
-    private NewExerciseRepository newExerciseRepository;
+    private final NewExerciseRepository newExerciseRepository;
+    private final TransactionTemplate transactionTemplate;
+
+    public NewExerciseServiceImpl(NewExerciseRepository newExerciseRepository, PlatformTransactionManager transactionManager) {
+        this.newExerciseRepository = newExerciseRepository;
+        this.transactionTemplate = new TransactionTemplate(transactionManager);
+    }
 
     /**
      * Создает упражнение. Важно, упражнение НИКАК не привязано модулям, чтобы любой модуль
@@ -49,7 +58,7 @@ public class NewExerciseServiceImpl implements NewExerciseService {
 
     /**
      * Возвращает именно упражнение без привязки к какому-либо модулю.
-     *  Данный метод во многом утилитарный для админских ролей
+     * Данный метод во многом утилитарный для админских ролей
      *
      * @param uuid упражнения
      * @return {@link NewExercise}
@@ -60,20 +69,37 @@ public class NewExerciseServiceImpl implements NewExerciseService {
     }
 
 
-
     @Override
     public void deleteNewExercise(Long id) {
-
+        throw new NotImplementedException("ждет реализацию модулей, тк удалять упраженения необходимо каскадно");
     }
 
+    /**
+     * Возвращает именно упражнения без привязки к какому-либо модулю. Данный метод во многом утилитарный для админов
+     *
+     * @return упражнения {@link NewExercise}
+     */
     @Override
     public List<NewExercise> getAllExercises() {
-        return List.of();
+        return newExerciseRepository.findAll();
     }
 
+    /**
+     * Обновляет указанное упраженение. Важно, данный метод обновит упражнение и все модули, которые на него ссылаются
+     * также обновятся
+     *
+     * @param uuid        курса, который обновляем
+     * @param exerciseDto новые данные курса. Важно, данные должны быть полными
+     * @return новое обновленное упражнение
+     */
     @Override
-    public NewExercise updateNewExercise(Long id, NewExerciseDto exerciseDto) {
-        return null;
+    public NewExercise updateNewExercise(UUID uuid, NewExerciseDto exerciseDto) {
+        return transactionTemplate.execute(status -> {
+            var exerciseToUpdate = newExerciseRepository.findById(uuid).orElseThrow(() -> new NotExistException("Упражнения с таким uuid не существует"));
+            var toSave = NewExerciseMapper.toEntity(exerciseDto);
+            toSave.setUuid(exerciseToUpdate.getUuid());
+            return newExerciseRepository.save(toSave);
+        });
     }
 
     @Override

@@ -27,9 +27,22 @@ public interface NewExerciseService {
 
     void deleteNewExercise(final Long id);
 
+    /**
+     * Возвращает именно упражнения без привязки к какому-либо модулю. Данный метод во многом утилитарный для админов
+     *
+     * @return упражнения {@link NewExercise}
+     */
     List<NewExercise> getAllExercises();
 
-    NewExercise updateNewExercise(Long id, NewExerciseDto exerciseDto);
+    /**
+     * Обновляет указанное упраженение. Важно, данный метод обновит упражнение и все модули, которые на него ссылаются
+     * также обновятся
+     *
+     * @param uuid        курса, который обновляем
+     * @param exerciseDto новые данные курса. Важно, данные должны быть полными
+     * @return новое обновленное упражнение
+     */
+    NewExercise updateNewExercise(UUID uuid, NewExerciseDto exerciseDto);
 
     Boolean submitAnswer(Long exerciseId, String userAnswer);
 }
