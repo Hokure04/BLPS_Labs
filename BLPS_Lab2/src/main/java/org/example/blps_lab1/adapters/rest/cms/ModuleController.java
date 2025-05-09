@@ -10,8 +10,6 @@ import org.example.blps_lab1.adapters.course.dto.nw.NewModuleDto;
 import org.example.blps_lab1.adapters.course.mapper.ModuleMapper;
 import org.example.blps_lab1.adapters.course.mapper.NewModuleMapper;
 import org.example.blps_lab1.core.domain.course.Module;
-import org.example.blps_lab1.core.domain.course.nw.NewModule;
-import org.example.blps_lab1.core.ports.course.ModuleService;
 import org.example.blps_lab1.core.ports.course.nw.NewModuleService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -41,7 +39,7 @@ public class ModuleController {
     }
 
     @PostMapping("/link")
-    @Operation(summary = "Привязывает упражнение к модулю")
+    @Operation(summary = "привязывает упражнение к модулю")
     public ResponseEntity<Map<String, Object>> linkExerciseToModule(@RequestParam UUID moduleUUID, @RequestParam UUID exerciseUUID) {
         Map<String, Object> response = new HashMap<>();
         var toRet = NewModuleMapper.toDto(newModuleService.linkExercise(moduleUUID, exerciseUUID));
@@ -49,7 +47,29 @@ public class ModuleController {
         return new ResponseEntity<>(response, HttpStatus.ACCEPTED);
     }
 
-//    @DeleteMapping("/{id}")
+    @GetMapping
+    @Operation(summary = "получение всех существующих модулей, без указания курса")
+    public ResponseEntity<Map<String, Object>> getAllCourses() {
+        Map<String, Object> response = new HashMap<>();
+        var toRet = newModuleService.getAllModules()
+                .stream()
+                .map(NewModuleMapper::toDto)
+                .toArray();
+        response.put("update_module", toRet);
+        return new ResponseEntity<>(response, HttpStatus.ACCEPTED);
+    }
+
+    @GetMapping("/{uuid}")
+    @Operation(summary = "получение определенного модуля вне зависимости от курса")
+    public ResponseEntity<Map<String, Object>> getSpecificModule(@PathVariable UUID uuid) {
+        Map<String, Object> response = new HashMap<>();
+        var toRet = NewModuleMapper.toDto(newModuleService.getModuleByUUID(uuid));
+        response.put("update_module", toRet);
+        return new ResponseEntity<>(response, HttpStatus.ACCEPTED);
+    }
+
+
+    //    @DeleteMapping("/{id}")
 //    @Operation(summary = "удаление модуля")
 //    public ResponseEntity<Map<String, Object>> deleteModule(@PathVariable @Parameter(description = "") Long id){
 //        Map<String, Object> response = new HashMap<>();
@@ -57,13 +77,14 @@ public class ModuleController {
 //        return new ResponseEntity<>(response, HttpStatus.OK);
 //    }
 //
-//    @PutMapping("/{id}")
-//    @Operation(summary = "обновление модуля")
-//    public ResponseEntity<Map<String, Object>> updateModule(@PathVariable @Parameter(description = "") Long id, @Valid @RequestBody @Parameter(description = "") ModuleDto moduleDto){
-//        Map<String, Object> response = new HashMap<>();
-//        Module updatedModule = newModuleService.updateModule(id, moduleDto);
-//        response.put("message", "module updated");
-//        response.put("module", updatedModule);
-//        return new ResponseEntity<>(response, HttpStatus.OK);
-//    }
+    @PutMapping("/{moduleUUID}")
+    @Operation(summary = "обновление модуля")
+    public ResponseEntity<Map<String, Object>> updateModule(@PathVariable @Parameter(description = "uuid модуля, который вы хотиите обновить") UUID moduleUUID,
+                                                            @RequestBody @Parameter(description = "новые значения") NewModuleDto moduleDto) {
+        Map<String, Object> response = new HashMap<>();
+        var updatedModule = NewModuleMapper.toDto(newModuleService.updateModule(moduleUUID, moduleDto));
+        response.put("message", "module updated");
+        response.put("module", updatedModule);
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
 }

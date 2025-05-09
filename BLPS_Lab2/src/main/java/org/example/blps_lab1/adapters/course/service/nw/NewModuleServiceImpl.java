@@ -7,6 +7,7 @@ import org.example.blps_lab1.adapters.course.mapper.NewModuleMapper;
 import org.example.blps_lab1.adapters.db.course.ExerciseRepository;
 import org.example.blps_lab1.adapters.db.course.NewExerciseRepository;
 import org.example.blps_lab1.adapters.db.course.NewModuleRepository;
+import org.example.blps_lab1.core.domain.course.nw.NewExercise;
 import org.example.blps_lab1.core.domain.course.nw.NewModule;
 import org.example.blps_lab1.core.exception.course.InvalidFieldException;
 import org.example.blps_lab1.core.exception.course.NotExistException;
@@ -58,9 +59,16 @@ public class NewModuleServiceImpl implements NewModuleService {
         });
     }
 
+    /**
+     * Возвращает именно модуль без привязки к какому-либо курсу.
+     * Данный метод во многом утилитарный для админских ролей
+     *
+     * @param uuid модуля
+     * @return {@link NewModule}
+     */
     @Override
-    public NewModule getModuleById(Long id) {
-        return null;
+    public NewModule getModuleByUUID(UUID uuid) {
+        return newModuleRepository.findById(uuid).orElseThrow(() -> new NotExistException("Модуль с uuid: " + uuid + " не существует"));
     }
 
     @Override
@@ -73,8 +81,34 @@ public class NewModuleServiceImpl implements NewModuleService {
         return List.of();
     }
 
+    /**
+     * Возвращает именно модули без привязки к какому-либо курсу.
+     * Данный метод во многом утилитарный для админских ролей
+     *
+     * @return list of = {@link NewModule}
+     */
     @Override
-    public NewModule updateModule(Long id, NewModuleDto moduleDto) {
-        return null;
+    public List<NewModule> getAllModules() {
+        return newModuleRepository.findAll();
+    }
+
+    @Override
+    public NewModule updateModule(UUID uuid, NewModuleDto moduleDto) {
+        return transactionTemplate.execute(status -> {
+            if (moduleDto.getName().isEmpty() ||
+                    moduleDto.getDescription().isEmpty()) {
+                throw new InvalidFieldException("Поля name, description и total points являются обязательными");
+            }
+            var oldEntity = newModuleRepository.findById(uuid).orElseThrow(() -> new NotExistException("модуля с заданным " +
+                    "uuid не существует"));
+
+            var newEntity = NewModuleMapper.toEntity(moduleDto);
+            newEntity.setCreatedAt(oldEntity.getCreatedAt());
+            newEntity.setUuid(uuid);
+            newEntity.setExercises(oldEntity.getExercises());
+
+            newModuleRepository.save(newEntity);
+            return newEntity;
+        });
     }
 }

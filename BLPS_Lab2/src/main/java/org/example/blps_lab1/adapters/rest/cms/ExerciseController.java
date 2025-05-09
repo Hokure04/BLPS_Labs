@@ -3,10 +3,8 @@ package org.example.blps_lab1.adapters.rest.cms;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.example.blps_lab1.adapters.course.dto.nw.NewExerciseDto;
-import org.example.blps_lab1.adapters.course.mapper.ExerciseMapper;
 import org.example.blps_lab1.adapters.course.mapper.NewExerciseMapper;
 import org.example.blps_lab1.core.ports.course.nw.NewExerciseService;
 import org.springframework.http.HttpStatus;
@@ -45,7 +43,7 @@ public class ExerciseController {
     @GetMapping("/{uuid}")
     public ResponseEntity<Map<String, Object>> getExerciseById(@PathVariable UUID uuid) {
         Map<String, Object> response = new HashMap<>();
-        var exercise = newExerciseService.getNewExerciseById(uuid);
+        var exercise = newExerciseService.getNewExerciseByUUID(uuid);
         var exerciseDto = NewExerciseMapper.toDto(exercise);
         response.put("exercise", exerciseDto);
         return new ResponseEntity<>(response, HttpStatus.OK);

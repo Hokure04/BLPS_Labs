@@ -23,7 +23,7 @@ public interface NewExerciseService {
      * @param uuid упражнения
      * @return {@link NewExercise}
      */
-    NewExercise getNewExerciseById(final UUID uuid);
+    NewExercise getNewExerciseByUUID(final UUID uuid);
 
     void deleteNewExercise(final Long id);
 
