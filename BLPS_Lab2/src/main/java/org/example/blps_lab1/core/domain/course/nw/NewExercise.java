@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 import org.example.blps_lab1.core.domain.course.DifficultyLevel;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Entity
 @Data
@@ -16,8 +17,8 @@ import java.time.LocalDateTime;
 public class NewExercise {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @GeneratedValue(strategy = GenerationType.UUID)
+    private UUID uuid;
 
 
     @Column(nullable = false)
