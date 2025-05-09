@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.example.blps_lab1.core.domain.course.Course;
 import org.example.blps_lab1.core.domain.course.Topic;
 
 import java.math.BigDecimal;
@@ -46,6 +47,15 @@ public class NewCourse {
             inverseJoinColumns = @JoinColumn(name = "new_module_uuid")
     )
     private List<NewModule> newModuleList;
+
+    //TODO очень и пиздец как очень внимательно тут нужно быть
+    @ManyToMany
+    @JoinTable(
+            name = "additional_courses",
+            joinColumns = @JoinColumn(name = "new_course_uuid"),
+            inverseJoinColumns = @JoinColumn(name = "additional_courses_uuid")
+    )
+    private List<NewCourse> additionalCourseList;
 
     @PrePersist
     public void prePersist() {
