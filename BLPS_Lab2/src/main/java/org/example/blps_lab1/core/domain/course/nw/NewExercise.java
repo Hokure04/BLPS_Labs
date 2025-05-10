@@ -7,7 +7,6 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.example.blps_lab1.core.domain.course.DifficultyLevel;
 
 import java.time.LocalDateTime;
 import java.util.UUID;

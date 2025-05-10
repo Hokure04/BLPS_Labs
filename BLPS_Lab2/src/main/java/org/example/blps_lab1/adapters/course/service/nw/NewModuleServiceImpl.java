@@ -1,7 +1,6 @@
 package org.example.blps_lab1.adapters.course.service.nw;
 
 import lombok.extern.slf4j.Slf4j;
-import org.example.blps_lab1.adapters.course.dto.ModuleDto;
 import org.example.blps_lab1.adapters.course.dto.nw.NewModuleDto;
 import org.example.blps_lab1.adapters.course.mapper.NewModuleMapper;
 import org.example.blps_lab1.adapters.db.course.NewCourseRepository;
