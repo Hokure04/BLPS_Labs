@@ -1,11 +1,13 @@
 package org.example.blps_lab1.adapters.course.service.nw;
 
 import lombok.extern.slf4j.Slf4j;
+import org.aspectj.weaver.ast.Not;
 import org.example.blps_lab1.adapters.course.dto.nw.NewCourseDto;
 import org.example.blps_lab1.adapters.course.mapper.NewCourseMapper;
 import org.example.blps_lab1.adapters.db.auth.ApplicationRepository;
 import org.example.blps_lab1.adapters.db.course.NewCourseRepository;
 import org.example.blps_lab1.adapters.db.course.NewModuleRepository;
+import org.example.blps_lab1.adapters.db.course.StudentRepository;
 import org.example.blps_lab1.core.domain.course.nw.NewCourse;
 import org.example.blps_lab1.core.exception.course.InvalidFieldException;
 import org.example.blps_lab1.core.exception.course.NotExistException;
@@ -26,12 +28,14 @@ public class NewCourseServiceImpl implements NewCourseService {
     private final NewCourseRepository newCourseRepository;
     private final ApplicationRepository applicationRepository;
     private final NewModuleRepository newModuleRepository;
+    private final StudentRepository studentRepository;
 
-    public NewCourseServiceImpl(PlatformTransactionManager transactionManager, NewCourseRepository newCourseRepository, ApplicationRepository applicationRepository, NewModuleRepository newModuleRepository) {
+    public NewCourseServiceImpl(PlatformTransactionManager transactionManager, NewCourseRepository newCourseRepository, ApplicationRepository applicationRepository, NewModuleRepository newModuleRepository, StudentRepository studentRepository) {
         this.transactionTemplate = new TransactionTemplate(transactionManager);
         this.newCourseRepository = newCourseRepository;
         this.applicationRepository = applicationRepository;
         this.newModuleRepository = newModuleRepository;
+        this.studentRepository = studentRepository;
     }
 
     @Override
@@ -96,7 +100,14 @@ public class NewCourseServiceImpl implements NewCourseService {
 
     @Override
     public List<NewCourse> enrollStudent(Long studentID, UUID courseUUID) {
-        return List.of();
+        return transactionTemplate.execute(status -> {
+           var studentEntity = studentRepository.findById(studentID).orElseThrow(() -> new NotExistException("Студент с id: " + studentID + " не найден"));
+           var courseEntity = newCourseRepository.findById(courseUUID).orElseThrow(() -> new NotExistException("Курс с uuid " + courseUUID + " не найден"));
+
+           studentEntity.getCourse().add(courseEntity);
+           return studentRepository.save(studentEntity).getCourse();
+        });
+
     }
 
     @Override
