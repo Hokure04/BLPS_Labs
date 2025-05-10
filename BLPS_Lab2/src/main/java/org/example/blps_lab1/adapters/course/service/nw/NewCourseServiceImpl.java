@@ -8,18 +8,25 @@ import org.example.blps_lab1.adapters.db.auth.ApplicationRepository;
 import org.example.blps_lab1.adapters.db.course.NewCourseRepository;
 import org.example.blps_lab1.adapters.db.course.NewModuleRepository;
 import org.example.blps_lab1.adapters.db.course.StudentRepository;
+import org.example.blps_lab1.core.domain.auth.UserXml;
 import org.example.blps_lab1.core.domain.course.nw.NewCourse;
+import org.example.blps_lab1.core.domain.course.nw.NewExercise;
 import org.example.blps_lab1.core.exception.course.InvalidFieldException;
 import org.example.blps_lab1.core.exception.course.NotExistException;
+import org.example.blps_lab1.core.ports.auth.UserService;
 import org.example.blps_lab1.core.ports.course.nw.NewCourseService;
 import org.springframework.boot.context.properties.source.InvalidConfigurationPropertyValueException;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.support.TransactionTemplate;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -29,13 +36,15 @@ public class NewCourseServiceImpl implements NewCourseService {
     private final ApplicationRepository applicationRepository;
     private final NewModuleRepository newModuleRepository;
     private final StudentRepository studentRepository;
+    private final UserService userService;
 
-    public NewCourseServiceImpl(PlatformTransactionManager transactionManager, NewCourseRepository newCourseRepository, ApplicationRepository applicationRepository, NewModuleRepository newModuleRepository, StudentRepository studentRepository) {
+    public NewCourseServiceImpl(PlatformTransactionManager transactionManager, NewCourseRepository newCourseRepository, ApplicationRepository applicationRepository, NewModuleRepository newModuleRepository, StudentRepository studentRepository, UserService userService) {
         this.transactionTemplate = new TransactionTemplate(transactionManager);
         this.newCourseRepository = newCourseRepository;
         this.applicationRepository = applicationRepository;
         this.newModuleRepository = newModuleRepository;
         this.studentRepository = studentRepository;
+        this.userService = userService;
     }
 
     @Override
@@ -132,6 +141,21 @@ public class NewCourseServiceImpl implements NewCourseService {
         });
     }
 
+    @Override
+    public Boolean isCourseFinished(UUID courseUUID) {
+        return transactionTemplate.execute(status -> {
+            var courseEntity = newCourseRepository.findById(courseUUID).orElseThrow(() -> new NotExistException("Курса с uuid: " + courseUUID + " не существует"));
+
+            for (var module : courseEntity.getNewModuleList()) {
+                if (!isModuleFinished(module.getUuid())) {
+                    return false;
+                }
+            }
+            return true;
+        });
+
+    }
+
     /**
      * Утилитарный метод для проверки полей {@link NewCourseDto}
      * Проверяет обязательные поля
@@ -152,5 +176,43 @@ public class NewCourseServiceImpl implements NewCourseService {
             log.warn("user not specified some not null fields, {}", dto);
             throw new InvalidFieldException("Поля name, description, price и topic являются обязательными");
         }
+    }
+
+    private UserXml getCurrentUser() {
+        //copypaste cause depend cycle
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+        if (principal instanceof UserDetails) {
+            String username = ((UserDetails) principal).getUsername();
+
+            return userService.getUserByEmail(username);
+        } else {
+            throw new IllegalStateException("Current user is not authenticated");
+        }
+    }
+
+    private Boolean isModuleFinished(UUID uuid) {
+        var moduleEntity = newModuleRepository.findById(uuid).orElseThrow(() -> new NotExistException("модуля с заданным " +
+                "uuid не существует"));
+
+        var moduleExercises = moduleEntity.getExercises();
+        var sumPoints = moduleExercises.stream()
+                .mapToInt(NewExercise::getPoints)
+                .sum();
+        var requiredPoints = sumPoints * 0.75;
+
+
+        var student = studentRepository.findByUsid(getCurrentUser().getId()).orElseThrow(() -> new NotExistException("Пользователь временно недоступен"));
+
+        Set<UUID> finishedExerciseIds = student.getFinishedExercises()
+                .stream()
+                .map(NewExercise::getUuid)
+                .collect(Collectors.toSet());
+
+        int earnedPoints = moduleExercises.stream()
+                .filter(e -> finishedExerciseIds.contains(e.getUuid()))
+                .mapToInt(NewExercise::getPoints)
+                .sum();
+        return earnedPoints >= requiredPoints;
     }
 }

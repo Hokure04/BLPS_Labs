@@ -40,4 +40,17 @@ public class CourseController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
+    @GetMapping("/complete/{courseUUID}")
+    public ResponseEntity<Map<String, Object>> completeCourse(@PathVariable UUID courseUUID) {
+        var isFinished = courseService.isCourseFinished(courseUUID);
+        Map<String, Object> response = new HashMap<>();
+        response.put("courseUUID", courseUUID);
+        response.put("isFinished", isFinished);
+        if(isFinished)
+            response.put("message", "Курс успешно завершён, можете запросить сертификат");
+        else
+            response.put("message", "Курс еще не завершён");
+        return ResponseEntity.ok(response);
+    }
+
 }

@@ -141,7 +141,6 @@ public class NewModuleServiceImpl implements NewModuleService {
                     .sum();
             var requiredPoints = sumPoints * 0.75;
 
-            log.info("total sum {}, sum to finish {}", sumPoints, requiredPoints); // TODO
 
             var student = studentRepository.findByUsid(authService.getCurrentUser().getId()).orElseThrow(() -> new NotExistException("Пользователь временно недоступен"));
 

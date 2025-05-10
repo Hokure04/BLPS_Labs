@@ -27,4 +27,6 @@ public interface NewCourseService {
     NewCourse addAdditionalCourses(UUID courseUUID, UUID additionalCourseUUID);
 
     NewCourse linkModule(UUID courseUUID, UUID moduleUUID);
+
+    Boolean isCourseFinished(UUID courseUUID);
 }
