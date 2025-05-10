@@ -10,7 +10,7 @@ import java.util.concurrent.TimeUnit;
 
 @Slf4j
 @Service
-@Profile("dev")
+@Profile("stage")
 public class SimpleStorageStubImpl implements SimpleStorageService {
     @Override
     public void uploadFile(String username, String filename, File file) throws Exception {
