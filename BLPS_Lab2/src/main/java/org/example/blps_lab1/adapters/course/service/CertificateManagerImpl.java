@@ -4,7 +4,6 @@ import java.io.File;
 import java.util.UUID;
 
 import org.example.blps_lab1.core.domain.auth.UserXml;
-import org.example.blps_lab1.core.domain.course.CourseProgressId;
 import org.example.blps_lab1.core.domain.course.nw.NewCourse;
 import org.example.blps_lab1.core.exception.course.InvalidFieldException;
 import org.example.blps_lab1.core.ports.course.CertificateGenerator;
@@ -14,37 +13,50 @@ import org.example.blps_lab1.core.ports.email.EmailService;
 import org.example.blps_lab1.core.ports.sss.SimpleStorageService;
 import org.springframework.stereotype.Service;
 
-import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.support.TransactionTemplate;
 
 @Service
 @Slf4j
-@AllArgsConstructor
 public class CertificateManagerImpl implements CertificateManager {
-    private CertificateGenerator certificateGenerator;
-    private NewCourseService courseService;
-    private SimpleStorageService simpleStorageService;
-    private EmailService emailService;
+    private final CertificateGenerator certificateGenerator;
+    private final NewCourseService courseService;
+    private final SimpleStorageService simpleStorageService;
+    private final EmailService emailService;
+    private final TransactionTemplate transactionTemplate;
+
+    public CertificateManagerImpl(CertificateGenerator certificateGenerator, NewCourseService courseService, SimpleStorageService simpleStorageService, EmailService emailService, PlatformTransactionManager transactionManager) {
+        this.certificateGenerator = certificateGenerator;
+        this.courseService = courseService;
+        this.simpleStorageService = simpleStorageService;
+        this.emailService = emailService;
+        this.transactionTemplate = new TransactionTemplate(transactionManager);
+    }
 
     @Override
     public void getCertificate(UserXml user, UUID courseUUID) {
+        transactionTemplate.execute(status -> {
 
-        var course = courseService.getCourseByUUID(courseUUID);
+            var course = courseService.getCourseByUUID(courseUUID);
 
-        boolean allModulesCompleted = courseService.isCourseFinished(courseUUID);
+            boolean allModulesCompleted = courseService.isCourseFinished(courseUUID);
 
-        if (!allModulesCompleted) {
-            throw new InvalidFieldException("Курс не пройден до конца");
-        }
+            if (!allModulesCompleted) {
+                throw new InvalidFieldException("Курс не пройден до конца");
+            }
 
-        try {
-            var certificatePdf = certificateGenerator.generateCertificate(course.getName(), user.getUsername(), null);
-            saveToSimpleStorageService(user, course, certificatePdf);
-            emailService.sendCertificateToUser(user.getUsername(), certificatePdf);
-        } catch (Exception e) {
-            log.error("Error while creating the certificate", e);
-            sendAboutException(user.getUsername());
-        }
+            try {
+                var certificatePdf = certificateGenerator.generateCertificate(course.getName(), user.getUsername(), null);
+                saveToSimpleStorageService(user, course, certificatePdf);
+                emailService.sendCertificateToUser(user.getUsername(), certificatePdf);
+            } catch (Exception e) {
+                log.error("Error while creating the certificate", e);
+                sendAboutException(user.getUsername());
+            }
+
+            return 0;
+        });
     }
 
     private void saveToSimpleStorageService(UserXml user, NewCourse course, File file) {
