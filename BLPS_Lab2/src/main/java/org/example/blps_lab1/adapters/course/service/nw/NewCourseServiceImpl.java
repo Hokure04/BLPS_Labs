@@ -104,8 +104,8 @@ public class NewCourseServiceImpl implements NewCourseService {
            var studentEntity = studentRepository.findById(studentID).orElseThrow(() -> new NotExistException("Студент с id: " + studentID + " не найден"));
            var courseEntity = newCourseRepository.findById(courseUUID).orElseThrow(() -> new NotExistException("Курс с uuid " + courseUUID + " не найден"));
 
-           studentEntity.getCourse().add(courseEntity);
-           return studentRepository.save(studentEntity).getCourse();
+           studentEntity.getCourses().add(courseEntity);
+           return studentRepository.save(studentEntity).getCourses();
         });
 
     }
