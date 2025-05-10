@@ -5,6 +5,7 @@ import org.example.blps_lab1.adapters.course.dto.nw.NewCourseDto;
 import org.example.blps_lab1.adapters.course.mapper.NewCourseMapper;
 import org.example.blps_lab1.adapters.db.auth.ApplicationRepository;
 import org.example.blps_lab1.adapters.db.course.NewCourseRepository;
+import org.example.blps_lab1.adapters.db.course.NewModuleRepository;
 import org.example.blps_lab1.core.domain.course.nw.NewCourse;
 import org.example.blps_lab1.core.exception.course.InvalidFieldException;
 import org.example.blps_lab1.core.exception.course.NotExistException;
@@ -24,11 +25,13 @@ public class NewCourseServiceImpl implements NewCourseService {
     private final TransactionTemplate transactionTemplate;
     private final NewCourseRepository newCourseRepository;
     private final ApplicationRepository applicationRepository;
+    private final NewModuleRepository newModuleRepository;
 
-    public NewCourseServiceImpl(PlatformTransactionManager transactionManager, NewCourseRepository newCourseRepository, ApplicationRepository applicationRepository) {
+    public NewCourseServiceImpl(PlatformTransactionManager transactionManager, NewCourseRepository newCourseRepository, ApplicationRepository applicationRepository, NewModuleRepository newModuleRepository) {
         this.transactionTemplate = new TransactionTemplate(transactionManager);
         this.newCourseRepository = newCourseRepository;
         this.applicationRepository = applicationRepository;
+        this.newModuleRepository = newModuleRepository;
     }
 
     @Override
@@ -104,6 +107,17 @@ public class NewCourseServiceImpl implements NewCourseService {
 
             coreCourse.getAdditionalCourseList().add(additionalCourse);
             return newCourseRepository.save(coreCourse);
+        });
+    }
+
+    @Override
+    public NewCourse linkModule(UUID courseUUID, UUID moduleUUID) {
+        return transactionTemplate.execute(status -> {
+            var courseEntity = newCourseRepository.findById(courseUUID).orElseThrow(() -> new NotExistException("Курса с uuid: " + courseUUID + " не существует"));
+            var moduleEntity = newModuleRepository.findById(moduleUUID).orElseThrow(() -> new NotExistException("Модуль с uuid: " + moduleUUID + " не существует"));
+
+            courseEntity.getNewModuleList().add(moduleEntity);
+            return newCourseRepository.save(courseEntity);
         });
     }
 

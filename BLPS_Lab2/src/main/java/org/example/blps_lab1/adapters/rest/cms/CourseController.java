@@ -8,6 +8,7 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.example.blps_lab1.adapters.course.dto.nw.NewCourseDto;
 import org.example.blps_lab1.adapters.course.mapper.NewCourseMapper;
+import org.example.blps_lab1.adapters.course.mapper.NewModuleMapper;
 import org.example.blps_lab1.core.ports.course.nw.NewCourseService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,7 +16,6 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -70,10 +70,13 @@ public class CourseController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-//    @PutMapping("/{courseUUID}/additional-courses")
-//    @Operation(summary = "Привязка спика дополнительных курсов")
-//    public ResponseEntity<Course> addListOfCourses(@PathVariable @Parameter(description = "Индентификатор основного курса") Long courseUUID, @RequestBody @Parameter(description = "список курсов для привязки") List<Course> additionalCourses) {
-//        Course updatedCourse = newCourseService.addListOfCourses(courseUUID, additionalCourses);
-//        return ResponseEntity.ok(updatedCourse);
-//    }
+    @PostMapping("/link")
+    @Operation(summary = "привязывает упражнение к модулю")
+    public ResponseEntity<Map<String, Object>> linkExerciseToModule(@RequestParam UUID courseUUID, @RequestParam UUID moduleUUID) {
+        Map<String, Object> response = new HashMap<>();
+        var toRet = NewCourseMapper.toDto(newCourseService.linkModule(courseUUID, moduleUUID));
+        response.put("update_course", toRet);
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
 }

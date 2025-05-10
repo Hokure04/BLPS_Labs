@@ -2,6 +2,7 @@ package org.example.blps_lab1.core.ports.course.nw;
 
 import org.example.blps_lab1.adapters.course.dto.nw.NewCourseDto;
 import org.example.blps_lab1.core.domain.course.nw.NewCourse;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
 import java.util.UUID;
@@ -24,4 +25,6 @@ public interface NewCourseService {
     List<NewCourse> enrollStudent(Long studentID, UUID courseUUID);
 
     NewCourse addAdditionalCourses(UUID courseUUID, UUID additionalCourseUUID);
+
+    NewCourse linkModule(UUID courseUUID, UUID moduleUUID);
 }
