@@ -14,9 +14,11 @@ import org.springframework.mail.MailAuthenticationException;
 import org.springframework.mail.MailSendException;
 import org.springframework.security.authorization.AuthorizationDeniedException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import org.springframework.web.servlet.NoHandlerFoundException;
 
 @RestControllerAdvice
@@ -53,7 +55,7 @@ public class RestAdviser {
         return new ExceptionWrapper(e);
     }
 
-    @ExceptionHandler(RuntimeException.class)
+    @ExceptionHandler(Exception.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public ExceptionWrapper handleRuntimeException(RuntimeException e) {
         log.error(e.getMessage(), e);
@@ -76,6 +78,19 @@ public class RestAdviser {
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public ExceptionWrapper noHandlerFoundException(Exception ex) {
         return new ExceptionWrapper(new Exception("страница не найдена"));
+    }
+
+    @ExceptionHandler(MethodArgumentTypeMismatchException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ExceptionWrapper impossibleToUnmarhal(Exception ex) {
+        return new ExceptionWrapper(new Exception("Были получены невалидные данные"));
+    }
+
+
+    @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
+    @ResponseStatus(HttpStatus.METHOD_NOT_ALLOWED)
+    public ExceptionWrapper methodNotAllowed(Exception ex) {
+        return new ExceptionWrapper(new Exception("Метод недоступен по этой ссылке"));
     }
 
     @ExceptionHandler({NotExistException.class, InvalidFieldException.class})
