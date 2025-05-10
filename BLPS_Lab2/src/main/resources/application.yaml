@@ -3,6 +3,10 @@ spring:
     active: "dev"
   jta:
     enabled: true
+  jackson:
+    serialization:
+      write_dates_as_timestamps: true
+
   application:
     name: BLPS_Lab1
   datasource:
@@ -13,6 +17,7 @@ spring:
   jpa:
     hibernate:
       ddl-auto: create-drop
+    show-sql: true
   mail:
     host: smtp.mail.ru
     port: 465
