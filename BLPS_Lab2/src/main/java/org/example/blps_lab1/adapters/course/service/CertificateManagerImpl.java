@@ -1,8 +1,6 @@
 package org.example.blps_lab1.adapters.course.service;
 
-import java.io.File;
-import java.util.UUID;
-
+import lombok.extern.slf4j.Slf4j;
 import org.example.blps_lab1.core.domain.auth.UserXml;
 import org.example.blps_lab1.core.domain.course.nw.NewCourse;
 import org.example.blps_lab1.core.exception.course.InvalidFieldException;
@@ -12,10 +10,13 @@ import org.example.blps_lab1.core.ports.course.nw.NewCourseService;
 import org.example.blps_lab1.core.ports.email.EmailService;
 import org.example.blps_lab1.core.ports.sss.SimpleStorageService;
 import org.springframework.stereotype.Service;
-
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.transaction.PlatformTransactionManager;
-import org.springframework.transaction.support.TransactionTemplate;
+import org.springframework.transaction.TransactionDefinition;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.DefaultTransactionDefinition;
+
+import java.io.File;
+import java.util.UUID;
 
 @Service
 @Slf4j
@@ -24,20 +25,23 @@ public class CertificateManagerImpl implements CertificateManager {
     private final NewCourseService courseService;
     private final SimpleStorageService simpleStorageService;
     private final EmailService emailService;
-    private final TransactionTemplate transactionTemplate;
+    private final PlatformTransactionManager transactionManager;
 
     public CertificateManagerImpl(CertificateGenerator certificateGenerator, NewCourseService courseService, SimpleStorageService simpleStorageService, EmailService emailService, PlatformTransactionManager transactionManager) {
         this.certificateGenerator = certificateGenerator;
         this.courseService = courseService;
         this.simpleStorageService = simpleStorageService;
         this.emailService = emailService;
-        this.transactionTemplate = new TransactionTemplate(transactionManager);
+        this.transactionManager = transactionManager;
     }
 
     @Override
     public void getCertificate(UserXml user, UUID courseUUID) {
-        transactionTemplate.execute(status -> {
-
+        DefaultTransactionDefinition definition = new DefaultTransactionDefinition();
+        definition.setName("getCertificate");
+        definition.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRED);
+        TransactionStatus status = transactionManager.getTransaction(definition);
+        try{
             var course = courseService.getCourseByUUID(courseUUID);
 
             boolean allModulesCompleted = courseService.isCourseFinished(courseUUID);
@@ -54,9 +58,11 @@ public class CertificateManagerImpl implements CertificateManager {
                 log.error("Error while creating the certificate", e);
                 sendAboutException(user.getUsername());
             }
-
-            return 0;
-        });
+            transactionManager.commit(status);
+        }catch (Exception e){
+            transactionManager.rollback(status);
+            throw e;
+        }
     }
 
     private void saveToSimpleStorageService(UserXml user, NewCourse course, File file) {

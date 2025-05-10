@@ -1,29 +1,27 @@
 package org.example.blps_lab1.adapters.auth.service;
 
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
-
-import org.example.blps_lab1.core.domain.auth.UserXml;
-import org.example.blps_lab1.core.ports.auth.ApplicationService;
+import lombok.extern.slf4j.Slf4j;
+import org.example.blps_lab1.adapters.db.auth.ApplicationRepository;
 import org.example.blps_lab1.core.domain.auth.Application;
 import org.example.blps_lab1.core.domain.auth.ApplicationStatus;
-import org.example.blps_lab1.adapters.db.auth.ApplicationRepository;
-import org.example.blps_lab1.core.ports.auth.UserService;
-import org.example.blps_lab1.core.exception.common.ObjectNotExistException;
+import org.example.blps_lab1.core.domain.auth.UserXml;
 import org.example.blps_lab1.core.exception.auth.ApplicationStatusAlreadySetException;
+import org.example.blps_lab1.core.exception.common.ObjectNotExistException;
+import org.example.blps_lab1.core.ports.auth.ApplicationService;
+import org.example.blps_lab1.core.ports.auth.UserService;
 import org.example.blps_lab1.core.ports.course.nw.NewCourseService;
-import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
-
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.support.TransactionCallbackWithoutResult;
-import org.springframework.transaction.support.TransactionTemplate;
+import org.springframework.transaction.support.DefaultTransactionDefinition;
+
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 
 @Service
 @Slf4j
@@ -31,14 +29,14 @@ public class ApplicationServiceImpl implements ApplicationService {
     private final ApplicationRepository repository;
     private final UserService userService;
     private final NewCourseService courseService;
-    private final TransactionTemplate transactionTemplate;
+    private final PlatformTransactionManager transactionManager;
 
     @Autowired
     public ApplicationServiceImpl(ApplicationRepository repository, UserService userService, NewCourseService courseService, PlatformTransactionManager transactionManager) {
         this.repository = repository;
         this.userService = userService;
         this.courseService = courseService;
-        this.transactionTemplate = new TransactionTemplate(transactionManager);
+        this.transactionManager = transactionManager;
     }
 
     @Override
@@ -49,7 +47,11 @@ public class ApplicationServiceImpl implements ApplicationService {
 
     @Override
     public Application add(UUID courseUUID, UserXml user) {
-        return transactionTemplate.execute(status -> {
+        DefaultTransactionDefinition definition = new DefaultTransactionDefinition();
+        definition.setName("add");
+        definition.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRED);
+        TransactionStatus status = transactionManager.getTransaction(definition);
+        try{
             var courseEntity = courseService.find(courseUUID);
             var app = Application.builder()
                     .newCourse(courseEntity)
@@ -57,13 +59,21 @@ public class ApplicationServiceImpl implements ApplicationService {
                     .status(ApplicationStatus.PENDING)
                     .build();
             log.debug("attempt to create application: {}", app);
+            transactionManager.commit(status);
             return repository.save(app);
-        });
+        }catch (Exception e){
+            transactionManager.rollback(status);
+            throw e;
+        }
     }
 
     @Override
     public Application updateStatus(Long id, ApplicationStatus applicationStatus) {
-        return transactionTemplate.execute(status -> {
+        DefaultTransactionDefinition definition = new DefaultTransactionDefinition();
+        definition.setName("updateStatus");
+        definition.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRED);
+        TransactionStatus status = transactionManager.getTransaction(definition);
+        try{
             Optional<Application> oldEntityOptional = repository.findById(id);
             if (oldEntityOptional.isEmpty()) {
                 log.warn("Application with id: {} did not exist", id);
@@ -74,9 +84,13 @@ public class ApplicationServiceImpl implements ApplicationService {
                 throw new ApplicationStatusAlreadySetException("Нельзя изменить статус уже сформированной заявки");
             }
             entity.setStatus(applicationStatus);
-
+            transactionManager.commit(status);
             return repository.save(entity);
-        });
+        }catch (Exception e){
+            transactionManager.rollback(status);
+            throw e;
+        }
+
     }
 
     @Override
@@ -86,12 +100,17 @@ public class ApplicationServiceImpl implements ApplicationService {
 
     @Override
     public void remove(List<Application> applicationList) {
-        transactionTemplate.execute(new TransactionCallbackWithoutResult() {
-            @Override
-            protected void doInTransactionWithoutResult(@NotNull TransactionStatus status) {
-                repository.deleteAll(applicationList);
-            }
-        });
+        DefaultTransactionDefinition definition = new DefaultTransactionDefinition();
+        definition.setName("remove");
+        definition.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRED);
+        TransactionStatus status = transactionManager.getTransaction(definition);
+        try{
+            repository.deleteAll(applicationList);
+            transactionManager.commit(status);
+        }catch (Exception e){
+            transactionManager.rollback(status);
+            throw e;
+        }
     }
 
     private UserXml getCurrentUser() {

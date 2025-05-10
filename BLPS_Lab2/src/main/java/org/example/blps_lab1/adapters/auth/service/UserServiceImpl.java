@@ -1,23 +1,19 @@
 package org.example.blps_lab1.adapters.auth.service;
 
 import lombok.extern.slf4j.Slf4j;
-
 import org.example.blps_lab1.core.domain.auth.UserXml;
 import org.example.blps_lab1.core.domain.course.nw.NewCourse;
-import org.example.blps_lab1.core.ports.auth.UserService;
 import org.example.blps_lab1.core.exception.common.ObjectNotExistException;
+import org.example.blps_lab1.core.ports.auth.UserService;
 import org.example.blps_lab1.core.ports.db.UserDatabase;
-import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-
 import org.springframework.stereotype.Service;
-
 import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.support.TransactionCallbackWithoutResult;
-import org.springframework.transaction.support.TransactionTemplate;
+import org.springframework.transaction.support.DefaultTransactionDefinition;
 
 import java.util.Optional;
 
@@ -25,24 +21,31 @@ import java.util.Optional;
 @Slf4j
 public class UserServiceImpl implements UserService {
     private final UserDatabase userRepository;
-    private final TransactionTemplate transactionTemplate;
+    private final PlatformTransactionManager transactionManager;
 
     @Autowired
     public UserServiceImpl(UserDatabase userRepository, PlatformTransactionManager transactionManager) {
         this.userRepository = userRepository;
-        this.transactionTemplate = new TransactionTemplate(transactionManager);
+        this.transactionManager = transactionManager;
     }
 
 
     @Override
     public UserXml add(final UserXml user) {
-        var userEntity = transactionTemplate.execute(status -> {
+        DefaultTransactionDefinition definition = new DefaultTransactionDefinition();
+        definition.setName("addUserTransaction");
+        definition.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRED);
+        TransactionStatus status = transactionManager.getTransaction(definition);
+        try{
             user.setPassword(user.getPassword());
             UserXml savedUser = userRepository.save(user);
             log.info("{} registered successfully", user.getUsername());
+            transactionManager.commit(status);
             return savedUser;
-        });
-        return userEntity;
+        }catch (Exception e){
+            transactionManager.rollback(status);
+            throw e;
+        }
     }
 
 
@@ -77,14 +80,19 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void enrollUser(UserXml user, NewCourse course) {
-        transactionTemplate.execute(new TransactionCallbackWithoutResult() {
-            @Override
-            protected void doInTransactionWithoutResult(@NotNull TransactionStatus status) {
-                var userOptional = userRepository.findByEmail(user.getUsername());
-                var userEntity = userOptional.orElseThrow(() -> new ObjectNotExistException("Нет пользователя с email: " + user.getUsername() + ", невозможно зачислить на курс"));
-                userRepository.save(userEntity);
-            }
-        });
+       DefaultTransactionDefinition definition = new DefaultTransactionDefinition();
+       definition.setName("enrollUserInUserServiceImpl");
+       definition.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRED);
+       TransactionStatus status = transactionManager.getTransaction(definition);
+       try{
+           var userOptional = userRepository.findByEmail(user.getUsername());
+           var userEntity = userOptional.orElseThrow(() -> new ObjectNotExistException("Нет пользователя с email: " + user.getUsername() + ", невозможно зачислить на курс"));
+           userRepository.save(userEntity);
+           transactionManager.commit(status);
+       }catch (Exception e){
+           transactionManager.rollback(status);
+           throw e;
+       }
     }
 
 }

@@ -13,7 +13,9 @@ import org.springframework.stereotype.Service;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.DefaultTransactionDefinition;
 import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.transaction.support.TransactionTemplate;
 
@@ -25,14 +27,14 @@ public class UserEnrollmentServiceImpl implements UserEnrollmentService {
     private final AuthService authService;
     private final NewCourseService courseService;
     private final EmailService emailService;
-    private final TransactionTemplate transactionTemplate;
+    private final PlatformTransactionManager transactionManager;
 
     @Autowired
     public UserEnrollmentServiceImpl(
-            PlatformTransactionManager transactionTemplate, EmailService emailService,
+            PlatformTransactionManager transactionManager, EmailService emailService,
             NewCourseService courseService, AuthService authService,
             UserService userService, ApplicationServiceImpl applicationService) {
-        this.transactionTemplate = new TransactionTemplate(transactionTemplate);
+        this.transactionManager = transactionManager;
         this.emailService = emailService;
         this.courseService = courseService;
         this.authService = authService;
@@ -42,28 +44,33 @@ public class UserEnrollmentServiceImpl implements UserEnrollmentService {
 
     @Override
     public void processEnrolment(Long applicationEnrollmentId, String applicationStatus) {
-        transactionTemplate.execute(new TransactionCallbackWithoutResult() {
-            @Override
-            protected void doInTransactionWithoutResult(@NotNull TransactionStatus status) {
-                ApplicationStatus appStatus;
-                try {
-                    appStatus = ApplicationStatus.valueOf(applicationStatus.toUpperCase().trim());
-                } catch (IllegalArgumentException e) {
-                    throw new IllegalArgumentException("Статус указан неверно");
-                } catch (IllegalStateException e) {
-                    throw new IllegalArgumentException("Нельзя изменить статус уже сформированной заявки");
-                }
-                var applicationEntity = applicationService.updateStatus(applicationEnrollmentId, appStatus);
-                if (appStatus == ApplicationStatus.REJECT) {
-                    emailService.rejectionMail(authService.getCurrentUser().getUsername(), applicationEntity.getNewCourse().getName());
-                    return;
-                }
-                var courseUUID = applicationEntity.getNewCourse().getUuid();
-                var user = authService.getCurrentUser();
-                userService.enrollUser(user, applicationEntity.getNewCourse());
-                courseService.enrollStudent(user.getId(), courseUUID);
+        DefaultTransactionDefinition definition = new DefaultTransactionDefinition();
+        definition.setName("processEnrolment");
+        definition.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRED);
+        TransactionStatus status = transactionManager.getTransaction(definition);
+        try{
+            ApplicationStatus appStatus;
+            try {
+                appStatus = ApplicationStatus.valueOf(applicationStatus.toUpperCase().trim());
+            } catch (IllegalArgumentException e) {
+                throw new IllegalArgumentException("Статус указан неверно");
+            } catch (IllegalStateException e) {
+                throw new IllegalArgumentException("Нельзя изменить статус уже сформированной заявки");
             }
-        });
+            var applicationEntity = applicationService.updateStatus(applicationEnrollmentId, appStatus);
+            if (appStatus == ApplicationStatus.REJECT) {
+                emailService.rejectionMail(authService.getCurrentUser().getUsername(), applicationEntity.getNewCourse().getName());
+                return;
+            }
+            var courseUUID = applicationEntity.getNewCourse().getUuid();
+            var user = authService.getCurrentUser();
+            userService.enrollUser(user, applicationEntity.getNewCourse());
+            courseService.enrollStudent(user.getId(), courseUUID);
+            transactionManager.commit(status);
+        }catch (Exception e){
+            transactionManager.rollback(status);
+            throw e;
+        }
     }
 }
 
