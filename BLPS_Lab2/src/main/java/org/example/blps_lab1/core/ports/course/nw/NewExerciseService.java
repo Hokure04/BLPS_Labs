@@ -25,7 +25,7 @@ public interface NewExerciseService {
      */
     NewExercise getNewExerciseByUUID(final UUID uuid);
 
-    void deleteNewExercise(final Long id);
+    void deleteNewExercise(final UUID id);
 
     /**
      * Возвращает именно упражнения без привязки к какому-либо модулю. Данный метод во многом утилитарный для админов

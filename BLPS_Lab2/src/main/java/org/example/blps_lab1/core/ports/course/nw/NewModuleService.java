@@ -10,7 +10,7 @@ public interface NewModuleService {
     NewModule createModule(final NewModuleDto module);
     NewModule linkExercise(final UUID moduleUUID, final UUID exerciseUUID);
     NewModule getModuleByUUID(final UUID uuid);
-    void deleteModule(final Long id);
+    void deleteModule(final UUID uuid);
     List<NewModule> getAllModules(Long courseID);
     List<NewModule> getAllModules();
     NewModule updateModule(UUID uuid, NewModuleDto moduleDto);

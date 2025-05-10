@@ -67,14 +67,14 @@ public class ModuleController {
     }
 
 
-    //    @DeleteMapping("/{id}")
-//    @Operation(summary = "удаление модуля")
-//    public ResponseEntity<Map<String, Object>> deleteModule(@PathVariable @Parameter(description = "") Long id){
-//        Map<String, Object> response = new HashMap<>();
-//        newModuleService.deleteModule(id);
-//        return new ResponseEntity<>(response, HttpStatus.OK);
-//    }
-//
+    @DeleteMapping("/{uuid}")
+    @Operation(summary = "удаление модуля")
+    public ResponseEntity<Map<String, Object>> deleteModule(@PathVariable @Parameter(description = "") UUID uuid){
+        Map<String, Object> response = new HashMap<>();
+        newModuleService.deleteModule(uuid);
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
     @PutMapping("/{moduleUUID}")
     @Operation(summary = "обновление модуля")
     public ResponseEntity<Map<String, Object>> updateModule(@PathVariable @Parameter(description = "uuid модуля, который вы хотиите обновить") UUID moduleUUID,

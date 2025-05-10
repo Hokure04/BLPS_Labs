@@ -6,6 +6,7 @@ import org.apache.commons.lang3.NotImplementedException;
 import org.example.blps_lab1.adapters.course.dto.nw.NewExerciseDto;
 import org.example.blps_lab1.adapters.course.mapper.NewExerciseMapper;
 import org.example.blps_lab1.adapters.db.course.NewExerciseRepository;
+import org.example.blps_lab1.adapters.db.course.NewModuleRepository;
 import org.example.blps_lab1.core.domain.course.nw.NewExercise;
 import org.example.blps_lab1.core.exception.course.InvalidFieldException;
 import org.example.blps_lab1.core.exception.course.NotExistException;
@@ -22,10 +23,12 @@ import java.util.UUID;
 public class NewExerciseServiceImpl implements NewExerciseService {
     private final NewExerciseRepository newExerciseRepository;
     private final TransactionTemplate transactionTemplate;
+    private final NewModuleRepository newModuleRepository;
 
-    public NewExerciseServiceImpl(NewExerciseRepository newExerciseRepository, PlatformTransactionManager transactionManager) {
+    public NewExerciseServiceImpl(NewExerciseRepository newExerciseRepository, PlatformTransactionManager transactionManager, NewModuleRepository newModuleRepository) {
         this.newExerciseRepository = newExerciseRepository;
         this.transactionTemplate = new TransactionTemplate(transactionManager);
+        this.newModuleRepository = newModuleRepository;
     }
 
     /**
@@ -73,8 +76,15 @@ public class NewExerciseServiceImpl implements NewExerciseService {
 
 
     @Override
-    public void deleteNewExercise(Long id) {
-        throw new NotImplementedException("ждет реализацию модулей, тк удалять упраженения необходимо каскадно");
+    public void deleteNewExercise(UUID uuid) {
+        transactionTemplate.execute(status -> {
+            var exercise = newExerciseRepository.findById(uuid).orElseThrow(() -> new NotExistException("упражнения с uuid: " + uuid + " не существует"));
+
+            newModuleRepository.removeByExercises(List.of(exercise));
+            newExerciseRepository.delete(exercise);
+
+            return 0;
+        });
     }
 
     /**

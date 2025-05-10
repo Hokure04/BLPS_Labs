@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.example.blps_lab1.adapters.course.dto.ModuleDto;
 import org.example.blps_lab1.adapters.course.dto.nw.NewModuleDto;
 import org.example.blps_lab1.adapters.course.mapper.NewModuleMapper;
+import org.example.blps_lab1.adapters.db.course.NewCourseRepository;
 import org.example.blps_lab1.adapters.db.course.NewExerciseRepository;
 import org.example.blps_lab1.adapters.db.course.NewModuleRepository;
 import org.example.blps_lab1.core.domain.course.nw.NewExercise;
@@ -26,11 +27,13 @@ public class NewModuleServiceImpl implements NewModuleService {
     private final NewExerciseRepository newExerciseRepository;
 
     private final TransactionTemplate transactionTemplate;
+    private final NewCourseRepository newCourseRepository;
 
-    public NewModuleServiceImpl(NewModuleRepository newModuleRepository, NewExerciseRepository newExerciseRepository, PlatformTransactionManager trManager) {
+    public NewModuleServiceImpl(NewModuleRepository newModuleRepository, NewExerciseRepository newExerciseRepository, PlatformTransactionManager trManager, NewCourseRepository newCourseRepository) {
         this.newModuleRepository = newModuleRepository;
         this.newExerciseRepository = newExerciseRepository;
         this.transactionTemplate = new TransactionTemplate(trManager);
+        this.newCourseRepository = newCourseRepository;
     }
 
     @Override
@@ -71,8 +74,15 @@ public class NewModuleServiceImpl implements NewModuleService {
     }
 
     @Override
-    public void deleteModule(Long id) {
+    public void deleteModule(UUID uuid) {
+        transactionTemplate.execute(status -> {
+            var module = newModuleRepository.findById(uuid).orElseThrow(() -> new NotExistException("Модуля с таким uuid не существует"));
 
+            newCourseRepository.removeByNewModuleList(List.of(module));
+            newModuleRepository.deleteById(uuid);
+
+            return 0;
+        });
     }
 
     @Override

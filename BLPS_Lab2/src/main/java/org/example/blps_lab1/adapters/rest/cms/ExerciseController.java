@@ -32,11 +32,11 @@ public class ExerciseController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/{uuid}")
     @Operation(summary = "удаление задания")
-    public ResponseEntity<Map<String, Object>> deleteExercise(@PathVariable @Parameter(description = "Идентификатор задания") Long id) {
+    public ResponseEntity<Map<String, Object>> deleteExercise(@PathVariable @Parameter(description = "Идентификатор задания") UUID uuid) {
         Map<String, Object> response = new HashMap<>();
-        newExerciseService.deleteNewExercise(id);
+        newExerciseService.deleteNewExercise(uuid);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
