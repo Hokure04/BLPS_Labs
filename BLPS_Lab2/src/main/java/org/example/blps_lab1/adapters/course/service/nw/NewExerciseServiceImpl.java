@@ -4,7 +4,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.NotImplementedException;
 
 import org.example.blps_lab1.adapters.course.dto.nw.NewExerciseDto;
-import org.example.blps_lab1.adapters.course.mapper.ExerciseMapper;
 import org.example.blps_lab1.adapters.course.mapper.NewExerciseMapper;
 import org.example.blps_lab1.adapters.db.course.NewExerciseRepository;
 import org.example.blps_lab1.core.domain.course.nw.NewExercise;
@@ -40,7 +39,7 @@ public class NewExerciseServiceImpl implements NewExerciseService {
     public NewExercise createNewExercise(NewExerciseDto exerciseDto) {
         if (exerciseDto == null) {
             log.warn("exercise dto somehow is nil");
-            throw new InvalidFieldException("Не хватает информации для создания курса");
+            throw new InvalidFieldException("Не хватает информации для создания упражнения");
         }
         if (exerciseDto.getName().isEmpty()
                 || exerciseDto.getDescription().isEmpty()
@@ -50,7 +49,7 @@ public class NewExerciseServiceImpl implements NewExerciseService {
             log.warn("user not specified some of the fields");
             throw new InvalidFieldException("Поля name, description, answer и points обязательны");
         }
-        if(exerciseDto.getPoints() < 0) {
+        if (exerciseDto.getPoints() < 0) {
             log.warn("user try to specify negative value for points: {}", exerciseDto.getPoints());
             throw new InvalidFieldException("Поля points должно быть целым положительным числом");
         }

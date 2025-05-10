@@ -5,11 +5,11 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.example.blps_lab1.core.domain.course.Course;
 import org.example.blps_lab1.core.domain.course.Topic;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -46,7 +46,7 @@ public class NewCourse {
             joinColumns = @JoinColumn(name = "new_course_uuid"),
             inverseJoinColumns = @JoinColumn(name = "new_module_uuid")
     )
-    private List<NewModule> newModuleList;
+    private List<NewModule> newModuleList = new ArrayList<>();
 
     //TODO очень и пиздец как очень внимательно тут нужно быть
     @ManyToMany
@@ -55,10 +55,15 @@ public class NewCourse {
             joinColumns = @JoinColumn(name = "new_course_uuid"),
             inverseJoinColumns = @JoinColumn(name = "additional_courses_uuid")
     )
-    private List<NewCourse> additionalCourseList;
+    private List<NewCourse> additionalCourseList = new ArrayList<>();
 
     @PrePersist
     public void prePersist() {
         creationTime = LocalDateTime.now();
+    }
+
+    @PreRemove
+    public void preRemove(){
+        newModuleList.clear();
     }
 }

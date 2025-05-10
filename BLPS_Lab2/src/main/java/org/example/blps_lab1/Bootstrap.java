@@ -7,11 +7,11 @@ import org.example.blps_lab1.adapters.auth.dto.RegistrationRequestDto;
 import org.example.blps_lab1.core.domain.auth.Role;
 import org.example.blps_lab1.core.domain.auth.User;
 import org.example.blps_lab1.core.domain.auth.UserXml;
-import org.example.blps_lab1.core.domain.course.Course;
 import org.example.blps_lab1.core.domain.course.Topic;
+import org.example.blps_lab1.core.domain.course.nw.NewCourse;
 import org.example.blps_lab1.core.ports.auth.AuthService;
 import org.example.blps_lab1.core.ports.auth.UserService;
-import org.example.blps_lab1.core.ports.course.CourseService;
+import org.example.blps_lab1.core.ports.course.nw.NewCourseService;
 import org.example.blps_lab1.core.ports.db.UserDatabase;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -32,7 +32,7 @@ public class Bootstrap implements ApplicationRunner {
     private final UserDatabase userDatabase;
     private final AuthService authService;
     private final AdminPanelServiceImpl adminPanelService;
-    private final CourseService courseService;
+    private final NewCourseService courseService;
     private final UserService userService;
 
     @Value("${app.admin.password}")
@@ -41,7 +41,7 @@ public class Bootstrap implements ApplicationRunner {
     private String adminLogin;
 
     @Autowired
-    public Bootstrap(UserDatabase userDatabase, AuthService authService, AdminPanelServiceImpl adminPanelService, CourseService courseService, UserService userService) {
+    public Bootstrap(UserDatabase userDatabase, AuthService authService, AdminPanelServiceImpl adminPanelService, NewCourseService courseService, UserService userService) {
         this.userDatabase = userDatabase;
         this.authService = authService;
         this.adminPanelService = adminPanelService;
@@ -63,15 +63,13 @@ public class Bootstrap implements ApplicationRunner {
 //        authService.signUp(regDto);
 
 
-        List<Course> courses = new ArrayList<>();
+        List<NewCourse> courses = new ArrayList<>();
         for (int i = 0; i < 5; i++) {
-            var course = Course.builder()
-                    .courseName(UUID.randomUUID().toString())
-                    .coursePrice(BigDecimal.valueOf(new Random().nextDouble()))
-                    .courseDescription(UUID.randomUUID().toString())
-                    .courseDuration(new Random().nextInt())
-                    .withJobOffer(new Random().nextBoolean())
-                    .topicName(Topic.ANALYTICS)
+            var course = NewCourse.builder()
+                    .name(UUID.randomUUID().toString())
+                    .price(BigDecimal.valueOf(new Random().nextDouble()))
+                    .description(UUID.randomUUID().toString())
+                    .topic(Topic.ANALYTICS)
                     .build();
 
             courses.add(course);

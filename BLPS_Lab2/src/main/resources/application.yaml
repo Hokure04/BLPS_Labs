@@ -3,6 +3,9 @@ spring:
     active: "dev"
   jta:
     enabled: true
+  jackson:
+    serialization:
+      write_dates_as_timestamps: true
 
   application:
     name: BLPS_Lab1

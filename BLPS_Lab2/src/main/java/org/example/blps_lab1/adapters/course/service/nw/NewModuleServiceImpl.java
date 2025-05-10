@@ -4,7 +4,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.example.blps_lab1.adapters.course.dto.ModuleDto;
 import org.example.blps_lab1.adapters.course.dto.nw.NewModuleDto;
 import org.example.blps_lab1.adapters.course.mapper.NewModuleMapper;
-import org.example.blps_lab1.adapters.db.course.ExerciseRepository;
 import org.example.blps_lab1.adapters.db.course.NewExerciseRepository;
 import org.example.blps_lab1.adapters.db.course.NewModuleRepository;
 import org.example.blps_lab1.core.domain.course.nw.NewExercise;

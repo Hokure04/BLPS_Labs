@@ -11,9 +11,7 @@ public interface NewCourseService {
 
     NewCourse find(final UUID uuid);
 
-    NewCourse find(String courseName);
-
-    List<NewCourse> addAll(List<NewCourseDto> courses);
+    List<NewCourse> addAll(List<NewCourse> courses);
 
     NewCourse getCourseByUUID(final UUID uuid);
 
@@ -21,7 +19,7 @@ public interface NewCourseService {
 
     List<NewCourse> getAllCourses();
 
-    NewCourse updateCourse(Long courseUUID, NewCourseDto courseDto);
+    NewCourse updateCourse(UUID courseUUID, NewCourseDto courseDto);
 
     List<NewCourse> enrollStudent(Long studentID, UUID courseUUID);
 

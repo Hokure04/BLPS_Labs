@@ -1,5 +1,6 @@
 package org.example.blps_lab1.adapters.auth.service;
 
+import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -10,7 +11,7 @@ import org.example.blps_lab1.adapters.auth.dto.RegistrationRequestDto;
 import org.example.blps_lab1.adapters.db.auth.UserXmlRepository;
 import org.example.blps_lab1.adapters.db.course.StudentRepository;
 import org.example.blps_lab1.core.domain.auth.UserXml;
-import org.example.blps_lab1.core.domain.course.Course;
+import org.example.blps_lab1.core.domain.course.nw.NewCourse;
 import org.example.blps_lab1.core.domain.course.nw.Student;
 import org.example.blps_lab1.core.exception.auth.AuthorizeException;
 import org.example.blps_lab1.core.domain.auth.Role;
@@ -22,7 +23,7 @@ import org.example.blps_lab1.core.ports.auth.UserService;
 import org.example.blps_lab1.core.exception.common.FieldNotSpecifiedException;
 
 import org.example.blps_lab1.core.exception.common.ObjectNotExistException;
-import org.example.blps_lab1.core.ports.course.CourseService;
+import org.example.blps_lab1.core.ports.course.nw.NewCourseService;
 import org.example.blps_lab1.core.ports.security.JwtService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -40,7 +41,7 @@ import org.springframework.transaction.support.TransactionTemplate;
 public class AuthServiceImpl implements AuthService {
 
     private final UserXmlRepository userXmlRepository;
-    private CourseService courseService;
+    private NewCourseService courseService;
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
     private final UserService userService;
@@ -52,7 +53,7 @@ public class AuthServiceImpl implements AuthService {
     private final TransactionTemplate transactionTemplate;
 
     @Autowired
-    public AuthServiceImpl(CourseService courseService, PasswordEncoder passwordEncoder,
+    public AuthServiceImpl(NewCourseService courseService, PasswordEncoder passwordEncoder,
                            JwtService jwtService, UserService userService,
                            ApplicationService applicationService, StudentRepository studentRepository,
                            PlatformTransactionManager transactionManager, UserXmlRepository userXmlRepository) {
@@ -141,7 +142,7 @@ public class AuthServiceImpl implements AuthService {
      * jwt токен {@link JwtAuthenticationResponse} и информацию о заявке(цену и описание)
      */
     @Override
-    public ApplicationResponseDto signUp(RegistrationRequestDto request, Long courseUUID) {
+    public ApplicationResponseDto signUp(RegistrationRequestDto request, UUID courseUUID) {
         return transactionTemplate.execute(status -> {
             var resultBuilder = ApplicationResponseDto.builder();
             var user = getUserOrThrow(request);
@@ -151,9 +152,9 @@ public class AuthServiceImpl implements AuthService {
             }
             var student = getStudentOrThrow(user);
             studentRepository.save(student);
-            Course courseEntity;
+            NewCourse courseEntity;
             try {
-                courseEntity = courseService.getCourseByID(courseUUID);
+                courseEntity = courseService.getCourseByUUID(courseUUID);
             } catch (ObjectNotExistException e) {
                 log.warn("course with uuid: {} not found", courseUUID);
                 throw new NotExistException("ошибка при создании заявки: данного курса больше не существует");
@@ -163,8 +164,8 @@ public class AuthServiceImpl implements AuthService {
             resultBuilder.applicationID(applicationEntity.getId());
 
             resultBuilder
-                    .price(courseEntity.getCoursePrice())
-                    .description(courseEntity.getCourseDescription());
+                    .price(courseEntity.getPrice())
+                    .description(courseEntity.getDescription());
 
             var jwt = jwtService.generateToken(user);
             resultBuilder.jwt(new JwtAuthenticationResponse(jwt));

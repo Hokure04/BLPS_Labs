@@ -9,13 +9,13 @@ import org.example.blps_lab1.core.domain.course.nw.NewModule;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
 
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
 @Data
 public class NewCourseDto {
     private UUID uuid;
@@ -30,5 +30,7 @@ public class NewCourseDto {
 
     private LocalDateTime creationTime;
 
-    private List<NewModuleDto> newModuleList;
+    private List<NewModuleDto> newModuleList = new ArrayList<>();
+
+    private List<NewCourseDto> additionalCourseList = new ArrayList<>();
 }

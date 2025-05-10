@@ -40,12 +40,12 @@ public class AuthController {
      * но дополнительно привязывает пользователя на определенный курс
      *
      * @param request пользовательские данные см {@link RegistrationRequestDto}
-     * @param courseID курс, на который пользователь планирует оставить заявку на запись
+     * @param courseUUID курс, на который пользователь планирует оставить заявку на запись
      * @return обертку с jwt токеном
      */
-    @PostMapping("/sign-up/{courseID}")
-    public ApplicationResponseDto signUp(@RequestBody RegistrationRequestDto request, @PathVariable Long courseID) {
-        return authService.signUp(request, courseID);
+    @PostMapping("/sign-up/{courseUUID}")
+    public ApplicationResponseDto signUp(@RequestBody RegistrationRequestDto request, @PathVariable UUID courseUUID) {
+        return authService.signUp(request, courseUUID);
     }
 
     @PostMapping("/sign-in")
