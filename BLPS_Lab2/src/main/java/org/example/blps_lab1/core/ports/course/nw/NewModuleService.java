@@ -14,4 +14,5 @@ public interface NewModuleService {
     List<NewModule> getAllModules(Long courseID);
     List<NewModule> getAllModules();
     NewModule updateModule(UUID uuid, NewModuleDto moduleDto);
+    Boolean isModuleComplete(UUID uuid);
 }

@@ -43,13 +43,16 @@ public class ModuleController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-//    @PostMapping("/complete/{moduleId}")
-//    public ResponseEntity<Map<String, Object>> completeModule(@PathVariable Long moduleId) {
-//        int earnedPoints = moduleService.completeModule(moduleId);
-//        Map<String, Object> response = new HashMap<>();
-//        response.put("moduleId", moduleId);
-//        response.put("earnedPoints", earnedPoints);
-//        response.put("message", "Модуль успешно завершён");
-//        return ResponseEntity.ok(response);
-//    } TODO
+    @GetMapping("/complete/{moduleUUID}")
+    public ResponseEntity<Map<String, Object>> completeModule(@PathVariable UUID moduleUUID) {
+        var isFinished = moduleService.isModuleComplete(moduleUUID);
+        Map<String, Object> response = new HashMap<>();
+        response.put("moduleUUID", moduleUUID);
+        response.put("isFinished", isFinished);
+        if(isFinished)
+            response.put("message", "Модуль успешно завершён");
+        else
+            response.put("message", "Модуль еще не завершён");
+        return ResponseEntity.ok(response);
+    }
 }

@@ -1,6 +1,7 @@
 package org.example.blps_lab1.core.domain.course.nw;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -30,6 +31,7 @@ public class NewExercise {
     private String description;
 
     @Column(nullable = false)
+    @JsonIgnore
     private String answer;
 
     // количество очков, которое дает упражнение

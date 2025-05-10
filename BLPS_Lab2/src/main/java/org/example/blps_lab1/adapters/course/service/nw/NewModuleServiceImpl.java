@@ -7,17 +7,21 @@ import org.example.blps_lab1.adapters.course.mapper.NewModuleMapper;
 import org.example.blps_lab1.adapters.db.course.NewCourseRepository;
 import org.example.blps_lab1.adapters.db.course.NewExerciseRepository;
 import org.example.blps_lab1.adapters.db.course.NewModuleRepository;
+import org.example.blps_lab1.adapters.db.course.StudentRepository;
 import org.example.blps_lab1.core.domain.course.nw.NewExercise;
 import org.example.blps_lab1.core.domain.course.nw.NewModule;
 import org.example.blps_lab1.core.exception.course.InvalidFieldException;
 import org.example.blps_lab1.core.exception.course.NotExistException;
+import org.example.blps_lab1.core.ports.auth.AuthService;
 import org.example.blps_lab1.core.ports.course.nw.NewModuleService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.support.TransactionTemplate;
 
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -28,12 +32,16 @@ public class NewModuleServiceImpl implements NewModuleService {
 
     private final TransactionTemplate transactionTemplate;
     private final NewCourseRepository newCourseRepository;
+    private final AuthService authService;
+    private final StudentRepository studentRepository;
 
-    public NewModuleServiceImpl(NewModuleRepository newModuleRepository, NewExerciseRepository newExerciseRepository, PlatformTransactionManager trManager, NewCourseRepository newCourseRepository) {
+    public NewModuleServiceImpl(NewModuleRepository newModuleRepository, NewExerciseRepository newExerciseRepository, PlatformTransactionManager trManager, NewCourseRepository newCourseRepository, AuthService authService, StudentRepository studentRepository) {
         this.newModuleRepository = newModuleRepository;
         this.newExerciseRepository = newExerciseRepository;
         this.transactionTemplate = new TransactionTemplate(trManager);
         this.newCourseRepository = newCourseRepository;
+        this.authService = authService;
+        this.studentRepository = studentRepository;
     }
 
     @Override
@@ -118,6 +126,35 @@ public class NewModuleServiceImpl implements NewModuleService {
 
             newModuleRepository.save(newEntity);
             return newEntity;
+        });
+    }
+
+    @Override
+    public Boolean isModuleComplete(UUID uuid) {
+        return transactionTemplate.execute(status -> {
+            var moduleEntity = newModuleRepository.findById(uuid).orElseThrow(() -> new NotExistException("модуля с заданным " +
+                    "uuid не существует"));
+
+            var moduleExercises = moduleEntity.getExercises();
+            var sumPoints = moduleExercises.stream()
+                    .mapToInt(NewExercise::getPoints)
+                    .sum();
+            var requiredPoints = sumPoints * 0.75;
+
+            log.info("total sum {}, sum to finish {}", sumPoints, requiredPoints); // TODO
+
+            var student = studentRepository.findByUsid(authService.getCurrentUser().getId()).orElseThrow(() -> new NotExistException("Пользователь временно недоступен"));
+
+            Set<UUID> finishedExerciseIds = student.getFinishedExercises()
+                    .stream()
+                    .map(NewExercise::getUuid)
+                    .collect(Collectors.toSet());
+
+            int earnedPoints = moduleExercises.stream()
+                    .filter(e -> finishedExerciseIds.contains(e.getUuid()))
+                    .mapToInt(NewExercise::getPoints)
+                    .sum();
+            return earnedPoints >= requiredPoints;
         });
     }
 }
