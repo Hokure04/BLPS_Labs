@@ -44,5 +44,5 @@ public interface NewExerciseService {
      */
     NewExercise updateNewExercise(UUID uuid, NewExerciseDto exerciseDto);
 
-    Boolean submitAnswer(Long exerciseId, String userAnswer);
+    Boolean submitAnswer(UUID exerciseUUID, String userAnswer);
 }

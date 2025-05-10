@@ -108,7 +108,7 @@ public class AuthServiceImpl implements AuthService {
      */
     private Student getStudentOrThrow(UserXml userXml) {
         var stud = Student.builder()
-                .user_id(userXml.getId());
+                .usid(userXml.getId());
         return stud.build();
     }
 

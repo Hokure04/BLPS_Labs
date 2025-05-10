@@ -3,14 +3,18 @@ package org.example.blps_lab1.adapters.course.service.nw;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.NotImplementedException;
 
+import org.aspectj.weaver.ast.Not;
 import org.example.blps_lab1.adapters.course.dto.nw.NewExerciseDto;
 import org.example.blps_lab1.adapters.course.mapper.NewExerciseMapper;
 import org.example.blps_lab1.adapters.db.course.NewExerciseRepository;
 import org.example.blps_lab1.adapters.db.course.NewModuleRepository;
+import org.example.blps_lab1.adapters.db.course.StudentRepository;
 import org.example.blps_lab1.core.domain.course.nw.NewExercise;
 import org.example.blps_lab1.core.exception.course.InvalidFieldException;
 import org.example.blps_lab1.core.exception.course.NotExistException;
+import org.example.blps_lab1.core.ports.auth.AuthService;
 import org.example.blps_lab1.core.ports.course.nw.NewExerciseService;
+import org.springframework.boot.actuate.metrics.startup.StartupTimeMetricsListener;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.support.TransactionTemplate;
@@ -24,11 +28,15 @@ public class NewExerciseServiceImpl implements NewExerciseService {
     private final NewExerciseRepository newExerciseRepository;
     private final TransactionTemplate transactionTemplate;
     private final NewModuleRepository newModuleRepository;
+    private final StudentRepository studentRepository;
+    private final AuthService authService;
 
-    public NewExerciseServiceImpl(NewExerciseRepository newExerciseRepository, PlatformTransactionManager transactionManager, NewModuleRepository newModuleRepository) {
+    public NewExerciseServiceImpl(NewExerciseRepository newExerciseRepository, PlatformTransactionManager transactionManager, NewModuleRepository newModuleRepository, StudentRepository studentRepository, AuthService authService) {
         this.newExerciseRepository = newExerciseRepository;
         this.transactionTemplate = new TransactionTemplate(transactionManager);
         this.newModuleRepository = newModuleRepository;
+        this.studentRepository = studentRepository;
+        this.authService = authService;
     }
 
     /**
@@ -116,7 +124,17 @@ public class NewExerciseServiceImpl implements NewExerciseService {
     }
 
     @Override
-    public Boolean submitAnswer(Long exerciseId, String userAnswer) {
-        return null;
+    public Boolean submitAnswer(UUID exerciseUUID, String userAnswer) {
+        return transactionTemplate.execute(status -> {
+            var exercise = newExerciseRepository.findById(exerciseUUID).orElseThrow(() -> new NotExistException("упражнения с uuid: " + exerciseUUID + " не существует"));
+            var userID = authService.getCurrentUser().getId();
+
+            var student = studentRepository.findByUsid(userID).orElseThrow(() -> new NotExistException("Пользователь временно недоступен для операций"));
+            if (exercise.getAnswer().equals(userAnswer)) {
+                student.getFinishedExercises().add(exercise);
+                return true;
+            }
+            return false;
+        });
     }
 }
