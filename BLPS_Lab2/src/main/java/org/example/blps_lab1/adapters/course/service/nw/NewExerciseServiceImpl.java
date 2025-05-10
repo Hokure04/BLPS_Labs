@@ -88,13 +88,15 @@ public class NewExerciseServiceImpl implements NewExerciseService {
         definition.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRED);
         TransactionStatus status = transactionManager.getTransaction(definition);
         try{
-            var exercise = newExerciseRepository.findById(uuid).orElseThrow(() -> new NotExistException("упражнения с uuid: " + uuid + " не существует"));
+            var exercise = newExerciseRepository.findById(uuid).orElseThrow(() -> new NotExistException("Упражнения с uuid: " + uuid + " не существует"));
+
+            studentRepository.removeByFinishedExercises(List.of(exercise));
+
 
             newModuleRepository.removeByExercises(List.of(exercise));
             newExerciseRepository.delete(exercise);
             transactionManager.commit(status);
 
-//            return 0;
         }catch (Exception e){
             transactionManager.rollback(status);
             throw e;

@@ -60,6 +60,7 @@ public class CertificateManagerImpl implements CertificateManager {
             }
             transactionManager.commit(status);
         }catch (Exception e){
+            log.error("transaction failed, rolling back");
             transactionManager.rollback(status);
             throw e;
         }
