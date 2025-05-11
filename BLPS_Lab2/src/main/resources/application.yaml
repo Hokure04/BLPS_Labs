@@ -1,3 +1,5 @@
+server:
+  port: 23210
 spring:
   profiles:
     active: "dev"
@@ -16,13 +18,13 @@ spring:
     driver-class-name: org.postgresql.Driver
   jpa:
     hibernate:
-      ddl-auto: create-drop
+      ddl-auto: update
     show-sql: true
   mail:
     host: smtp.mail.ru
     port: 465
-    username: hokure04@mail.ru
-    password: BlpS_lab2123^^^
+    username: go.bank.03@mail.ru
+    password: Vjrm6i0L46zzKntnEEkD
     protocol: smtps
     properties:
       mail:

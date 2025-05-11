@@ -34,6 +34,9 @@ import org.springframework.stereotype.Service;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.TransactionDefinition;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.DefaultTransactionDefinition;
 import org.springframework.transaction.support.TransactionTemplate;
 
 @Service
@@ -50,7 +53,7 @@ public class AuthServiceImpl implements AuthService {
 
     public static final Pattern VALID_EMAIL_ADDRESS_REGEX =
             Pattern.compile("^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,6}$", Pattern.CASE_INSENSITIVE);
-    private final TransactionTemplate transactionTemplate;
+    private final PlatformTransactionManager transactionManager;
 
     @Autowired
     public AuthServiceImpl(NewCourseService courseService, PasswordEncoder passwordEncoder,
@@ -63,7 +66,7 @@ public class AuthServiceImpl implements AuthService {
         this.userService = userService;
         this.applicationService = applicationService;
         this.studentRepository = studentRepository;
-        this.transactionTemplate = new TransactionTemplate(transactionManager);
+        this.transactionManager = transactionManager;
         this.userXmlRepository = userXmlRepository;
     }
 
@@ -121,14 +124,22 @@ public class AuthServiceImpl implements AuthService {
      */
     @Override
     public JwtAuthenticationResponse signUp(RegistrationRequestDto request) {
-        return transactionTemplate.execute(status -> {
+        DefaultTransactionDefinition definition = new DefaultTransactionDefinition();
+        definition.setName("signUpWithoutId");
+        definition.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRED);
+        TransactionStatus status = transactionManager.getTransaction(definition);
+        try{
             var user = getUserOrThrow(request);
             userService.add(user);
             var student = getStudentOrThrow(user);
             studentRepository.save(student);
             var jwt = jwtService.generateToken(user);
+            transactionManager.commit(status);
             return new JwtAuthenticationResponse(jwt);
-        });
+        } catch (Exception e){
+            transactionManager.rollback(status);
+            throw e;
+        }
     }
 
     /**
@@ -143,7 +154,11 @@ public class AuthServiceImpl implements AuthService {
      */
     @Override
     public ApplicationResponseDto signUp(RegistrationRequestDto request, UUID courseUUID) {
-        return transactionTemplate.execute(status -> {
+        DefaultTransactionDefinition definition = new DefaultTransactionDefinition();
+        definition.setName("signUpWithCourse");
+        definition.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRED);
+        TransactionStatus status = transactionManager.getTransaction(definition);
+        try{
             var resultBuilder = ApplicationResponseDto.builder();
             var user = getUserOrThrow(request);
             if (courseUUID == null) {
@@ -169,14 +184,22 @@ public class AuthServiceImpl implements AuthService {
 
             var jwt = jwtService.generateToken(user);
             resultBuilder.jwt(new JwtAuthenticationResponse(jwt));
+            transactionManager.commit(status);
             return resultBuilder.build();
-        });
+        } catch (Exception e){
+            transactionManager.rollback(status);
+            throw e;
+        }
     }
 
 
     @Override
     public JwtAuthenticationResponse signIn(LoginRequest request) {
-        return transactionTemplate.execute(status -> {
+        DefaultTransactionDefinition definition = new DefaultTransactionDefinition();
+        definition.setName("signIn");
+        definition.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRED);
+        TransactionStatus status = transactionManager.getTransaction(definition);
+        try{
             if (request.getEmail() == null || request.getEmail().isEmpty()) {
                 throw new FieldNotSpecifiedException("Поле email обязательное");
             }
@@ -197,8 +220,12 @@ public class AuthServiceImpl implements AuthService {
             }
 
             var jwt = jwtService.generateToken(userEntity);
+            transactionManager.commit(status);
             return new JwtAuthenticationResponse(jwt);
-        });
+        }catch (Exception e){
+            transactionManager.rollback(status);
+            throw e;
+        }
     }
 
     @Override

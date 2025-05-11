@@ -17,19 +17,39 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 
 import org.example.blps_lab1.core.ports.course.CertificateGenerator;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.TransactionDefinition;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.reactive.TransactionalOperator;
+import org.springframework.transaction.support.DefaultTransactionDefinition;
 
 @Service
 @Slf4j
 public class CertificatePdfGenerator implements CertificateGenerator {
+    private final TransactionalOperator transactionalOperator;
     @Value("${certificate.generator.pdf}")
     private String pathToSign;
 
+    private final PlatformTransactionManager platformTransactionManager;
+
+    @Autowired
+    public CertificatePdfGenerator(PlatformTransactionManager platformTransactionManager, TransactionalOperator transactionalOperator) {
+        this.platformTransactionManager = platformTransactionManager;
+        this.transactionalOperator = transactionalOperator;
+    }
+
     @Override
     public File generateCertificate(final String courseName, final String userName, String signaturePath) throws Exception {
+        DefaultTransactionDefinition definition = new DefaultTransactionDefinition();
+        definition.setName("generate-certificate");
+        definition.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRED);
+        TransactionStatus status = platformTransactionManager.getTransaction(definition);
+
         try {
             if (signaturePath == null || signaturePath.isEmpty()) {
                 signaturePath = pathToSign;
@@ -68,8 +88,10 @@ public class CertificatePdfGenerator implements CertificateGenerator {
             }
 
             document.close();
+            platformTransactionManager.commit(status);
             return file;
         } catch (IOException e) {
+            platformTransactionManager.rollback(status);
             log.error("Error while generating the certificate", e);
             throw new Exception("Ошибка при генерации отчета");
         }
