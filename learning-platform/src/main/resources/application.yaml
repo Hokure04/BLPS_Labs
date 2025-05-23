@@ -2,7 +2,11 @@ spring:
   kafka:
     bootstrap-servers: "localhost:29092,localhost:39092"
     consumer:
-      group-id: "my-group-id"
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+      group-id: "reg-users"
+      properties:
+        spring.json.trusted.packages: "*"
   profiles:
     active: "dev"
   jta:

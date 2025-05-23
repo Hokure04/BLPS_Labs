@@ -13,7 +13,10 @@ public class KafkaController {
 
     @PostMapping("/send")
     public String sendMessage(@RequestParam("message") String message) {
-        messageProducer.sendMessage("reg-users", message);
+        var user = new User();
+        user.setUsername(message);
+        user.setPassword(message);
+        messageProducer.sendMessage("reg-users", user);
         return "Message sent: " + message;
     }
 
