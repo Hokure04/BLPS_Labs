@@ -112,6 +112,28 @@ services:
       - minio2
       - minio3
       - minio4
+  postgresql:
+    image: docker.io/bitnami/postgresql:latest
+    environment:
+      #      - psql -U bn_keycloak -d bitnami_keycloak
+      - ALLOW_EMPTY_PASSWORD=yes
+      - POSTGRESQL_USERNAME=bn_keycloak
+      - POSTGRESQL_DATABASE=bitnami_keycloak
+    volumes:
+      - 'postgresql_data:/bitnami/postgresql'
+  keycloak:
+      image: kcow:latest
+      build:
+        dockerfile: Dockerfile
+      ports:
+        - "80:8080"
+        # for debug
+        - '8787:8787'
+      environment:
+        - KEYCLOAK_CREATE_ADMIN_USER=true
+      depends_on:
+        - postgresql
+
 volumes:
   data1-1:
   data1-2:
