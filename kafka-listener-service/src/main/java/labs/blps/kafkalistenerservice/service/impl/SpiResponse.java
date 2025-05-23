@@ -1,4 +1,4 @@
-package labs.blps.kafkalistenerservice.service;
+package labs.blps.kafkalistenerservice.service.impl;
 
 import lombok.Data;
 

@@ -1,8 +1,8 @@
-package labs.blps.kafkalistenerservice.service;
+package labs.blps.kafkalistenerservice.service.impl;
 
 import labs.blps.kafkalistenerservice.model.User;
+import labs.blps.kafkalistenerservice.service.RegisterService;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -45,6 +45,9 @@ public class RegisterServiceImpl implements RegisterService {
             log.info("got result: {}", response);
         } catch (HttpClientErrorException e) {
             log.error("error registering user: {} → {}", e.getStatusCode(), e.getResponseBodyAsString());
+        } catch (Exception e){
+            log.error("server has occured an exception, will attempt later");
+
         }
 
     }
