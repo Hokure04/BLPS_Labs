@@ -21,6 +21,5 @@ public class LearningPlatform extends SpringBootServletInitializer {
 		return application.sources(LearningPlatform.class);
 	}
 
-	private static Class<LearningPlatform> applicationClass = LearningPlatform.class;
 }
 

@@ -12,6 +12,7 @@
     <groupId>labs.blps</groupId>
     <artifactId>learning-platform</artifactId>
     <version>3</version>
+    <packaging>war</packaging>
     <name>learning-platform</name>
     <description>fake skillbox</description>
     <url/>
@@ -51,6 +52,7 @@
                     <artifactId>spring-boot-starter-tomcat</artifactId>
                 </exclusion>
             </exclusions>
+
         </dependency>
 <!--    need for correct working wildfly-->
         <dependency>
@@ -74,10 +76,6 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-security</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-validation</artifactId>
         </dependency>
 
         <!-- https://mvnrepository.com/artifact/org.projectlombok/lombok -->
@@ -139,23 +137,27 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-data-jpa</artifactId>
             <version>3.4.4</version>
+            <scope>provided</scope>
         </dependency>
 
         <dependency>
             <groupId>org.jetbrains.kotlin</groupId>
             <artifactId>kotlin-reflect</artifactId>
             <version>1.9.22</version>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>com.fasterxml.jackson.dataformat</groupId>
             <artifactId>jackson-dataformat-xml</artifactId>
             <version>2.17.0</version>
+            <scope>provided</scope>
         </dependency>
 
         <dependency>
             <groupId>org.springdoc</groupId>
             <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
             <version>2.8.0</version>
+            <scope>provided</scope>
         </dependency>
     </dependencies>
 
