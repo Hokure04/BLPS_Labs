@@ -4,6 +4,6 @@ import labs.blps.kafkalistenerservice.model.User;
 
 public interface RegisterService {
 
-    void register(User user);
+    Boolean register(User user);
 
 }

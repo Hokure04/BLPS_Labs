@@ -1,7 +1,10 @@
 package labs.blps.kafkalistenerservice.service.impl;
 
 import labs.blps.kafkalistenerservice.model.User;
+import labs.blps.kafkalistenerservice.model.UserFailure;
+import labs.blps.kafkalistenerservice.repository.UserFailureRepository;
 import labs.blps.kafkalistenerservice.service.RegisterService;
+import labs.blps.kafkalistenerservice.service.UserFailureService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -25,12 +28,18 @@ public class RegisterServiceImpl implements RegisterService {
 
     private final RestTemplate restTemplate = new RestTemplate();
 
+    private final UserFailureRepository userFailureRepository;
+
+    public RegisterServiceImpl(UserFailureRepository userFailureRepository) {
+        this.userFailureRepository = userFailureRepository;
+    }
+
 
     @Override
-    public void register(User user) {
+    public Boolean register(User user) {
         if (user == null) {
             log.warn("attempt to send null user");
-            return;
+            return false;
         }
 
         HttpHeaders headers = new HttpHeaders();
@@ -43,12 +52,19 @@ public class RegisterServiceImpl implements RegisterService {
             ResponseEntity<SpiResponse> response =
                     restTemplate.postForEntity(REGISTER_URL, request, SpiResponse.class);
             log.info("got result: {}", response);
+            return true;
         } catch (HttpClientErrorException e) {
             log.error("error registering user: {} → {}", e.getStatusCode(), e.getResponseBodyAsString());
+            return false;
         } catch (Exception e){
             log.error("server has occured an exception, will attempt later");
 
+            var userFailure = new UserFailure();
+            userFailure.setUsername(user.getUsername());
+            userFailure.setPassword(user.getPassword());
+            userFailure.setEmail(user.getEmail());
+            userFailureRepository.save(userFailure);
+            return false;
         }
-
     }
 }
