@@ -1,4 +1,4 @@
-package org.example.blps_lab1.configuration;
+package labs.blps.kafkalistenerservice.config;
 
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Component;
