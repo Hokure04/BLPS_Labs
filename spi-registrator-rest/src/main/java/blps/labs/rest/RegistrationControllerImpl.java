@@ -33,7 +33,7 @@ public class RegistrationControllerImpl implements RegistrationController{
                     .build();
         }
         return Response
-                .status(Response.Status.INTERNAL_SERVER_ERROR)
+                .status(Response.Status.BAD_REQUEST)
                 .entity(Map.of("success", false,"message","fail to save user in keycloak system"))
                 .build();
     }

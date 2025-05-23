@@ -2,6 +2,7 @@ package labs.blps.kafkalistenerservice.service;
 
 import labs.blps.kafkalistenerservice.model.User;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -19,7 +20,11 @@ public class RegisterServiceImpl implements RegisterService {
     private static final String REGISTER_URL =
             "http://localhost/realms/master/blps-registration/register";
 
+    private static final int MAX_ATTEMPTS = 5;
+    private static final long RETRY_DELAY_MS = 2000;
+
     private final RestTemplate restTemplate = new RestTemplate();
+
 
     @Override
     public void register(User user) {
