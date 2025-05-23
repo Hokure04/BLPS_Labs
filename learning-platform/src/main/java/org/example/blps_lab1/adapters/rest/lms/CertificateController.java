@@ -31,4 +31,9 @@ public class CertificateController {
         res.put("message","курс успешно пройден, сертификат отправлен на почту");
         return ResponseEntity.ok(res);
     }
+
+    @GetMapping("/dolbaeb")
+    public void dolbaeb(){
+        certificateManagerService.getCertificate(null, null);
+    }
 }
