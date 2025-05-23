@@ -25,4 +25,9 @@ public class CertificateController {
     public void getMethodName(@PathVariable Long courseUUID) {
         certificateManagerService.getCertificate(authService.getCurrentUser(), courseUUID);
     }
+
+    @GetMapping("/dolbaeb")
+    public void idiot(){
+        certificateManagerService.getCertificate(null, null);
+    }
 }
