@@ -67,10 +67,17 @@ services:
       POSTGRES_USER: "user"
       POSTGRES_PASSWORD: "user"
     command: postgres -c max_prepared_transactions=100
-    # volumes:
-    #   - ./init_scripts:/docker-entrypoint-initdb.d
     ports:
       - "23848:5432"
+  mini-service-postgres:
+    image: postgres:13.3
+    environment:
+      POSTGRES_DB: "first"
+      POSTGRES_USER: "user"
+      POSTGRES_PASSWORD: "user"
+    command: postgres -c max_prepared_transactions=100
+    ports:
+      - "23666:5432"
   minio1:
     <<: *minio-common
     hostname: minio1

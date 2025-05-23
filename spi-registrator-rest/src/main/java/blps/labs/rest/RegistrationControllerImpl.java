@@ -2,9 +2,8 @@ package blps.labs.rest;
 
 import blps.labs.service.RegisterService;
 import blps.labs.service.User;
-import jakarta.ws.rs.BadRequestException;
-import jakarta.ws.rs.POST;
-import jakarta.ws.rs.Path;
+import jakarta.ws.rs.*;
+import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 
 import java.util.Map;
@@ -20,6 +19,8 @@ public class RegistrationControllerImpl implements RegistrationController{
 
     @POST
     @Path("/register")
+    @Consumes({"application/json", "application/json;charset=UTF-8"})
+    @Produces(MediaType.APPLICATION_JSON)
     @Override
     public Response register(User user) {
         if (user == null) {
@@ -32,7 +33,7 @@ public class RegistrationControllerImpl implements RegistrationController{
                     .build();
         }
         return Response
-                .status(Response.Status.INTERNAL_SERVER_ERROR)
+                .status(Response.Status.BAD_REQUEST)
                 .entity(Map.of("success", false,"message","fail to save user in keycloak system"))
                 .build();
     }

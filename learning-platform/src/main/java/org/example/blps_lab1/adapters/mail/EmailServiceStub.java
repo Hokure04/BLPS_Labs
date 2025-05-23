@@ -1,7 +1,7 @@
 package org.example.blps_lab1.adapters.mail;
 
 import lombok.extern.slf4j.Slf4j;
-import org.example.blps_lab1.core.domain.course.Course;
+import org.example.blps_lab1.core.domain.course.nw.NewCourse;
 import org.example.blps_lab1.core.ports.email.EmailService;
 import org.springframework.context.annotation.Profile;
 import org.springframework.mail.javamail.MimeMessageHelper;
@@ -34,7 +34,7 @@ public class EmailServiceStub implements EmailService {
     }
 
     @Override
-    public void informAboutNewCourses(String toEmail, String courseName, BigDecimal price, List<Course> additionalCourses) {
+    public void informAboutNewCourses(String toEmail, String courseName, BigDecimal price, List<NewCourse> additionalCourses) {
         simulateWorking();
 
     }
