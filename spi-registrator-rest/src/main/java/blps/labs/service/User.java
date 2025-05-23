@@ -4,6 +4,8 @@ public class User {
 
     private String username;
     private String email;
+    private String password;
+
 
     public String getPassword() {
         return password;
@@ -29,5 +31,4 @@ public class User {
         this.username = username;
     }
 
-    private String password;
 }

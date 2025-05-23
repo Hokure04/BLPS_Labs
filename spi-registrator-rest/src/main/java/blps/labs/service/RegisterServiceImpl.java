@@ -1,11 +1,6 @@
 package blps.labs.service;
 
-import org.keycloak.credential.CredentialModel;
-import org.keycloak.models.KeycloakSession;
-import org.keycloak.models.KeycloakSessionTask;
-import org.keycloak.models.RealmModel;
-import org.keycloak.models.UserModel;
-import org.keycloak.models.utils.KeycloakModelUtils;
+import org.keycloak.models.*;
 
 public class RegisterServiceImpl implements RegisterService {
 
@@ -18,16 +13,14 @@ public class RegisterServiceImpl implements RegisterService {
     @Override
     public Boolean register(User user) {
         try {
-            KeycloakModelUtils.runJobInTransaction(session.getKeycloakSessionFactory(), session -> {
-                RealmModel realm = session.getContext().getRealm();
-                UserModel userModel = session.users().addUser(realm, user.getUsername());
-                userModel.setEnabled(true);
-                userModel.setEmail(user.getEmail());
-                // Set password
-//                CredentialModel credential = CredentialModel.password(user.getPassword());
-//                session.userCredentialManager().updateCredential(realm, userModel, credential);
-//                return null;
-            });
+            RealmModel realm = session.getContext().getRealm();
+            UserModel userModel = session.users().addUser(realm, user.getUsername());
+            userModel.setEnabled(true);
+            userModel.setEmail(user.getEmail());
+
+            UserCredentialModel credential = UserCredentialModel.password(user.getPassword(), false);
+            SubjectCredentialManager credManager = userModel.credentialManager();
+            credManager.updateCredential(credential);
             return true;
         } catch (Exception e) {
             e.printStackTrace();
