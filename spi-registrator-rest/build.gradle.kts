@@ -20,8 +20,8 @@ dependencies {
 
     implementation("jakarta.persistence:jakarta.persistence-api:3.2.0")
 
-    runtimeOnly("com.google.auto.service:auto-service-annotations:1.1.1")
-    implementation("com.google.auto.service:auto-service:1.0-rc5")
+    compileOnly("com.google.auto.service:auto-service-annotations:1.1.1")
+    annotationProcessor("com.google.auto.service:auto-service:1.1.1")
 
     testImplementation(platform("org.junit:junit-bom:5.10.0"))
     testImplementation("org.junit.jupiter:junit-jupiter")

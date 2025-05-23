@@ -1,6 +1,6 @@
 FROM bitnami/keycloak:26.2.0
 
-#COPY registration-manager/build/libs/*.jar /opt/bitnami/keycloak/providers/registration-manager-1.0-SNAPSHOT.jar
+COPY build/libs/spi-registrator-rest-1.0-SNAPSHOT.jar /opt/bitnami/keycloak/providers/spi-registrator-rest-1.0-SNAPSHOT.jar
 
 
 ENTRYPOINT ["/opt/bitnami/scripts/keycloak/entrypoint.sh"]

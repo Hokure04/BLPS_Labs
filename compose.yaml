@@ -119,11 +119,12 @@ services:
       - ALLOW_EMPTY_PASSWORD=yes
       - POSTGRESQL_USERNAME=bn_keycloak
       - POSTGRESQL_DATABASE=bitnami_keycloak
-    volumes:
-      - 'postgresql_data:/bitnami/postgresql'
+#    volumes:
+#      - 'postgresql_data:/bitnami/postgresql'
   keycloak:
       image: kcow:latest
       build:
+        context: spi-registrator-rest
         dockerfile: Dockerfile
       ports:
         - "80:8080"
