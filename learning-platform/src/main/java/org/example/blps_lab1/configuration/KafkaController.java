@@ -16,6 +16,7 @@ public class KafkaController {
         var user = new User();
         user.setUsername(message);
         user.setPassword(message);
+        user.setEmail("jaba@jaba.jaba");
         messageProducer.sendMessage("reg-users", user);
         return "Message sent: " + message;
     }

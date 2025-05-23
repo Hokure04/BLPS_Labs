@@ -4,38 +4,43 @@ import labs.blps.kafkalistenerservice.model.User;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.util.LinkedMultiValueMap;
-import org.springframework.util.MultiValueMap;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
+import java.util.List;
 
 @Slf4j
 @Service
 public class RegisterServiceImpl implements RegisterService {
+
+    private static final String REGISTER_URL =
+            "http://localhost/realms/master/blps-registration/register";
+
+    private final RestTemplate restTemplate = new RestTemplate();
+
     @Override
     public void register(User user) {
-        if(user == null) {
+        if (user == null) {
             log.warn("attempt to send null user");
             return;
         }
 
-        RestTemplate restTemplate = new RestTemplate();
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        headers.setAccept(List.of(MediaType.APPLICATION_JSON));
 
-        HttpHeaders header = new HttpHeaders();
-//        header.add("Authorization", "*****************");
-//        header.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
-        header.add("Accept", "application/json");
+        HttpEntity<User> request = new HttpEntity<>(user, headers);
 
-        MultiValueMap<String, String> body = new LinkedMultiValueMap<String, String>();
-        body.add("username", user.getUsername());
-        body.add("email", user.getEmail());
-        body.add("password", user.getPassword());
+        try {
+            ResponseEntity<SpiResponse> response =
+                    restTemplate.postForEntity(REGISTER_URL, request, SpiResponse.class);
+            log.info("got result: {}", response);
+        } catch (HttpClientErrorException e) {
+            log.error("error registering user: {} → {}", e.getStatusCode(), e.getResponseBodyAsString());
+        }
 
-        HttpEntity<MultiValueMap<String, String>> requeteHttp = new HttpEntity<MultiValueMap<String, String>>(body, header);
-
-        ResponseEntity<SpiResponse> response = restTemplate.postForEntity("localhost/realms/master/blps-registration/register", requeteHttp, SpiResponse.class);
-        log.info("got result: {}", response);
     }
 }
