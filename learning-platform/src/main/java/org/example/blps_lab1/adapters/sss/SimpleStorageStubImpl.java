@@ -11,7 +11,7 @@ import java.util.concurrent.TimeUnit;
 
 @Slf4j
 @Service
-@Profile("dev")
+@Profile("!dev")
 public class SimpleStorageStubImpl implements SimpleStorageService {
     @SneakyThrows
     @Override

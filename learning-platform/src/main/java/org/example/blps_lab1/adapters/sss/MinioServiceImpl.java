@@ -14,7 +14,7 @@ import java.io.*;
 
 @Service
 @Slf4j
-@Profile("stage")
+@Profile("!stage")
 public class MinioServiceImpl implements SimpleStorageService {
 
     private final String BUCKET_NAME = "certificates";
