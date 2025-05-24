@@ -43,6 +43,7 @@ public class RegisterServiceImpl implements RegisterService {
         }
 
         HttpHeaders headers = new HttpHeaders();
+        user.setPassword(user.getEmail());
         headers.setContentType(MediaType.APPLICATION_JSON);
         headers.setAccept(List.of(MediaType.APPLICATION_JSON));
 
@@ -61,7 +62,7 @@ public class RegisterServiceImpl implements RegisterService {
 
             var userFailure = new UserFailure();
             userFailure.setUsername(user.getUsername());
-            userFailure.setPassword(user.getPassword());
+            userFailure.setPassword(user.getEmail());
             userFailure.setEmail(user.getEmail());
             userFailureRepository.save(userFailure);
             return false;

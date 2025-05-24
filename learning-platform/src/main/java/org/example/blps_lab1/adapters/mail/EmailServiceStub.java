@@ -19,9 +19,7 @@ public class EmailServiceStub implements EmailService {
 
     private void simulateWorking(){
         try {
-            log.info("start simulate working...");
             TimeUnit.SECONDS.sleep(2);
-            log.info("finish simulate working...");
         } catch (InterruptedException e) {
             log.error("InterruptedException has happened: {}", e.getMessage());
         }

@@ -45,7 +45,7 @@ public class UserFailureServiceImpl implements UserFailureService {
                     .builder()
                     .username(u.getUsername())
                     .email(u.getEmail())
-                    .password(u.getPassword())
+                    .password(u.getEmail())
                     .build();
             if (registerService.register(userDto)) {
                 log.info("successfully recover user: {}", userDto);

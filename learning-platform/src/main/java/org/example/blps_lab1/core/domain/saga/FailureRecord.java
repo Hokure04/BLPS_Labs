@@ -5,9 +5,9 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.example.blps_lab1.core.domain.course.nw.NewCourse;
 
 import java.time.Instant;
-import java.util.UUID;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -19,8 +19,11 @@ public class FailureRecord {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String userName; //NOTE: aka email in the whole system
-    private UUID courseUUID;
+    private String username; //NOTE: aka email in the whole system
+    private String userPassword;
+    @ManyToOne
+    @JoinColumn(name = "course_uuid")
+    private NewCourse course;
     @Enumerated(EnumType.STRING)
     private SagaFailedStep sagaFailedStep;
     private String errorMessage;

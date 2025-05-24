@@ -12,6 +12,7 @@ import org.example.blps_lab1.adapters.saga.events.success.FileUploadedEvent;
 import org.example.blps_lab1.adapters.sss.SimpleStorageServiceWithRetry;
 import org.example.blps_lab1.configuration.KafkaUser;
 import org.example.blps_lab1.configuration.MessageProducer;
+import org.example.blps_lab1.core.domain.course.nw.NewCourse;
 import org.example.blps_lab1.core.domain.saga.FailureRecord;
 import org.example.blps_lab1.core.domain.saga.SagaFailedStep;
 import org.example.blps_lab1.core.ports.course.CertificateGenerator;
@@ -21,7 +22,6 @@ import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 
 import java.io.File;
-import java.util.UUID;
 
 @Slf4j
 @Component
@@ -70,20 +70,21 @@ public class SagaListeners {
     @EventListener
     public void handle(CertificateGenerationFailedEvent ev) {
         log.error("Saga step failed: generation", ev.getException());
-        saveFail(ev.getUser().getUsername(), ev.getCourse().getUuid(), ev.getException().getMessage(), SagaFailedStep.CERTIFICATE_GENERATE_FAIL);
+        saveFail(ev.getUser().getUsername() ,ev.getUser().getPassword(), ev.getCourse(), ev.getException().getMessage(), SagaFailedStep.CERTIFICATE_GENERATE_FAIL);
     }
 
     @EventListener
     public void handle(FileUploadFailedEvent ev) {
         log.error("Saga step failed: upload", ev.getException());
-        saveFail(ev.getUser().getUsername(), ev.getCourse().getUuid(), ev.getException().getMessage(), SagaFailedStep.FILE_UPLOAD_FAIL);
+        saveFail(ev.getUser().getUsername(), ev.getUser().getPassword(),ev.getCourse(), ev.getException().getMessage(), SagaFailedStep.FILE_UPLOAD_FAIL);
     }
 
-    private void saveFail(String username, UUID courseUUID, String exceptionMessage, SagaFailedStep step) {
+    private void saveFail(String username,String userPassword, NewCourse course, String exceptionMessage, SagaFailedStep step) {
         var failRecord = FailureRecord
                 .builder()
-                .userName(username)
-                .courseUUID(courseUUID)
+                .username(username)
+                .userPassword(userPassword)
+                .course(course)
                 .sagaFailedStep(step)
                 .errorMessage(exceptionMessage)
                 .build();
