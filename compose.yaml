@@ -14,6 +14,14 @@ x-minio-common: &minio-common
     retries: 5
 
 services:
+  mini-service-kafka:
+    image: miniservice:latest
+    build:
+      context: kafka-listener-service
+      dockerfile: Dockerfile
+    network_mode: host
+
+
   zookeeper-1:
     image: confluentinc/cp-zookeeper:7.4.4
     environment:
