@@ -9,6 +9,7 @@ import org.example.blps_lab1.adapters.saga.events.success.CertificateGeneratedEv
 import org.example.blps_lab1.adapters.saga.events.success.CertificateSentEvent;
 import org.example.blps_lab1.adapters.saga.events.success.CourseCompletedEvent;
 import org.example.blps_lab1.adapters.saga.events.success.FileUploadedEvent;
+import org.example.blps_lab1.adapters.sss.SimpleStorageServiceWithRetry;
 import org.example.blps_lab1.configuration.KafkaUser;
 import org.example.blps_lab1.configuration.MessageProducer;
 import org.example.blps_lab1.core.ports.course.CertificateGenerator;
@@ -25,7 +26,7 @@ import java.io.File;
 @AllArgsConstructor
 public class SagaListeners {
     private final CertificateGenerator certificateGenerator;
-    private final SimpleStorageService simpleStorageService;
+    private final SimpleStorageServiceWithRetry simpleStorageServiceWithRetry;
     private final MessageProducer messageProducer;
     private final EmailService emailService;
     private final ApplicationEventPublisher publisher;
@@ -44,7 +45,7 @@ public class SagaListeners {
     @EventListener
     public void handle(CertificateGeneratedEvent ev) {
         try {
-            simpleStorageService.uploadFile(ev.getUser().getUsername(), ev.getUser().getUsername() + ev.getCourse().getName(), ev.getPdf());
+            simpleStorageServiceWithRetry.uploadWithRetry(ev.getUser().getUsername(), ev.getUser().getUsername() + ev.getCourse().getName(), ev.getPdf());
             publisher.publishEvent(new FileUploadedEvent(ev.getUser(), ev.getCourse(), ev.getPdf()));
         } catch (Exception ex) {
             publisher.publishEvent(new FileUploadFailedEvent(ev.getUser(), ev.getCourse(), ex));

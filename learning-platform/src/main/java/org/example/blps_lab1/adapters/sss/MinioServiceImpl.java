@@ -40,7 +40,7 @@ public class MinioServiceImpl implements SimpleStorageService {
     }
 
     @Override
-    public void uploadFile(final String username, final String filename, final File file) throws Exception {
+    public void uploadFile(final String username, final String filename, final File file) {
         final String filenameForStoring = getNewFileName(username, filename);
 
         try (InputStream fileStream = new FileInputStream(file)) {
@@ -54,7 +54,7 @@ public class MinioServiceImpl implements SimpleStorageService {
             minioClient.putObject(args);
         } catch (Exception e) {
             log.error("Error occurred while uploading file: {}", filenameForStoring, e);
-            throw new Exception(e);
+            throw new S3Exception(e.getMessage());
         }
         log.info("File successfully uploaded: {}", filenameForStoring);
     }
