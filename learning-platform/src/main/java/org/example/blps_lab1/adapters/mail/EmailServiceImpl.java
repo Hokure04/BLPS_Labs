@@ -201,7 +201,7 @@ public class EmailServiceImpl implements EmailService {
             mailSender.send(helper.getMimeMessage());
         } catch (MessagingException e) {
             log.error("Error while sending email on {} {}", toEmail, e.getMessage());
-            throw new MailSendingException("Ошибка при отправке email о успешном отказе");
+//            throw new MailSendingException("Ошибка при отправке email о успешном отказе");
         }
     }
 }

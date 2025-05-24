@@ -1,12 +1,9 @@
 package org.example.blps_lab1.adapters.course.service;
 
-import java.io.File;
 import java.util.UUID;
 
-import org.example.blps_lab1.adapters.saga.CourseCompletedEvent;
+import org.example.blps_lab1.adapters.saga.events.success.CourseCompletedEvent;
 import org.example.blps_lab1.core.domain.auth.UserXml;
-import org.example.blps_lab1.core.domain.course.nw.NewCourse;
-import org.example.blps_lab1.core.exception.course.InvalidFieldException;
 import org.example.blps_lab1.core.ports.course.CertificateGenerator;
 import org.example.blps_lab1.core.ports.course.CertificateManager;
 import org.example.blps_lab1.core.ports.course.nw.NewCourseService;
@@ -40,6 +37,8 @@ public class CertificateManagerImpl implements CertificateManager {
 
     @Override
     public void getCertificate(UserXml user, UUID courseUUID) {
+        //TODO проверка прошел ли пользователь все курсы -> если нет, throw шо нить,
+
         publisher.publishEvent(new CourseCompletedEvent(2L, UUID.randomUUID()));
     }
 //        transactionTemplate.execute(status -> {
