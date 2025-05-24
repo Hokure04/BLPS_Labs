@@ -4,5 +4,5 @@ public enum SagaFailedStep {
 
     FILE_UPLOAD_FAIL,
     CERTIFICATE_GENERATE_FAIL,
-
+    CERTIFICATE_S
 }

@@ -2,8 +2,8 @@ package org.example.blps_lab1.adapters.saga;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.example.blps_lab1.adapters.db.saga.FailureRecordRepository;
 import org.example.blps_lab1.adapters.saga.events.failures.CertificateGenerationFailedEvent;
-import org.example.blps_lab1.adapters.saga.events.failures.CertificateSendFailedEvent;
 import org.example.blps_lab1.adapters.saga.events.failures.FileUploadFailedEvent;
 import org.example.blps_lab1.adapters.saga.events.success.CertificateGeneratedEvent;
 import org.example.blps_lab1.adapters.saga.events.success.CertificateSentEvent;
@@ -12,14 +12,16 @@ import org.example.blps_lab1.adapters.saga.events.success.FileUploadedEvent;
 import org.example.blps_lab1.adapters.sss.SimpleStorageServiceWithRetry;
 import org.example.blps_lab1.configuration.KafkaUser;
 import org.example.blps_lab1.configuration.MessageProducer;
+import org.example.blps_lab1.core.domain.saga.FailureRecord;
+import org.example.blps_lab1.core.domain.saga.SagaFailedStep;
 import org.example.blps_lab1.core.ports.course.CertificateGenerator;
 import org.example.blps_lab1.core.ports.email.EmailService;
-import org.example.blps_lab1.core.ports.sss.SimpleStorageService;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 
 import java.io.File;
+import java.util.UUID;
 
 @Slf4j
 @Component
@@ -29,6 +31,7 @@ public class SagaListeners {
     private final SimpleStorageServiceWithRetry simpleStorageServiceWithRetry;
     private final MessageProducer messageProducer;
     private final EmailService emailService;
+    private final FailureRecordRepository failureRecordRepository;
     private final ApplicationEventPublisher publisher;
 
 
@@ -54,13 +57,9 @@ public class SagaListeners {
 
     @EventListener
     public void handle(FileUploadedEvent ev) {
-        try {
-            var user = ev.getUser();
-            messageProducer.sendMessage("reg-users", new KafkaUser(user.getUsername(), user.getUsername(), user.getPassword()));
-            publisher.publishEvent(new CertificateSentEvent(ev.getUser(), ev.getPdf()));
-        } catch (Exception ex) {
-            publisher.publishEvent(new CertificateSendFailedEvent(ev.getUser(), ev.getCourse(), ex));
-        }
+        var user = ev.getUser();
+        messageProducer.sendMessage("reg-users", new KafkaUser(user.getUsername(), user.getUsername(), user.getPassword()));
+        publisher.publishEvent(new CertificateSentEvent(ev.getUser(), ev.getPdf()));
     }
 
     @EventListener
@@ -71,15 +70,23 @@ public class SagaListeners {
     @EventListener
     public void handle(CertificateGenerationFailedEvent ev) {
         log.error("Saga step failed: generation", ev.getException());
+        saveFail(ev.getUser().getUsername(), ev.getCourse().getUuid(), ev.getException().getMessage(), SagaFailedStep.CERTIFICATE_GENERATE_FAIL);
     }
 
     @EventListener
     public void handle(FileUploadFailedEvent ev) {
         log.error("Saga step failed: upload", ev.getException());
+        saveFail(ev.getUser().getUsername(), ev.getCourse().getUuid(), ev.getException().getMessage(), SagaFailedStep.FILE_UPLOAD_FAIL);
     }
 
-    @EventListener
-    public void handle(CertificateSendFailedEvent ev) {
-        log.error("Saga step failed: send", ev.getException());
+    private void saveFail(String username, UUID courseUUID, String exceptionMessage, SagaFailedStep step) {
+        var failRecord = FailureRecord
+                .builder()
+                .userName(username)
+                .courseUUID(courseUUID)
+                .sagaFailedStep(step)
+                .errorMessage(exceptionMessage)
+                .build();
+        failureRecordRepository.save(failRecord);
     }
 }
