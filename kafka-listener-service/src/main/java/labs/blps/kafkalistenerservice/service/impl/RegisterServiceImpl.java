@@ -23,9 +23,6 @@ public class RegisterServiceImpl implements RegisterService {
     private static final String REGISTER_URL =
             "http://localhost/realms/master/blps-registration/register";
 
-    private static final int MAX_ATTEMPTS = 5;
-    private static final long RETRY_DELAY_MS = 2000;
-
     private final RestTemplate restTemplate = new RestTemplate();
 
     private final UserFailureRepository userFailureRepository;
