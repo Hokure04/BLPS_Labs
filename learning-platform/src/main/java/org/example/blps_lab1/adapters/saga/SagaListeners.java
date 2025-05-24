@@ -34,53 +34,51 @@ public class SagaListeners {
     @EventListener
     public void handle(CourseCompletedEvent ev) {
         try {
-            File pdf = certificateGenerator.generateCertificate("CourseName", ev.getUserId().toString(), null);
-            publisher.publishEvent(new CertificateGeneratedEvent(ev.getUserId(), ev.getCourseId(), pdf));
+            File pdf = certificateGenerator.generateCertificate(ev.getCourse().getName(), ev.getUser().getUsername(), null);
+            publisher.publishEvent(new CertificateGeneratedEvent(ev.getUser(), ev.getCourse(), pdf));
         } catch (Exception ex) {
-            publisher.publishEvent(new CertificateGenerationFailedEvent(ev.getUserId(), ev.getCourseId(), ex));
+            publisher.publishEvent(new CertificateGenerationFailedEvent(ev.getUser(), ev.getCourse(), ex));
         }
     }
 
     @EventListener
     public void handle(CertificateGeneratedEvent ev) {
         try {
-            simpleStorageService.uploadFile(ev.getUserId().toString(), ev.getCourseId().toString(), ev.getPdf());
-            publisher.publishEvent(new FileUploadedEvent(ev.getUserId(), ev.getCourseId(), ev.getPdf()));
+            simpleStorageService.uploadFile(ev.getUser().getUsername(), ev.getUser().getUsername() + ev.getCourse().getName(), ev.getPdf());
+            publisher.publishEvent(new FileUploadedEvent(ev.getUser(), ev.getCourse(), ev.getPdf()));
         } catch (Exception ex) {
-            publisher.publishEvent(new FileUploadFailedEvent(ev.getUserId(), ev.getCourseId(), ex));
+            publisher.publishEvent(new FileUploadFailedEvent(ev.getUser(), ev.getCourse(), ex));
         }
     }
 
     @EventListener
     public void handle(FileUploadedEvent ev) {
         try {
-            messageProducer.sendMessage("certificate-topic", new KafkaUser(ev.getUserId().toString(), null, null));
-            publisher.publishEvent(new CertificateSentEvent(ev.getUserId(), ev.getCourseId()));
+            var user = ev.getUser();
+            messageProducer.sendMessage("reg-users", new KafkaUser(user.getUsername(), user.getUsername(), user.getPassword()));
+            publisher.publishEvent(new CertificateSentEvent(ev.getUser(), ev.getPdf()));
         } catch (Exception ex) {
-            publisher.publishEvent(new CertificateSendFailedEvent(ev.getUserId(), ev.getCourseId(), ex));
+            publisher.publishEvent(new CertificateSendFailedEvent(ev.getUser(), ev.getCourse(), ex));
         }
     }
 
     @EventListener
     public void handle(CertificateSentEvent ev) {
-        emailService.sendCertificateToUser(ev.getUserId().toString(), /* файл */ null);
+        emailService.sendCertificateToUser(ev.getUser().getUsername(), ev.getPdf());
     }
 
     @EventListener
     public void handle(CertificateGenerationFailedEvent ev) {
-        emailService.informMinioFailure(ev.getUserId().toString());
         log.error("Saga step failed: generation", ev.getException());
     }
 
     @EventListener
     public void handle(FileUploadFailedEvent ev) {
-        emailService.informMinioFailure(ev.getUserId().toString());
         log.error("Saga step failed: upload", ev.getException());
     }
 
     @EventListener
     public void handle(CertificateSendFailedEvent ev) {
-        emailService.informMinioFailure(ev.getUserId().toString());
         log.error("Saga step failed: send", ev.getException());
     }
 }

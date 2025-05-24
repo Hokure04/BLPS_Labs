@@ -39,7 +39,7 @@ public class CertificateManagerImpl implements CertificateManager {
     public void getCertificate(UserXml user, UUID courseUUID) {
         //TODO проверка прошел ли пользователь все курсы -> если нет, throw шо нить,
 
-        publisher.publishEvent(new CourseCompletedEvent(2L, UUID.randomUUID()));
+            publisher.publishEvent(new CourseCompletedEvent(user, UUID.randomUUID()));
     }
 //        transactionTemplate.execute(status -> {
 //
