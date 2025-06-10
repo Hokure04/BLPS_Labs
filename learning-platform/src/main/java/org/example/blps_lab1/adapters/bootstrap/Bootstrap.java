@@ -41,7 +41,7 @@ public class Bootstrap implements CommandLineRunner {
     @Override
     public void run(String... args) throws Exception {
         NewCourse newCourse = null;
-        for (int i = 0; i < 2; i++) {
+        for (int i = 0; i < 1; i++) {
             NewExerciseDto exerciseDto = NewExerciseDto
                     .builder()
                     .points(21)
