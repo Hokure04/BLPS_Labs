@@ -211,12 +211,14 @@
         <camunda:formData>
           <camunda:formField id="CourseList" label="Список курсов" type="string" defaultValue="${courseList}" />
           <camunda:formField id="chosenCourse" label="Введите курс" type="string" />
+          <camunda:formField id="errorMessage" label=" " type="string" defaultValue="причина ошибки" />
         </camunda:formData>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_1aasy8w</bpmn:incoming>
+      <bpmn:incoming>Flow_0c8q08j</bpmn:incoming>
       <bpmn:outgoing>Flow_0ujre3u</bpmn:outgoing>
     </bpmn:userTask>
-    <bpmn:serviceTask id="Activity_0b6ozlh" name="Запрос модулей курса">
+    <bpmn:serviceTask id="Activity_0b6ozlh" name="Запрос модулей курса" camunda:delegateExpression="${getModules}">
       <bpmn:incoming>Flow_0ujre3u</bpmn:incoming>
       <bpmn:outgoing>Flow_0t67j1l</bpmn:outgoing>
     </bpmn:serviceTask>
@@ -226,6 +228,12 @@
       <bpmn:outgoing>Flow_0a9hb3h</bpmn:outgoing>
     </bpmn:serviceTask>
     <bpmn:userTask id="Activity_19a2mpm" name="Выбор модуля для прохождения">
+      <bpmn:extensionElements>
+        <camunda:formData>
+          <camunda:formField id="moduleList" label="список модулей" type="string" defaultValue="${moduleList}" />
+          <camunda:formField id="chosenModule" label="Введите uuid модуля" type="string" />
+        </camunda:formData>
+      </bpmn:extensionElements>
       <bpmn:incoming>Flow_0t67j1l</bpmn:incoming>
       <bpmn:outgoing>Flow_1jr57dv</bpmn:outgoing>
     </bpmn:userTask>
@@ -263,6 +271,11 @@
       <bpmn:outgoing>Flow_1p4brdt</bpmn:outgoing>
     </bpmn:userTask>
     <bpmn:sequenceFlow id="Flow_0ty01nn" name="на страницу с модулями" sourceRef="Gateway_0y33hkw" targetRef="Activity_04ygnyx" />
+    <bpmn:boundaryEvent id="Event_1csguk7" name="invalid input" attachedToRef="Activity_0b6ozlh">
+      <bpmn:outgoing>Flow_0c8q08j</bpmn:outgoing>
+      <bpmn:errorEventDefinition id="ErrorEventDefinition_1dlih8h" errorRef="Error_0bcwrtb" />
+    </bpmn:boundaryEvent>
+    <bpmn:sequenceFlow id="Flow_0c8q08j" sourceRef="Event_1csguk7" targetRef="Activity_01vhgb1" />
   </bpmn:process>
   <bpmndi:BPMNDiagram id="BPMNDiagram_1">
     <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Collaboration_0e4pb1w">
@@ -326,6 +339,12 @@
         <dc:Bounds x="272" y="1122" width="36" height="36" />
         <bpmndi:BPMNLabel>
           <dc:Bounds x="200" y="1133" width="62" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1csguk7_di" bpmnElement="Event_1csguk7">
+        <dc:Bounds x="772" y="1122" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="780" y="1165" width="59" height="14" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="BPMNEdge_1sn1q5p" bpmnElement="Flow_0cy2uma">
@@ -421,6 +440,11 @@
         <bpmndi:BPMNLabel>
           <dc:Bounds x="1304" y="1016" width="71" height="27" />
         </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0c8q08j_di" bpmnElement="Flow_0c8q08j">
+        <di:waypoint x="790" y="1158" />
+        <di:waypoint x="790" y="1250" />
+        <di:waypoint x="710" y="1250" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="Participant_1bzmfhi_di" bpmnElement="Participant_1bzmfhi" isHorizontal="true">
         <dc:Bounds x="170" y="600" width="935" height="320" />
