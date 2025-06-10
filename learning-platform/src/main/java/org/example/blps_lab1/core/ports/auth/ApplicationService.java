@@ -12,6 +12,8 @@ public interface ApplicationService {
     Application add(UUID courseUUID);
     Application add(UUID courseUUID, User user);
 
+    List<Application> getByUserId(Long id);
+
     Application updateStatus(Long id, ApplicationStatus applicationStatus);
 
     List<Application> find(UUID courseUUID);

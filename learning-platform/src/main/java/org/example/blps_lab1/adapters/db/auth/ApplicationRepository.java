@@ -12,4 +12,6 @@ public interface ApplicationRepository extends JpaRepository<Application, Long> 
     void deleteAllByNewCourse_Uuid(UUID courseUUID);
 
     List<Application> findByNewCourse_Uuid(UUID courseUUID);
+
+    List<Application> findByUser_Id(Long userId);
 }

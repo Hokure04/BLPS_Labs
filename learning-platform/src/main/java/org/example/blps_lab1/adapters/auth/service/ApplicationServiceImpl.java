@@ -54,11 +54,20 @@ public class ApplicationServiceImpl implements ApplicationService {
             var courseEntity = courseService.find(courseUUID);
             var app = Application.builder()
                     .newCourse(courseEntity)
-                    .userEmail(user.getUsername())
+                    .user(user)
                     .status(ApplicationStatus.PENDING)
                     .build();
             log.debug("attempt to create application: {}", app);
             return repository.save(app);
+        });
+    }
+
+    @Override
+    public List<Application> getByUserId(Long id) {
+        return transactionTemplate.execute(status -> {
+            List<Application> l = repository.findByUser_Id(id);
+            log.info("found {} applications", l.size());
+            return l;
         });
     }
 
@@ -79,6 +88,8 @@ public class ApplicationServiceImpl implements ApplicationService {
             return repository.save(entity);
         });
     }
+
+
 
     @Override
     public List<Application> find(UUID courseUUID) {

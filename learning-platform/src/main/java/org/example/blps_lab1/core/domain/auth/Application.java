@@ -31,7 +31,8 @@ public class Application {
     @Enumerated(EnumType.STRING)
     private ApplicationStatus status;
 
-    private String userEmail;
+    @ManyToOne
+    private User user;
 
     @ManyToOne(cascade = CascadeType.REMOVE)
     private NewCourse newCourse;

@@ -1,5 +1,8 @@
 package org.example.blps_lab1.adapters.camunda.util;
 
+import lombok.Getter;
+
+@Getter
 public enum Codes {
 
     ERROR_MESSAGE("errorMessage");
@@ -9,7 +12,4 @@ public enum Codes {
         this.stringName = stringName;
     }
 
-    public String getStringName() {
-        return stringName;
-    }
 }
