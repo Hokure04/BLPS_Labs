@@ -43,7 +43,7 @@ public class ExerciseController {
     @GetMapping("/{uuid}")
     public ResponseEntity<Map<String, Object>> getExerciseById(@PathVariable UUID uuid) {
         Map<String, Object> response = new HashMap<>();
-        var exercise = newExerciseService.getNewExerciseByUUID(uuid);
+        var exercise = newExerciseService.find(uuid);
         var exerciseDto = NewExerciseMapper.toDto(exercise);
         response.put("exercise", exerciseDto);
         return new ResponseEntity<>(response, HttpStatus.OK);

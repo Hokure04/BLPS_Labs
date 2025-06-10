@@ -78,7 +78,7 @@ public class NewExerciseServiceImpl implements NewExerciseService {
      * @return {@link NewExercise}
      */
     @Override
-    public NewExercise getNewExerciseByUUID(UUID uuid) {
+    public NewExercise find(UUID uuid) {
         return newExerciseRepository.findById(uuid).orElseThrow(() -> new NotExistException("упражнения с uuid: " + uuid + " не существует"));
     }
 
