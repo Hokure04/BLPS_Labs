@@ -3,6 +3,7 @@ package org.example.blps_lab1.adapters.rest.lms;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.example.blps_lab1.adapters.course.mapper.NewCourseMapper;
+import org.example.blps_lab1.core.ports.auth.AuthService;
 import org.example.blps_lab1.core.ports.course.nw.NewCourseService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,6 +19,7 @@ import java.util.UUID;
 @Slf4j
 public class CourseController {
     private final NewCourseService courseService;
+    private final AuthService authService;
 
     @GetMapping
     public ResponseEntity<Map<String, Object>> getAllCourses() {
@@ -42,7 +44,10 @@ public class CourseController {
 
     @GetMapping("/complete/{courseUUID}")
     public ResponseEntity<Map<String, Object>> completeCourse(@PathVariable UUID courseUUID) {
-        var isFinished = courseService.isCourseFinished(courseUUID);
+
+        var user = authService.getCurrentUser();
+
+        var isFinished = courseService.isCourseFinished(user, courseUUID);
         Map<String, Object> response = new HashMap<>();
         response.put("courseUUID", courseUUID);
         response.put("isFinished", isFinished);

@@ -27,7 +27,7 @@ public class CertificateManagerImpl implements CertificateManager {
     @Override
     public void getCertificate(User user, UUID courseUUID) {
         var course = courseService.getCourseByUUID(courseUUID);
-        boolean allModulesCompleted = courseService.isCourseFinished(courseUUID);
+        boolean allModulesCompleted = courseService.isCourseFinished(user, courseUUID);
         if (!allModulesCompleted) {
             throw new InvalidFieldException("Курс не пройден до конца");
         }

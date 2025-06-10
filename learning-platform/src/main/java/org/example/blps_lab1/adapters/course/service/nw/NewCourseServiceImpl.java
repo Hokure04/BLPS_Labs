@@ -153,12 +153,12 @@ public class NewCourseServiceImpl implements NewCourseService {
     }
 
     @Override
-    public Boolean isCourseFinished(UUID courseUUID) {
+    public Boolean isCourseFinished(User user, UUID courseUUID) {
         return transactionTemplate.execute(status -> {
             var courseEntity = newCourseRepository.findById(courseUUID).orElseThrow(() -> new NotExistException("Курса с uuid: " + courseUUID + " не существует"));
 
             for (var module : courseEntity.getNewModuleList()) {
-                if (!isModuleFinished(module.getUuid())) {
+                if (!isModuleFinished(user, module.getUuid())) {
                     return false;
                 }
             }
@@ -202,7 +202,7 @@ public class NewCourseServiceImpl implements NewCourseService {
         }
     }
 
-    private Boolean isModuleFinished(UUID uuid) {
+    private Boolean isModuleFinished(User user, UUID uuid) {
         var moduleEntity = newModuleRepository.findById(uuid).orElseThrow(() -> new NotExistException("модуля с заданным " +
                 "uuid не существует"));
 
@@ -213,7 +213,7 @@ public class NewCourseServiceImpl implements NewCourseService {
         var requiredPoints = sumPoints * 0.75;
 
 
-        var student = studentRepository.findByUser_Id(getCurrentUser().getId()).orElseThrow(() -> new NotExistException("Пользователь временно недоступен"));
+        var student = studentRepository.findByUser_Id(user.getId()).orElseThrow(() -> new NotExistException("Пользователь временно недоступен"));
 
         Set<UUID> finishedExerciseIds = student.getFinishedExercises()
                 .stream()

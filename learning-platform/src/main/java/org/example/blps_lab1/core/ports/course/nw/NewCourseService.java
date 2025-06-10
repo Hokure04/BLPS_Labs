@@ -1,6 +1,7 @@
 package org.example.blps_lab1.core.ports.course.nw;
 
 import org.example.blps_lab1.adapters.course.dto.nw.NewCourseDto;
+import org.example.blps_lab1.core.domain.auth.User;
 import org.example.blps_lab1.core.domain.course.nw.NewCourse;
 
 import java.util.List;
@@ -29,5 +30,5 @@ public interface NewCourseService {
 
     NewCourse linkModule(UUID courseUUID, UUID moduleUUID);
 
-    Boolean isCourseFinished(UUID courseUUID);
+    Boolean isCourseFinished(User user, UUID courseUUID);
 }

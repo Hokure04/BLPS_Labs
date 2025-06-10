@@ -22,15 +22,19 @@ import java.util.UUID;
 @AllArgsConstructor
 public class ValidateFinishingCourseDelegate implements JavaDelegate {
     private final NewCourseService newCourseService;
+    private final UserService userService;
 
     @Override
     public void execute(DelegateExecution execution) throws Exception {
+        String username = CamundaUtils.getVariableString(execution, "username");
         UUID chosenCourseUUID = UUID.fromString(Objects.requireNonNull(CamundaUtils.getVariableString(execution, "chosenCourse")));
 
-        boolean allModulesCompleted = newCourseService.isCourseFinished(chosenCourseUUID);
+        var user = userService.getUserByEmail(username);
+
+        boolean allModulesCompleted = newCourseService.isCourseFinished(user, chosenCourseUUID);
         if (!allModulesCompleted) {
-            execution.setVariable("isCourseFinished", false);
+            execution.setVariable("isFinished", false);
         }
-        execution.setVariable("isCourseFinished", true);
+        execution.setVariable("isFinished", true);
     }
 }
