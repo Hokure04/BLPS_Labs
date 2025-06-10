@@ -40,7 +40,6 @@ import org.springframework.transaction.support.TransactionTemplate;
 @Slf4j
 public class AuthServiceImpl implements AuthService {
 
-    private final UserXmlRepository userXmlRepository;
     private NewCourseService courseService;
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
@@ -56,7 +55,7 @@ public class AuthServiceImpl implements AuthService {
     public AuthServiceImpl(NewCourseService courseService, PasswordEncoder passwordEncoder,
                            JwtService jwtService, UserService userService,
                            ApplicationService applicationService, StudentRepository studentRepository,
-                           PlatformTransactionManager transactionManager, UserXmlRepository userXmlRepository) {
+                           PlatformTransactionManager transactionManager) {
         this.courseService = courseService;
         this.passwordEncoder = passwordEncoder;
         this.jwtService = jwtService;
@@ -64,7 +63,6 @@ public class AuthServiceImpl implements AuthService {
         this.applicationService = applicationService;
         this.studentRepository = studentRepository;
         this.transactionTemplate = new TransactionTemplate(transactionManager);
-        this.userXmlRepository = userXmlRepository;
     }
 
     /**
@@ -74,17 +72,18 @@ public class AuthServiceImpl implements AuthService {
      * @return {@link User}, которого можно сохранять в бд
      * @throws AuthorizeException, если пользователь с таким именем существует
      */
-    private UserXml getUserOrThrow(RegistrationRequestDto request) {
+    private User getUserOrThrow(RegistrationRequestDto request) {
         Matcher matcher = VALID_EMAIL_ADDRESS_REGEX.matcher(request.getEmail());
         if (!matcher.matches()) {
             log.error("error, email expect domain, got {}", request.getEmail());
             throw new IllegalArgumentException("Email должен включать в себя домен");
         }
 
-        var userBuilder = UserXml.builder()
+        var userBuilder = User.builder()
+                .camundaUserID(request.getUserID())
                 .firstName(request.getFirstName())
                 .lastName(request.getLastName())
-                .username(request.getEmail())
+                .email(request.getEmail())
                 .phoneNumber(request.getPhoneNumber())
                 .role(Role.CASUAL_STUDENT)
                 .password(passwordEncoder.encode(request.getPassword()));
@@ -103,12 +102,12 @@ public class AuthServiceImpl implements AuthService {
      * Важно данный метод подготавливает, но не сохраняет в бд данного студента.
      * Предполагается предварительный вызов метода {@code private UserXml getUserOrThrow(RegistrationRequestDto request)}
      *
-     * @param userXml пользователь формата user xml(специфика второй лабораторной работы
+     * @param user пользователь формата user xml(специфика второй лабораторной работы
      * @return готовый к сохранению в бд {@link Student}
      */
-    private Student getStudentOrThrow(UserXml userXml) {
+    private Student getStudentOrThrow(User user) {
         var stud = Student.builder()
-                .usid(userXml.getId());
+                .usid(user.getId());
         return stud.build();
     }
 
@@ -184,7 +183,7 @@ public class AuthServiceImpl implements AuthService {
                 throw new FieldNotSpecifiedException("Поле password обязательное");
             }
 
-            UserXml userEntity;
+            User userEntity;
             try {
                 userEntity = userService.getUserByEmail(request.getEmail());
                 log.debug("Stored hash: {}", userEntity.getPassword());
@@ -202,7 +201,7 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
-    public UserXml getCurrentUser() {
+    public User getCurrentUser() {
         Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
         if (principal instanceof UserDetails) {

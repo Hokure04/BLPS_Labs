@@ -34,7 +34,7 @@ public interface AuthService {
     JwtAuthenticationResponse signIn(LoginRequest request);
 
 
-    UserXml getCurrentUser();
+    User getCurrentUser();
 
 
 }

@@ -1,8 +1,14 @@
 camunda:
   bpm:
+    auto-deployment-enabled: true
     admin-user:
       id: demo
       password: demo
+    webapp:
+      tasklist:
+        client: true
+        forms:
+          allowUnsafe: true
 spring:
   kafka:
     consumer:

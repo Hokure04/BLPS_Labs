@@ -12,7 +12,7 @@ import (
 	"time"
 )
 
-const address = "http://localhost:8080"
+const address = "http://localhost:8080/learning_platform_war_exploded"
 
 const (
 	apiV            = "/api/v1"

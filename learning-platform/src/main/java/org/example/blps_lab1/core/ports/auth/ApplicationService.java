@@ -10,7 +10,7 @@ import java.util.UUID;
 
 public interface ApplicationService {
     Application add(UUID courseUUID);
-    Application add(UUID courseUUID, UserXml user);
+    Application add(UUID courseUUID, User user);
 
     Application updateStatus(Long id, ApplicationStatus applicationStatus);
 

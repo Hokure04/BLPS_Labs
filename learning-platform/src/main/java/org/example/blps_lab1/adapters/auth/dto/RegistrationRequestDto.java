@@ -23,5 +23,5 @@ public class RegistrationRequestDto {
 
     private String phoneNumber;
 
-    private String companyName;//NOTE: nullable field, validating only if client specified
+    private String userID;
 }

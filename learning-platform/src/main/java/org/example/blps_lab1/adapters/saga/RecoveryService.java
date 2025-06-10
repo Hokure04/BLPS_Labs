@@ -5,6 +5,7 @@ import lombok.SneakyThrows;
 import org.example.blps_lab1.adapters.db.saga.FailureRecordRepository;
 import org.example.blps_lab1.adapters.saga.events.success.FileUploadedEvent;
 import org.example.blps_lab1.adapters.sss.SimpleStorageServiceWithRetry;
+import org.example.blps_lab1.core.domain.auth.User;
 import org.example.blps_lab1.core.domain.auth.UserXml;
 import org.example.blps_lab1.core.domain.saga.FailureRecord;
 import org.example.blps_lab1.core.domain.saga.SagaFailedStep;
@@ -34,8 +35,8 @@ public class RecoveryService {
             try {
                 File pdf = certificateGenerator.generateCertificate(f.getCourse().getName(), f.getUsername(), null);
                 simpleStorageServiceWithRetry.uploadWithRetry(f.getUsername(), f.getUsername() + f.getCourse().getName(), pdf);
-                var user = new UserXml();
-                user.setUsername(f.getUsername());
+                var user = new User();
+                user.setEmail(f.getUsername());
                 user.setPassword(f.getUserPassword());
                 publisher.publishEvent(new FileUploadedEvent(user, f.getCourse(), pdf));
                 toDelete.add(f);

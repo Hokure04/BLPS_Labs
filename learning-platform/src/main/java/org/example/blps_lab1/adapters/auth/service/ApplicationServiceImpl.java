@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+import org.example.blps_lab1.core.domain.auth.User;
 import org.example.blps_lab1.core.domain.auth.UserXml;
 import org.example.blps_lab1.core.ports.auth.ApplicationService;
 import org.example.blps_lab1.core.domain.auth.Application;
@@ -48,7 +49,7 @@ public class ApplicationServiceImpl implements ApplicationService {
     }
 
     @Override
-    public Application add(UUID courseUUID, UserXml user) {
+    public Application add(UUID courseUUID, User user) {
         return transactionTemplate.execute(status -> {
             var courseEntity = courseService.find(courseUUID);
             var app = Application.builder()
@@ -94,7 +95,7 @@ public class ApplicationServiceImpl implements ApplicationService {
         });
     }
 
-    private UserXml getCurrentUser() {
+    private User getCurrentUser() {
 //        copypaste cause depend cycle
         Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 

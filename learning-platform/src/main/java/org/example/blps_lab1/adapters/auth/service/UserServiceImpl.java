@@ -2,11 +2,13 @@ package org.example.blps_lab1.adapters.auth.service;
 
 import lombok.extern.slf4j.Slf4j;
 
+import org.example.blps_lab1.core.domain.auth.User;
 import org.example.blps_lab1.core.domain.auth.UserXml;
 import org.example.blps_lab1.core.domain.course.nw.NewCourse;
 import org.example.blps_lab1.core.ports.auth.UserService;
 import org.example.blps_lab1.core.exception.common.ObjectNotExistException;
 import org.example.blps_lab1.core.ports.db.UserDatabase;
+import org.example.blps_lab1.core.ports.db.UserRepository;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -24,31 +26,30 @@ import java.util.Optional;
 @Service
 @Slf4j
 public class UserServiceImpl implements UserService {
-    private final UserDatabase userRepository;
+    private final UserRepository userRepository;
     private final TransactionTemplate transactionTemplate;
 
     @Autowired
-    public UserServiceImpl(UserDatabase userRepository, PlatformTransactionManager transactionManager) {
+    public UserServiceImpl(UserRepository userRepository, PlatformTransactionManager transactionManager) {
         this.userRepository = userRepository;
         this.transactionTemplate = new TransactionTemplate(transactionManager);
     }
 
 
     @Override
-    public UserXml add(final UserXml user) {
-        var userEntity = transactionTemplate.execute(status -> {
+    public User add(final User user) {
+        return transactionTemplate.execute(status -> {
             user.setPassword(user.getPassword());
-            UserXml savedUser = userRepository.save(user);
+            User savedUser = userRepository.save(user);
             log.info("{} registered successfully", user.getUsername());
             return savedUser;
         });
-        return userEntity;
     }
 
 
     @Override
-    public UserXml updateUser(final UserXml user) {
-        UserXml newUser = userRepository.save(user);
+    public User updateUser(final User user) {
+        var newUser = userRepository.save(user);
         log.info("{} updated successfully", user.getUsername());
         return newUser;
     }
@@ -56,7 +57,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public boolean isExist(final String email) {
-        Optional<UserXml> potentialUser = userRepository.findByEmail(email);
+        Optional<User> potentialUser = userRepository.findByEmail(email);
         if (potentialUser.isPresent()) {
             log.info("User with username: {} exist", email);
             return true;
@@ -66,7 +67,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserXml getUserByEmail(final String email) {
+    public User getUserByEmail(final String email) {
         return userRepository.findByEmail(email.trim()).orElseThrow(() -> new UsernameNotFoundException("User with username: " + email + " not found"));
     }
 
@@ -76,7 +77,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void enrollUser(UserXml user, NewCourse course) {
+    public void enrollUser(User user, NewCourse course) {
         transactionTemplate.execute(new TransactionCallbackWithoutResult() {
             @Override
             protected void doInTransactionWithoutResult(@NotNull TransactionStatus status) {

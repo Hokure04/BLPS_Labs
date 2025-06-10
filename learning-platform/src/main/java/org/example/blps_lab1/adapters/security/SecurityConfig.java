@@ -43,6 +43,13 @@ public class SecurityConfig {
                     return corsConfiguration;
                 }))
                 .authorizeHttpRequests(request -> request
+                        .requestMatchers("/", "/index.html",
+                                "/app/**",
+                                "/camunda/**",
+                                "/plugin/**",
+                                "/rest/**",
+                                "/engine-rest/**").permitAll()
+
                         .requestMatchers("/api/v1/auth/**").permitAll()
                         .requestMatchers("/api/v1/admin/**").authenticated()
                         .requestMatchers("/api/v1/certificate/**").authenticated()

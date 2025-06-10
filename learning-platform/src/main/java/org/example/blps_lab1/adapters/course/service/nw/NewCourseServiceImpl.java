@@ -8,6 +8,7 @@ import org.example.blps_lab1.adapters.db.auth.ApplicationRepository;
 import org.example.blps_lab1.adapters.db.course.NewCourseRepository;
 import org.example.blps_lab1.adapters.db.course.NewModuleRepository;
 import org.example.blps_lab1.adapters.db.course.StudentRepository;
+import org.example.blps_lab1.core.domain.auth.User;
 import org.example.blps_lab1.core.domain.auth.UserXml;
 import org.example.blps_lab1.core.domain.course.nw.NewCourse;
 import org.example.blps_lab1.core.domain.course.nw.NewExercise;
@@ -178,7 +179,7 @@ public class NewCourseServiceImpl implements NewCourseService {
         }
     }
 
-    private UserXml getCurrentUser() {
+    private User getCurrentUser() {
         //copypaste cause depend cycle
         Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 

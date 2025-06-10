@@ -1,0 +1,50 @@
+<form role="form">
+    <h2>Жалобы</h2>
+
+    <textarea
+            id="listing-data"
+            cam-variable-name="complaints"
+            cam-variable-type="String"
+            style="display: none"
+    ></textarea>
+
+    <div id="listing-container">
+    </div>
+
+<!--    <script cam-script type="text/form-script">-->
+<!--        setTimeout(() => {-->
+<!--          const rawJson = document.getElementById('listing-data').value;-->
+<!--          const container = document.getElementById('listing-container');-->
+
+<!--            const listings = JSON.parse(rawJson);-->
+<!--            container.innerHTML = '';-->
+
+<!--            if (Array.isArray(listings) && listings.length > 0) {-->
+<!--              listings.forEach(listing => {-->
+<!--                const card = document.createElement('div');-->
+<!--                card.style.border = '1px solid #ccc';-->
+<!--                card.style.padding = '12px';-->
+<!--                card.style.marginBottom = '10px';-->
+<!--                card.style.borderRadius = '8px';-->
+<!--                card.style.boxShadow = '0 2px 4px rgba(0,0,0,0.1)';-->
+
+<!--                const title = document.createElement('h3');-->
+<!--                title.textContent = listing.title;-->
+
+<!--                const price = document.createElement('p');-->
+<!--                price.innerHTML = `<strong>На: ${listing.defendant}</strong>`;-->
+
+<!--                const note = document.createElement('p');-->
+<!--                note.innerHTML = `<em>${listing.description}</em>`;-->
+
+<!--                card.appendChild(title);-->
+<!--                card.appendChild(price);-->
+<!--                card.appendChild(note);-->
+<!--                container.appendChild(card);-->
+<!--              });-->
+<!--            } else {-->
+<!--              container.innerHTML = '<p>Нет доступных объявлений.</p>';-->
+<!--            }-->
+<!--        }, 100);-->
+<!--    </script>-->
+</form>

@@ -3,6 +3,7 @@ package org.example.blps_lab1.adapters.course.service;
 import java.util.UUID;
 
 import org.example.blps_lab1.adapters.saga.events.success.CourseCompletedEvent;
+import org.example.blps_lab1.core.domain.auth.User;
 import org.example.blps_lab1.core.domain.auth.UserXml;
 import org.example.blps_lab1.core.exception.course.InvalidFieldException;
 import org.example.blps_lab1.core.ports.course.CertificateManager;
@@ -24,7 +25,7 @@ public class CertificateManagerImpl implements CertificateManager {
     }
 
     @Override
-    public void getCertificate(UserXml user, UUID courseUUID) {
+    public void getCertificate(User user, UUID courseUUID) {
         var course = courseService.getCourseByUUID(courseUUID);
         boolean allModulesCompleted = courseService.isCourseFinished(courseUUID);
         if (!allModulesCompleted) {

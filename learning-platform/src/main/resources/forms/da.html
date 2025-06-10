@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Выбор курса</title>
+    <div>ПУПУ</div>
+<!--    <script cam-script type="text/form-script">-->
+<!--        camForm.on('form-loaded', function() {-->
+<!--          // получаем переменную courses-->
+<!--          camForm.variableManager-->
+<!--            .createVariableInstanceQuery()-->
+<!--            .variableName('courses')-->
+<!--            .list()-->
+<!--            .then(function(vars) {-->
+<!--              var courses = vars[0].value; // массив объектов { id, name }-->
+<!--              var select = document.querySelector('select[name="course"]');-->
+<!--              courses.forEach(function(c) {-->
+<!--                var opt = document.createElement('option');-->
+<!--                opt.value = c.id;-->
+<!--                opt.text  = c.name;-->
+<!--                select.appendChild(opt);-->
+<!--              });-->
+<!--            });-->
+<!--        });-->
+<!--    </script>-->
+</head>
+<body>
+<form class="camunda-form">
+    <label>Курс:</label>
+    <input cam-variable-name="course"></input>
+
+<!--    <select cam-variable-name="course"></select>-->
+    <button type="submit">Отправить</button>
+</form>
+</body>
+</html>

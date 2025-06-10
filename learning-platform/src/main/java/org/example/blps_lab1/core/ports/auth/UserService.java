@@ -6,15 +6,15 @@ import org.example.blps_lab1.core.domain.course.nw.NewCourse;
 import org.springframework.security.core.userdetails.UserDetailsService;
 
 public interface UserService {
-    UserXml add(UserXml user);
+    User add(User user);
 
-    UserXml getUserByEmail(String username);
+    User getUserByEmail(String username);
 
-    UserXml updateUser(UserXml user);
+    User updateUser(User user);
 
     boolean isExist(String username);
 
-    void enrollUser(UserXml user, NewCourse course);
+    void enrollUser(User user, NewCourse course);
 
     UserDetailsService getUserDetailsService();
 }
