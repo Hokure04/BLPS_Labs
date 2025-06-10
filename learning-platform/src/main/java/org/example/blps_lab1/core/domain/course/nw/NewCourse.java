@@ -6,6 +6,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.example.blps_lab1.core.domain.course.Topic;
+import org.hibernate.annotations.Cascade;
+import org.hibernate.annotations.CascadeType;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -46,6 +48,7 @@ public class NewCourse {
             joinColumns = @JoinColumn(name = "new_course_uuid"),
             inverseJoinColumns = @JoinColumn(name = "new_module_uuid")
     )
+    @Cascade(CascadeType.ALL)//FIXME: tсли что-то разъебется из удаления - виновата эта хуйня
     private List<NewModule> newModuleList = new ArrayList<>();
 
     //TODO очень и пиздец как очень внимательно тут нужно быть

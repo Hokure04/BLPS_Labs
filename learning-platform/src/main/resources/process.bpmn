@@ -94,7 +94,7 @@
     </bpmn:sequenceFlow>
   </bpmn:process>
   <bpmn:error id="Error_0bcwrtb" name="errorMessage" />
-  <bpmn:process id="Process_1hhr9e4" name="Обработка заявки" isExecutable="true" camunda:historyTimeToLive="180">
+  <bpmn:process id="Process_1hhr9e4" name="обработка заявки" isExecutable="true" camunda:historyTimeToLive="180">
     <bpmn:startEvent id="Event_0wyejyy">
       <bpmn:extensionElements>
         <camunda:formData>
@@ -161,7 +161,7 @@
     <bpmn:sequenceFlow id="Flow_1nwwn9t" sourceRef="Activity_0hkeyq5" targetRef="Activity_0r0ntmj" />
     <bpmn:sequenceFlow id="Flow_02crt62" sourceRef="Activity_0r0ntmj" targetRef="Event_06uareb" />
   </bpmn:process>
-  <bpmn:process id="Process_1wjqexm" name="процесс авторизация" isExecutable="true" camunda:historyTimeToLive="180">
+  <bpmn:process id="Process_1wjqexm" name="прохождение курса" isExecutable="true" camunda:historyTimeToLive="180">
     <bpmn:dataStoreReference id="DataStoreReference_0zx6v4q" name="Заявка на прохождение курса" />
     <bpmn:dataStoreReference id="DataStoreReference_0td2oq1" name="Пользователи" />
     <bpmn:dataStoreReference id="DataStoreReference_1xgx5f5" name="Бд с курсами" />
