@@ -2,6 +2,7 @@ package org.example.blps_lab1.adapters.camunda.util;
 
 import lombok.extern.slf4j.Slf4j;
 import org.camunda.bpm.engine.delegate.DelegateExecution;
+import org.example.blps_lab1.core.domain.auth.User;
 
 @Slf4j
 public class CamundaUtils {
@@ -37,5 +38,4 @@ public class CamundaUtils {
     public static void prepareErrorVariables(DelegateExecution execution) {
         execution.setVariable(Codes.ERROR_MESSAGE.getStringName(), "");
     }
-
 }
