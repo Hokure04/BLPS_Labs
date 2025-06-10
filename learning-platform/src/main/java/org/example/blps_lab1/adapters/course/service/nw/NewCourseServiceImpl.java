@@ -8,6 +8,7 @@ import org.example.blps_lab1.adapters.db.auth.ApplicationRepository;
 import org.example.blps_lab1.adapters.db.course.NewCourseRepository;
 import org.example.blps_lab1.adapters.db.course.NewModuleRepository;
 import org.example.blps_lab1.adapters.db.course.StudentRepository;
+import org.example.blps_lab1.core.domain.auth.Application;
 import org.example.blps_lab1.core.domain.auth.User;
 import org.example.blps_lab1.core.domain.auth.UserXml;
 import org.example.blps_lab1.core.domain.course.nw.NewCourse;
@@ -67,6 +68,19 @@ public class NewCourseServiceImpl implements NewCourseService {
         }
 
         return newCourseRepository.saveAll(listDtos);
+    }
+
+    @Override
+    public List<NewCourse> getCourseByUserID(Long id) {
+        return transactionTemplate.execute(status -> {
+            var applicationList = applicationRepository.findByUser_Id(id);
+            List<NewCourse> courseList = applicationList
+                    .stream()
+                    .map(Application::getNewCourse)
+                    .toList();
+            log.info("getCourseByUserID: {}", id);
+            return courseList;
+        });
     }
 
     @Override
