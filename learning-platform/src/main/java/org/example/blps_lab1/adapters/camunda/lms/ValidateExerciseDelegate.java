@@ -41,7 +41,7 @@ public class ValidateExerciseDelegate implements JavaDelegate {
             log.error("fail to find user by email: {}", username);
             throw new BpmnError(Codes.ERROR_MESSAGE.getStringName(), "Внутренняя ошибка: попробуйте позже, пользователь не найден");
         }
-        Optional<Student> optionalStudent = studentRepository.findByUsid(user.getId());
+        Optional<Student> optionalStudent = studentRepository.findByUser_Id(user.getId());
         if (optionalStudent.isEmpty()) {
             log.error("fail to find student by usid: {}", user.getId());
             throw new BpmnError(Codes.ERROR_MESSAGE.getStringName(), "Внутреняя ошибка: студент не найден");
@@ -51,6 +51,7 @@ public class ValidateExerciseDelegate implements JavaDelegate {
         var exercise = newExerciseService.find(UUID.fromString(exerciseUUID));
         if (exercise.getAnswer().equals(userAns)) {
             student.getFinishedExercises().add(exercise); // todo проверить, сохраняет ли он аналогично submitAns
+            log.info("course finished successfully");
         }else {
             throw new BpmnError(Codes.ERROR_MESSAGE.getStringName(), "неверный ответ");
         }

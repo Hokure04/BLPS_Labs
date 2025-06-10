@@ -1,7 +1,6 @@
 package org.example.blps_lab1.adapters.course.service.nw;
 
 import lombok.extern.slf4j.Slf4j;
-import org.aspectj.weaver.ast.Not;
 import org.example.blps_lab1.adapters.course.dto.nw.NewCourseDto;
 import org.example.blps_lab1.adapters.course.mapper.NewCourseMapper;
 import org.example.blps_lab1.adapters.db.auth.ApplicationRepository;
@@ -10,21 +9,18 @@ import org.example.blps_lab1.adapters.db.course.NewModuleRepository;
 import org.example.blps_lab1.adapters.db.course.StudentRepository;
 import org.example.blps_lab1.core.domain.auth.Application;
 import org.example.blps_lab1.core.domain.auth.User;
-import org.example.blps_lab1.core.domain.auth.UserXml;
 import org.example.blps_lab1.core.domain.course.nw.NewCourse;
 import org.example.blps_lab1.core.domain.course.nw.NewExercise;
 import org.example.blps_lab1.core.exception.course.InvalidFieldException;
 import org.example.blps_lab1.core.exception.course.NotExistException;
 import org.example.blps_lab1.core.ports.auth.UserService;
 import org.example.blps_lab1.core.ports.course.nw.NewCourseService;
-import org.springframework.boot.context.properties.source.InvalidConfigurationPropertyValueException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.support.TransactionTemplate;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
@@ -217,7 +213,7 @@ public class NewCourseServiceImpl implements NewCourseService {
         var requiredPoints = sumPoints * 0.75;
 
 
-        var student = studentRepository.findByUsid(getCurrentUser().getId()).orElseThrow(() -> new NotExistException("Пользователь временно недоступен"));
+        var student = studentRepository.findByUser_Id(getCurrentUser().getId()).orElseThrow(() -> new NotExistException("Пользователь временно недоступен"));
 
         Set<UUID> finishedExerciseIds = student.getFinishedExercises()
                 .stream()

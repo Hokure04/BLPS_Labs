@@ -141,7 +141,7 @@ public class NewModuleServiceImpl implements NewModuleService {
             var requiredPoints = sumPoints * 0.75;
 
 
-            var student = studentRepository.findByUsid(authService.getCurrentUser().getId()).orElseThrow(() -> new NotExistException("Пользователь временно недоступен"));
+            var student = studentRepository.findByUser_Id(authService.getCurrentUser().getId()).orElseThrow(() -> new NotExistException("Пользователь временно недоступен"));
 
             Set<UUID> finishedExerciseIds = student.getFinishedExercises()
                     .stream()

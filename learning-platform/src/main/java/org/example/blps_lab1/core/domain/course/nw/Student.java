@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.example.blps_lab1.core.domain.auth.User;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,9 +31,8 @@ public class Student {
     )
     private List<NewExercise> finishedExercises = new ArrayList<>();
 
-    // должно было бы быть @ManyToOne на User -> пользователи существуют только в xml
-    //  поэтому есть потребность указывать идюк UserXml в виде обычной записи
-    private Long usid;
+    @ManyToOne
+    private User user;
 
     @ManyToMany
     @JoinTable(

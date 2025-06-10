@@ -107,7 +107,7 @@ public class AuthServiceImpl implements AuthService {
      */
     private Student getStudentOrThrow(User user) {
         var stud = Student.builder()
-                .usid(user.getId());
+                .user(user);
         return stud.build();
     }
 
@@ -150,7 +150,8 @@ public class AuthServiceImpl implements AuthService {
                 throw new FieldNotSpecifiedException("Не указан id курса");
             }
             var student = getStudentOrThrow(user);
-            studentRepository.save(student);
+            var studEntity = studentRepository.save(student);
+            log.info("saved student: {}", studEntity);
             NewCourse courseEntity;
             try {
                 courseEntity = courseService.getCourseByUUID(courseUUID);
