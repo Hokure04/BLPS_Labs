@@ -26,6 +26,6 @@ public class RequestApplicationDelegate implements JavaDelegate {
         User currentUser = userService.getUserByEmail(CamundaUtils.getVariableString(execution,"username"));
 
         List<Application> applicationList = applicationService.getByUserId(currentUser.getId());
-        execution.setVariable("applicationList", applicationList);
+        execution.setVariable("applicationList", applicationList.toString());
     }
 }
