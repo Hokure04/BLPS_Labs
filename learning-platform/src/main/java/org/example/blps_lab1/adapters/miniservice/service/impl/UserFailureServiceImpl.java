@@ -34,7 +34,7 @@ public class UserFailureServiceImpl implements UserFailureService {
 
     @Override
     @Transactional
-    @Scheduled(fixedRate = 5000)
+//    @Scheduled(fixedRate = 5000)
     public void recoverAll() {
         List<UserFailure> userFailureList = userFailureRepository.findAllByIsFailed(Boolean.TRUE);
         log.info("starting to update users, size to update {}", userFailureList.size());

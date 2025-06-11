@@ -27,7 +27,7 @@ public class RecoveryService {
     private final SimpleStorageServiceWithRetry simpleStorageServiceWithRetry;
 
 
-    @Scheduled(fixedRate = 10_000*3)
+//    @Scheduled(fixedRate = 10_000*3)
     public void recoverFileUploads() {
         List<FailureRecord> failed = failureRepo.findAllBySagaFailedStep(SagaFailedStep.FILE_UPLOAD_FAIL);
         List<FailureRecord> toDelete = new ArrayList<>();
