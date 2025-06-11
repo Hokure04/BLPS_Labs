@@ -3,6 +3,7 @@ package org.example.blps_lab1.adapters.saga;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.example.blps_lab1.adapters.db.saga.FailureRecordRepository;
+import org.example.blps_lab1.adapters.miniservice.model.MiniUser;
 import org.example.blps_lab1.adapters.saga.events.failures.CertificateGenerationFailedEvent;
 import org.example.blps_lab1.adapters.saga.events.failures.FileUploadFailedEvent;
 import org.example.blps_lab1.adapters.saga.events.success.CertificateGeneratedEvent;
@@ -58,7 +59,7 @@ public class SagaListeners {
     @EventListener
     public void handle(FileUploadedEvent ev) {
         var user = ev.getUser();
-        messageProducer.sendMessage("reg-users", new KafkaUser(user.getUsername(), user.getUsername(), user.getPassword()));
+        publisher.publishEvent(new MiniUser(user.getUsername(), user.getUsername(), user.getPassword()));
         publisher.publishEvent(new CertificateSentEvent(ev.getUser(), ev.getPdf()));
     }
 
