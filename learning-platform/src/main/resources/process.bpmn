@@ -443,7 +443,7 @@
     </bpmn:boundaryEvent>
     <bpmn:sequenceFlow id="Flow_1pu0u2e" sourceRef="Event_023zo7l" targetRef="Activity_166wqoo" />
   </bpmn:process>
-  <bpmn:process id="Process_0quipyw" isExecutable="false">
+  <bpmn:process id="Process_0quipyw" isExecutable="true" name="создать упражнение" camunda:historyTimeToLive="180">
     <bpmn:startEvent id="Event_0l64f1n">
       <bpmn:extensionElements>
         <camunda:formData>
