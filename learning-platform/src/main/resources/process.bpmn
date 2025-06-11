@@ -111,6 +111,19 @@
     <bpmn:dataStoreReference id="DataStoreReference_18q8hok" name="Студент" />
     <bpmn:dataStoreReference id="DataStoreReference_1wnl5nc" name="Провальные записи" />
     <bpmn:dataStoreReference id="DataStoreReference_15qwbc9" name="Провальные пропушивания" />
+    <bpmn:dataStoreReference id="DataStoreReference_0zi93qq" name="Пользователи" />
+    <bpmn:dataStoreReference id="DataStoreReference_0hkmhiy" name="Курсы" />
+    <bpmn:dataStoreReference id="DataStoreReference_0dbt8dc" name="Модули" />
+    <bpmn:dataStoreReference id="DataStoreReference_1ch3ubp" name="Упражнения" />
+    <bpmn:dataStoreReference id="DataStoreReference_0whnpdj" name="s3" />
+    <bpmn:dataStoreReference id="DataStoreReference_13flzug" name="kafka" />
+    <bpmn:dataStoreReference id="DataStoreReference_1w6z1qv" name="Пользователи" />
+    <bpmn:dataStoreReference id="DataStoreReference_1km20eu" name="Пользователи" />
+    <bpmn:dataStoreReference id="DataStoreReference_14t7e4u" name="упражнение" />
+    <bpmn:dataStoreReference id="DataStoreReference_1cwwa6y" name="Пользователи" />
+    <bpmn:dataStoreReference id="DataStoreReference_06fim6j" name="модуль" />
+    <bpmn:dataStoreReference id="DataStoreReference_16f4yk7" name="курс" />
+    <bpmn:dataStoreReference id="DataStoreReference_0hba3si" name="Пользователи" />
   </bpmn:process>
   <bpmn:error id="Error_0bcwrtb" name="errorMessage" />
   <bpmn:process id="Process_1hhr9e4" name="обработка заявки" isExecutable="true" camunda:historyTimeToLive="180">
@@ -351,6 +364,11 @@
       <bpmn:incoming>Flow_1jbc0nl</bpmn:incoming>
       <bpmn:incoming>Flow_1ineq2w</bpmn:incoming>
       <bpmn:outgoing>Flow_006ed15</bpmn:outgoing>
+      <bpmn:property id="Property_0q2go04" name="__targetRef_placeholder" />
+      <bpmn:dataInputAssociation id="DataInputAssociation_1mjmkqj">
+        <bpmn:sourceRef>DataStoreReference_0zi93qq</bpmn:sourceRef>
+        <bpmn:targetRef>Property_0q2go04</bpmn:targetRef>
+      </bpmn:dataInputAssociation>
     </bpmn:serviceTask>
     <bpmn:userTask id="Activity_0b27tvq" name="Повторная попытка входа">
       <bpmn:extensionElements>
@@ -371,8 +389,14 @@
     <bpmn:serviceTask id="Activity_14vtct9" name="Отправка сертификата и сохранение в бд" camunda:delegateExpression="${startSending}">
       <bpmn:incoming>Flow_06521mg</bpmn:incoming>
       <bpmn:outgoing>Flow_07y6kh5</bpmn:outgoing>
+      <bpmn:dataOutputAssociation id="DataOutputAssociation_1p6gpoa">
+        <bpmn:targetRef>DataStoreReference_0whnpdj</bpmn:targetRef>
+      </bpmn:dataOutputAssociation>
+      <bpmn:dataOutputAssociation id="DataOutputAssociation_1reu8yz">
+        <bpmn:targetRef>DataStoreReference_13flzug</bpmn:targetRef>
+      </bpmn:dataOutputAssociation>
     </bpmn:serviceTask>
-    <bpmn:userTask id="Activity_1cbhy5w" name="Уведомить, что курс не завершен">
+    <bpmn:userTask id="Activity_1cbhy5w" name="Курс не завершен">
       <bpmn:extensionElements>
         <camunda:formData>
           <camunda:formField id="messageToUser" label="Результат запроса" type="string" defaultValue="Курс не пройден">
@@ -402,10 +426,28 @@
     <bpmn:serviceTask id="Activity_0vejo36" name="Проверка завершил ли пользователь курс" camunda:delegateExpression="${validateFinishingCourse}">
       <bpmn:incoming>Flow_02llck9</bpmn:incoming>
       <bpmn:outgoing>Flow_083hwbg</bpmn:outgoing>
+      <bpmn:property id="Property_0yhun61" name="__targetRef_placeholder" />
+      <bpmn:dataInputAssociation id="DataInputAssociation_02px4tu">
+        <bpmn:sourceRef>DataStoreReference_0hkmhiy</bpmn:sourceRef>
+        <bpmn:targetRef>Property_0yhun61</bpmn:targetRef>
+      </bpmn:dataInputAssociation>
+      <bpmn:dataInputAssociation id="DataInputAssociation_0kv6hl8">
+        <bpmn:sourceRef>DataStoreReference_0dbt8dc</bpmn:sourceRef>
+        <bpmn:targetRef>Property_0yhun61</bpmn:targetRef>
+      </bpmn:dataInputAssociation>
+      <bpmn:dataInputAssociation id="DataInputAssociation_186zi8a">
+        <bpmn:sourceRef>DataStoreReference_1ch3ubp</bpmn:sourceRef>
+        <bpmn:targetRef>Property_0yhun61</bpmn:targetRef>
+      </bpmn:dataInputAssociation>
     </bpmn:serviceTask>
     <bpmn:serviceTask id="Activity_1npkp9t" name="Запрос списка курсов" camunda:delegateExpression="${getCourses}">
       <bpmn:incoming>Flow_006ed15</bpmn:incoming>
       <bpmn:outgoing>Flow_0inp7xm</bpmn:outgoing>
+      <bpmn:property id="Property_1gpjzwg" name="__targetRef_placeholder" />
+      <bpmn:dataInputAssociation id="DataInputAssociation_02ahiu6">
+        <bpmn:sourceRef>DataStoreReference_0hkmhiy</bpmn:sourceRef>
+        <bpmn:targetRef>Property_1gpjzwg</bpmn:targetRef>
+      </bpmn:dataInputAssociation>
     </bpmn:serviceTask>
     <bpmn:boundaryEvent id="Event_0lcgkuk" name="Invalid creds" attachedToRef="Activity_0yq1oj6">
       <bpmn:outgoing>Flow_1ehecmo</bpmn:outgoing>
@@ -433,6 +475,14 @@
     <bpmn:serviceTask id="Activity_0b57ss0" name="Создание события на регистрацию в keycloak" camunda:delegateExpression="${processing}">
       <bpmn:incoming>Flow_07y6kh5</bpmn:incoming>
       <bpmn:outgoing>Flow_0gsj7cr</bpmn:outgoing>
+      <bpmn:property id="Property_0lkesfh" name="__targetRef_placeholder" />
+      <bpmn:dataInputAssociation id="DataInputAssociation_0xj5hid">
+        <bpmn:sourceRef>DataStoreReference_13flzug</bpmn:sourceRef>
+        <bpmn:targetRef>Property_0lkesfh</bpmn:targetRef>
+      </bpmn:dataInputAssociation>
+      <bpmn:dataOutputAssociation id="DataOutputAssociation_0l08ds6">
+        <bpmn:targetRef>DataStoreReference_13flzug</bpmn:targetRef>
+      </bpmn:dataOutputAssociation>
     </bpmn:serviceTask>
   </bpmn:process>
   <bpmn:process id="Process_0heqj6z" name="выдача админской роли" isExecutable="true" camunda:historyTimeToLive="180">
@@ -452,6 +502,11 @@
       <bpmn:incoming>Flow_1f5mv0t</bpmn:incoming>
       <bpmn:incoming>Flow_1df8c6g</bpmn:incoming>
       <bpmn:outgoing>Flow_1svny2q</bpmn:outgoing>
+      <bpmn:property id="Property_01wfu4g" name="__targetRef_placeholder" />
+      <bpmn:dataInputAssociation id="DataInputAssociation_0271r4c">
+        <bpmn:sourceRef>DataStoreReference_1w6z1qv</bpmn:sourceRef>
+        <bpmn:targetRef>Property_01wfu4g</bpmn:targetRef>
+      </bpmn:dataInputAssociation>
     </bpmn:serviceTask>
     <bpmn:startEvent id="Event_14wxaya">
       <bpmn:extensionElements>
@@ -484,6 +539,9 @@
     <bpmn:serviceTask id="Activity_1ywb3m6" name="Выдача роли" camunda:delegateExpression="${roleAssign}">
       <bpmn:incoming>Flow_1gn9m04</bpmn:incoming>
       <bpmn:outgoing>Flow_10m914k</bpmn:outgoing>
+      <bpmn:dataOutputAssociation id="DataOutputAssociation_1pw5thj">
+        <bpmn:targetRef>DataStoreReference_1w6z1qv</bpmn:targetRef>
+      </bpmn:dataOutputAssociation>
     </bpmn:serviceTask>
     <bpmn:endEvent id="Event_1h7m0j2">
       <bpmn:incoming>Flow_10m914k</bpmn:incoming>
@@ -492,6 +550,11 @@
     <bpmn:serviceTask id="Activity_182efrw" name="Проверка роли" camunda:delegateExpression="${validateUserRole}">
       <bpmn:incoming>Flow_1svny2q</bpmn:incoming>
       <bpmn:outgoing>Flow_00000ih</bpmn:outgoing>
+      <bpmn:property id="Property_1410zjf" name="__targetRef_placeholder" />
+      <bpmn:dataInputAssociation id="DataInputAssociation_12xkocr">
+        <bpmn:sourceRef>DataStoreReference_1w6z1qv</bpmn:sourceRef>
+        <bpmn:targetRef>Property_1410zjf</bpmn:targetRef>
+      </bpmn:dataInputAssociation>
     </bpmn:serviceTask>
     <bpmn:boundaryEvent id="Event_023zo7l" attachedToRef="Activity_182efrw">
       <bpmn:outgoing>Flow_1pu0u2e</bpmn:outgoing>
@@ -525,6 +588,11 @@
       <bpmn:incoming>Flow_1qwj5xo</bpmn:incoming>
       <bpmn:incoming>Flow_0wjqma9</bpmn:incoming>
       <bpmn:outgoing>Flow_0tejvvi</bpmn:outgoing>
+      <bpmn:property id="Property_1sse22t" name="__targetRef_placeholder" />
+      <bpmn:dataInputAssociation id="DataInputAssociation_1d2qf38">
+        <bpmn:sourceRef>DataStoreReference_1km20eu</bpmn:sourceRef>
+        <bpmn:targetRef>Property_1sse22t</bpmn:targetRef>
+      </bpmn:dataInputAssociation>
     </bpmn:serviceTask>
     <bpmn:boundaryEvent id="Event_1bfunxl" name="Invalid creds" attachedToRef="Activity_1bnus1q">
       <bpmn:outgoing>Flow_0qy1tk6</bpmn:outgoing>
@@ -538,6 +606,11 @@
     <bpmn:serviceTask id="Activity_0rs88cw" name="Проверка роли" camunda:delegateExpression="${validateUserRole}">
       <bpmn:incoming>Flow_0tejvvi</bpmn:incoming>
       <bpmn:outgoing>Flow_0ofvsbq</bpmn:outgoing>
+      <bpmn:property id="Property_0z6z27v" name="__targetRef_placeholder" />
+      <bpmn:dataInputAssociation id="DataInputAssociation_05ktt43">
+        <bpmn:sourceRef>DataStoreReference_1km20eu</bpmn:sourceRef>
+        <bpmn:targetRef>Property_0z6z27v</bpmn:targetRef>
+      </bpmn:dataInputAssociation>
     </bpmn:serviceTask>
     <bpmn:boundaryEvent id="Event_09th64i" attachedToRef="Activity_0rs88cw">
       <bpmn:outgoing>Flow_0lu29gu</bpmn:outgoing>
@@ -562,6 +635,9 @@
     <bpmn:serviceTask id="Activity_17uogwn" name="Валидация и создание упражненения" camunda:delegateExpression="${validateAndCreateExercise}">
       <bpmn:incoming>Flow_13ad9to</bpmn:incoming>
       <bpmn:outgoing>Flow_0tm0xxy</bpmn:outgoing>
+      <bpmn:dataOutputAssociation id="DataOutputAssociation_1l017dm">
+        <bpmn:targetRef>DataStoreReference_14t7e4u</bpmn:targetRef>
+      </bpmn:dataOutputAssociation>
     </bpmn:serviceTask>
     <bpmn:boundaryEvent id="Event_08d20qm" attachedToRef="Activity_17uogwn">
       <bpmn:outgoing>Flow_0i8qoxa</bpmn:outgoing>
@@ -586,6 +662,11 @@
     <bpmn:serviceTask id="Activity_1x92ewm" name="Проверка роли" camunda:delegateExpression="${validateUserRole}">
       <bpmn:incoming>Flow_11i8mt7</bpmn:incoming>
       <bpmn:outgoing>Flow_10ezybo</bpmn:outgoing>
+      <bpmn:property id="Property_1palmis" name="__targetRef_placeholder" />
+      <bpmn:dataInputAssociation id="DataInputAssociation_0687h59">
+        <bpmn:sourceRef>DataStoreReference_1cwwa6y</bpmn:sourceRef>
+        <bpmn:targetRef>Property_1palmis</bpmn:targetRef>
+      </bpmn:dataInputAssociation>
     </bpmn:serviceTask>
     <bpmn:userTask id="Activity_0ijmprt" name="Повторная попытка входа">
       <bpmn:extensionElements>
@@ -603,6 +684,11 @@
       <bpmn:incoming>Flow_1cxsuvs</bpmn:incoming>
       <bpmn:incoming>Flow_1vtgz72</bpmn:incoming>
       <bpmn:outgoing>Flow_11i8mt7</bpmn:outgoing>
+      <bpmn:property id="Property_0t4wpwe" name="__targetRef_placeholder" />
+      <bpmn:dataInputAssociation id="DataInputAssociation_0eul67a">
+        <bpmn:sourceRef>DataStoreReference_1cwwa6y</bpmn:sourceRef>
+        <bpmn:targetRef>Property_0t4wpwe</bpmn:targetRef>
+      </bpmn:dataInputAssociation>
     </bpmn:serviceTask>
     <bpmn:userTask id="Activity_184r0ok" name="Ввод данных">
       <bpmn:extensionElements>
@@ -633,6 +719,9 @@
     <bpmn:serviceTask id="Activity_0qe9mof" name="Валидация и создание модуля" camunda:delegateExpression="${validateAndCreateModule}">
       <bpmn:incoming>Flow_1844z5y</bpmn:incoming>
       <bpmn:outgoing>Flow_0q782fd</bpmn:outgoing>
+      <bpmn:dataOutputAssociation id="DataOutputAssociation_0dqovkh">
+        <bpmn:targetRef>DataStoreReference_06fim6j</bpmn:targetRef>
+      </bpmn:dataOutputAssociation>
     </bpmn:serviceTask>
     <bpmn:boundaryEvent id="Event_1enbu1p" attachedToRef="Activity_0qe9mof">
       <bpmn:outgoing>Flow_1a7p09t</bpmn:outgoing>
@@ -682,11 +771,21 @@
     <bpmn:serviceTask id="Activity_1qoxn78" name="Проверка роли" camunda:delegateExpression="${validateUserRole}">
       <bpmn:incoming>Flow_0gm13vy</bpmn:incoming>
       <bpmn:outgoing>Flow_1ir43ab</bpmn:outgoing>
+      <bpmn:property id="Property_17rulb1" name="__targetRef_placeholder" />
+      <bpmn:dataInputAssociation id="DataInputAssociation_0758rqq">
+        <bpmn:sourceRef>DataStoreReference_0hba3si</bpmn:sourceRef>
+        <bpmn:targetRef>Property_17rulb1</bpmn:targetRef>
+      </bpmn:dataInputAssociation>
     </bpmn:serviceTask>
     <bpmn:serviceTask id="Activity_138obhs" name="Обработка вводных" camunda:delegateExpression="${auth}">
       <bpmn:incoming>Flow_1prv6tp</bpmn:incoming>
       <bpmn:incoming>Flow_1rhcwoj</bpmn:incoming>
       <bpmn:outgoing>Flow_0gm13vy</bpmn:outgoing>
+      <bpmn:property id="Property_0xu4lux" name="__targetRef_placeholder" />
+      <bpmn:dataInputAssociation id="DataInputAssociation_0lwcwh2">
+        <bpmn:sourceRef>DataStoreReference_0hba3si</bpmn:sourceRef>
+        <bpmn:targetRef>Property_0xu4lux</bpmn:targetRef>
+      </bpmn:dataInputAssociation>
     </bpmn:serviceTask>
     <bpmn:startEvent id="Event_13w055g">
       <bpmn:extensionElements>
@@ -716,6 +815,9 @@
     <bpmn:serviceTask id="Activity_0po4g1e" name="Валидация и создание модуля" camunda:delegateExpression="${validateAndCreateCourse}">
       <bpmn:incoming>Flow_15igkws</bpmn:incoming>
       <bpmn:outgoing>Flow_07zfrza</bpmn:outgoing>
+      <bpmn:dataOutputAssociation id="DataOutputAssociation_0fbeoh0">
+        <bpmn:targetRef>DataStoreReference_16f4yk7</bpmn:targetRef>
+      </bpmn:dataOutputAssociation>
     </bpmn:serviceTask>
     <bpmn:boundaryEvent id="Event_16f6yvh" attachedToRef="Activity_0po4g1e">
       <bpmn:outgoing>Flow_0qy0sk2</bpmn:outgoing>
@@ -1597,6 +1699,84 @@
           <dc:Bounds x="1683" y="55" width="75" height="27" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_1s1hlvh" bpmnElement="DataStoreReference_0zi93qq">
+        <dc:Bounds x="415" y="1605" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="404" y="1581" width="72" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_1kys88j" bpmnElement="DataStoreReference_0hkmhiy">
+        <dc:Bounds x="585" y="1615" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="594" y="1591" width="32" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="DataStoreReference_1ch3ubp_di" bpmnElement="DataStoreReference_1ch3ubp">
+        <dc:Bounds x="915" y="1595" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="909" y="1652" width="63" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="DataStoreReference_0dbt8dc_di" bpmnElement="DataStoreReference_0dbt8dc">
+        <dc:Bounds x="755" y="1605" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="761" y="1662" width="40" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="DataStoreReference_0whnpdj_di" bpmnElement="DataStoreReference_0whnpdj">
+        <dc:Bounds x="1075" y="1615" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1114" y="1672" width="12" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_1pgsn7e" bpmnElement="DataStoreReference_13flzug">
+        <dc:Bounds x="1185" y="1625" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1217" y="1682" width="27" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_1m0u7j8" bpmnElement="DataStoreReference_1w6z1qv">
+        <dc:Bounds x="365" y="2145" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="354" y="2121" width="72" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_1990q9h" bpmnElement="DataStoreReference_1km20eu">
+        <dc:Bounds x="405" y="2515" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="394" y="2491" width="72" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_0f8v6b1" bpmnElement="DataStoreReference_14t7e4u">
+        <dc:Bounds x="725" y="2535" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="719" y="2511" width="62" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_1d1yx6q" bpmnElement="DataStoreReference_1cwwa6y">
+        <dc:Bounds x="455" y="2905" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="444" y="2881" width="72" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_0chvggw" bpmnElement="DataStoreReference_06fim6j">
+        <dc:Bounds x="775" y="2925" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="781" y="2901" width="38" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_04ug7ym" bpmnElement="DataStoreReference_16f4yk7">
+        <dc:Bounds x="775" y="3355" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="790" y="3331" width="22" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_157yrc0" bpmnElement="DataStoreReference_0hba3si">
+        <dc:Bounds x="455" y="3335" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="444" y="3311" width="72" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="TextAnnotation_0urx905_di" bpmnElement="TextAnnotation_0urx905">
         <dc:Bounds x="1070" y="470" width="100" height="98" />
         <bpmndi:BPMNLabel />
@@ -1664,6 +1844,90 @@
       <bpmndi:BPMNEdge id="DataInputAssociation_1s6oia6_di" bpmnElement="DataInputAssociation_1s6oia6">
         <di:waypoint x="1720" y="135" />
         <di:waypoint x="1720" y="280" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="DataInputAssociation_1mjmkqj_di" bpmnElement="DataInputAssociation_1mjmkqj">
+        <di:waypoint x="437" y="1655" />
+        <di:waypoint x="415" y="1820" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="DataInputAssociation_02ahiu6_di" bpmnElement="DataInputAssociation_02ahiu6">
+        <di:waypoint x="603" y="1665" />
+        <di:waypoint x="563" y="1820" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="DataInputAssociation_02px4tu_di" bpmnElement="DataInputAssociation_02px4tu">
+        <di:waypoint x="624" y="1665" />
+        <di:waypoint x="714" y="1820" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="DataInputAssociation_0kv6hl8_di" bpmnElement="DataInputAssociation_0kv6hl8">
+        <di:waypoint x="773" y="1655" />
+        <di:waypoint x="723" y="1820" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="DataInputAssociation_186zi8a_di" bpmnElement="DataInputAssociation_186zi8a">
+        <di:waypoint x="919" y="1645" />
+        <di:waypoint x="766" y="1823" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="DataOutputAssociation_1p6gpoa_di" bpmnElement="DataOutputAssociation_1p6gpoa">
+        <di:waypoint x="1068" y="1820" />
+        <di:waypoint x="1101" y="1665" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="DataOutputAssociation_0l08ds6_di" bpmnElement="DataOutputAssociation_0l08ds6">
+        <di:waypoint x="1348" y="1820" />
+        <di:waypoint x="1231" y="1675" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="DataOutputAssociation_1reu8yz_di" bpmnElement="DataOutputAssociation_1reu8yz">
+        <di:waypoint x="1087" y="1820" />
+        <di:waypoint x="1185" y="1675" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="DataInputAssociation_0xj5hid_di" bpmnElement="DataInputAssociation_0xj5hid">
+        <di:waypoint x="1235" y="1671" />
+        <di:waypoint x="1408" y="1820" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="DataInputAssociation_0271r4c_di" bpmnElement="DataInputAssociation_0271r4c">
+        <di:waypoint x="395" y="2195" />
+        <di:waypoint x="406" y="2260" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="DataInputAssociation_12xkocr_di" bpmnElement="DataInputAssociation_12xkocr">
+        <di:waypoint x="415" y="2181" />
+        <di:waypoint x="597" y="2260" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="DataOutputAssociation_1pw5thj_di" bpmnElement="DataOutputAssociation_1pw5thj">
+        <di:waypoint x="840" y="2286" />
+        <di:waypoint x="415" y="2170" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="DataInputAssociation_1d2qf38_di" bpmnElement="DataInputAssociation_1d2qf38">
+        <di:waypoint x="428" y="2565" />
+        <di:waypoint x="423" y="2630" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="DataInputAssociation_05ktt43_di" bpmnElement="DataInputAssociation_05ktt43">
+        <di:waypoint x="455" y="2553" />
+        <di:waypoint x="601" y="2630" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="DataOutputAssociation_1l017dm_di" bpmnElement="DataOutputAssociation_1l017dm">
+        <di:waypoint x="930" y="2646" />
+        <di:waypoint x="775" y="2570" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="DataInputAssociation_0687h59_di" bpmnElement="DataInputAssociation_0687h59">
+        <di:waypoint x="499" y="2955" />
+        <di:waypoint x="563" y="3041" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="DataInputAssociation_0eul67a_di" bpmnElement="DataInputAssociation_0eul67a">
+        <di:waypoint x="468" y="2955" />
+        <di:waypoint x="429" y="3040" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="DataOutputAssociation_0dqovkh_di" bpmnElement="DataOutputAssociation_0dqovkh">
+        <di:waypoint x="906" y="3080" />
+        <di:waypoint x="817" y="2975" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="DataOutputAssociation_0fbeoh0_di" bpmnElement="DataOutputAssociation_0fbeoh0">
+        <di:waypoint x="942" y="3485" />
+        <di:waypoint x="825" y="3400" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="DataInputAssociation_0lwcwh2_di" bpmnElement="DataInputAssociation_0lwcwh2">
+        <di:waypoint x="471" y="3385" />
+        <di:waypoint x="439" y="3480" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="DataInputAssociation_0758rqq_di" bpmnElement="DataInputAssociation_0758rqq">
+        <di:waypoint x="505" y="3382" />
+        <di:waypoint x="615" y="3480" />
       </bpmndi:BPMNEdge>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>
