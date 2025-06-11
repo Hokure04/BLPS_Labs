@@ -18,13 +18,19 @@ public class RoleAssignDelegate implements JavaDelegate {
 
     @Override
     public void execute(DelegateExecution execution) throws Exception {
-        String emailToUpdate = CamundaUtils.getVariableString(execution, "alienEmail");
-
         try {
-            adminPanelService.updateRole(emailToUpdate, "ROLE_ADMIN");
+            String emailToUpdate = CamundaUtils.getVariableString(execution, "alienEmail");
+
+            try {
+                adminPanelService.updateRole(emailToUpdate, "ROLE_ADMIN");
+            } catch (Exception e) {
+                log.error("fail to update role {}", e.getMessage());
+                throw new BpmnError(Codes.ERROR_MESSAGE.getStringName(), "не удалось обновить email");
+            }
+        } catch (BpmnError e) {
+            throw e;
         } catch (Exception e) {
-            log.error("fail to update role {}", e.getMessage());
-            throw new BpmnError(Codes.ERROR_MESSAGE.getStringName(), "не удалось обновить email");
+            throw new BpmnError(Codes.ERROR_MESSAGE.getStringName(), e.getMessage());
         }
     }
 }

@@ -26,15 +26,21 @@ public class ValidateFinishingCourseDelegate implements JavaDelegate {
 
     @Override
     public void execute(DelegateExecution execution) throws Exception {
-        String username = CamundaUtils.getVariableString(execution, "username");
-        UUID chosenCourseUUID = UUID.fromString(Objects.requireNonNull(CamundaUtils.getVariableString(execution, "chosenCourse")));
+        try {
+            String username = CamundaUtils.getVariableString(execution, "username");
+            UUID chosenCourseUUID = UUID.fromString(Objects.requireNonNull(CamundaUtils.getVariableString(execution, "chosenCourse")));
 
-        var user = userService.getUserByEmail(username);
+            var user = userService.getUserByEmail(username);
 
-        boolean allModulesCompleted = newCourseService.isCourseFinished(user, chosenCourseUUID);
-        if (!allModulesCompleted) {
-            execution.setVariable("isFinished", false);
+            boolean allModulesCompleted = newCourseService.isCourseFinished(user, chosenCourseUUID);
+            if (!allModulesCompleted) {
+                execution.setVariable("isFinished", false);
+            }
+            execution.setVariable("isFinished", true);
+        } catch (BpmnError e) {
+            throw e;
+        } catch (Exception e) {
+            throw new BpmnError(Codes.ERROR_MESSAGE.getStringName(), e.getMessage());
         }
-        execution.setVariable("isFinished", true);
     }
 }

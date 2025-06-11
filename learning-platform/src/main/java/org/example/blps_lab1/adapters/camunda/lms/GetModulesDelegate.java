@@ -10,6 +10,7 @@ import org.example.blps_lab1.adapters.camunda.util.Codes;
 import org.example.blps_lab1.core.ports.auth.UserService;
 import org.example.blps_lab1.core.ports.course.nw.NewCourseService;
 import org.springframework.stereotype.Service;
+
 import java.util.UUID;
 
 @Service("getModules")
@@ -23,14 +24,20 @@ public class GetModulesDelegate implements JavaDelegate {
 
     @Override
     public void execute(DelegateExecution execution) throws Exception {
-        String chosenCourse = CamundaUtils.getVariableString(execution, "chosenCourse");
-        if (chosenCourse == null || chosenCourse.isEmpty()) {
-            log.warn("No chosen course found");
-            throw new BpmnError(Codes.ERROR_MESSAGE.getStringName(), "Курс не выбран");
+        try {
+            String chosenCourse = CamundaUtils.getVariableString(execution, "chosenCourse");
+            if (chosenCourse == null || chosenCourse.isEmpty()) {
+                log.warn("No chosen course found");
+                throw new BpmnError(Codes.ERROR_MESSAGE.getStringName(), "Курс не выбран");
+            }
+            var course = newCourseService.find(UUID.fromString(chosenCourse));
+            var moduleList = course.getNewModuleList();
+            log.info("Found {} new modules", moduleList.size());
+            execution.setVariable("moduleList", moduleList.toString());
+        } catch (BpmnError e) {
+            throw e;
+        } catch (Exception e) {
+            throw new BpmnError(Codes.ERROR_MESSAGE.getStringName(), e.getMessage());
         }
-        var course = newCourseService.find(UUID.fromString(chosenCourse));
-        var moduleList = course.getNewModuleList();
-        log.info("Found {} new modules", moduleList.size());
-        execution.setVariable("moduleList", moduleList.toString());
     }
 }

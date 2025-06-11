@@ -169,11 +169,7 @@
     <bpmn:userTask id="Activity_0hkeyq5" name="Подтверждение заявки">
       <bpmn:extensionElements>
         <camunda:formData>
-          <camunda:formField id="applicationList" label="список заявок" type="string" defaultValue="${applicationList}">
-            <camunda:validation>
-              <camunda:constraint name="readonly" config="true" />
-            </camunda:validation>
-          </camunda:formField>
+          <camunda:formField id="applicationList" label="список заявок" type="string" defaultValue="${applicationList}"/>
           <camunda:formField id="chosenApplication" label="номер заявки" type="string" />
           <camunda:formField id="status" label="статус" type="enum">
             <camunda:value id="OK" name="подтвердить" />
@@ -399,11 +395,7 @@
     <bpmn:userTask id="Activity_1cbhy5w" name="Курс не завершен">
       <bpmn:extensionElements>
         <camunda:formData>
-          <camunda:formField id="messageToUser" label="Результат запроса" type="string" defaultValue="Курс не пройден">
-            <camunda:validation>
-              <camunda:constraint name="readonly" config="true" />
-            </camunda:validation>
-          </camunda:formField>
+          <camunda:formField id="messageToUser" label="Результат запроса" type="string" defaultValue="Курс не пройден"/>
         </camunda:formData>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_1tuga05</bpmn:incoming>

@@ -28,32 +28,38 @@ public class ValidateExerciseDelegate implements JavaDelegate {
 
     @Override
     public void execute(DelegateExecution execution) throws Exception {
-        String userAns = CamundaUtils.getVariableString(execution, "exerciseAns");
-        String exerciseUUID = CamundaUtils.getVariableString(execution, "chosenExercise");
-        String username = CamundaUtils.getVariableString(execution, "username");
+        try {
+            String userAns = CamundaUtils.getVariableString(execution, "exerciseAns");
+            String exerciseUUID = CamundaUtils.getVariableString(execution, "chosenExercise");
+            String username = CamundaUtils.getVariableString(execution, "username");
 
-        if (exerciseUUID == null || userAns == null || username == null) {
-            throw new BpmnError(Codes.ERROR_MESSAGE.getStringName(), "Не все обязательные поля заполнены");
-        }
+            if (exerciseUUID == null || userAns == null || username == null) {
+                throw new BpmnError(Codes.ERROR_MESSAGE.getStringName(), "Не все обязательные поля заполнены");
+            }
 
-        var user = userService.getUserByEmail(username);
-        if (user == null) {
-            log.error("fail to find user by email: {}", username);
-            throw new BpmnError(Codes.ERROR_MESSAGE.getStringName(), "Внутренняя ошибка: попробуйте позже, пользователь не найден");
-        }
-        Optional<Student> optionalStudent = studentRepository.findByUser_Id(user.getId());
-        if (optionalStudent.isEmpty()) {
-            log.error("fail to find student by usid: {}", user.getId());
-            throw new BpmnError(Codes.ERROR_MESSAGE.getStringName(), "Внутреняя ошибка: студент не найден");
-        }
-        var student = optionalStudent.get();
+            var user = userService.getUserByEmail(username);
+            if (user == null) {
+                log.error("fail to find user by email: {}", username);
+                throw new BpmnError(Codes.ERROR_MESSAGE.getStringName(), "Внутренняя ошибка: попробуйте позже, пользователь не найден");
+            }
+            Optional<Student> optionalStudent = studentRepository.findByUser_Id(user.getId());
+            if (optionalStudent.isEmpty()) {
+                log.error("fail to find student by usid: {}", user.getId());
+                throw new BpmnError(Codes.ERROR_MESSAGE.getStringName(), "Внутреняя ошибка: студент не найден");
+            }
+            var student = optionalStudent.get();
 
-        var exercise = newExerciseService.find(UUID.fromString(exerciseUUID));
-        if (exercise.getAnswer().equals(userAns)) {
-            student.getFinishedExercises().add(exercise); // todo проверить, сохраняет ли он аналогично submitAns
-            log.info("course finished successfully");
-        }else {
-            throw new BpmnError(Codes.ERROR_MESSAGE.getStringName(), "неверный ответ");
+            var exercise = newExerciseService.find(UUID.fromString(exerciseUUID));
+            if (exercise.getAnswer().equals(userAns)) {
+                student.getFinishedExercises().add(exercise); // todo проверить, сохраняет ли он аналогично submitAns
+                log.info("course finished successfully");
+            } else {
+                throw new BpmnError(Codes.ERROR_MESSAGE.getStringName(), "неверный ответ");
+            }
+        } catch (BpmnError e) {
+            throw e;
+        } catch (Exception e) {
+            throw new BpmnError(Codes.ERROR_MESSAGE.getStringName(), e.getMessage());
         }
     }
 }

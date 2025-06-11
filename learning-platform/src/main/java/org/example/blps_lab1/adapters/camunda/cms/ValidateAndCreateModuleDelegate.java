@@ -21,24 +21,30 @@ public class ValidateAndCreateModuleDelegate implements JavaDelegate {
 
     @Override
     public void execute(DelegateExecution execution) throws Exception {
-        String exerciseName = CamundaUtils.getVariableString(execution, "moduleName");
-        String exerciseDescription = CamundaUtils.getVariableString(execution, "moduleDescription");
-
-        if (exerciseName == null || exerciseDescription == null) {
-            throw new BpmnError(Codes.ERROR_MESSAGE.getStringName(), "все поля, кроме ошибки, обязательны");
-        }
-
-        var moduleDto = NewModuleDto
-                .builder()
-                .name(exerciseName)
-                .description(exerciseDescription)
-                .build();
         try {
-            newModuleService.createModule(moduleDto);
-            log.info("successfully created new module");
+            String exerciseName = CamundaUtils.getVariableString(execution, "moduleName");
+            String exerciseDescription = CamundaUtils.getVariableString(execution, "moduleDescription");
+
+            if (exerciseName == null || exerciseDescription == null) {
+                throw new BpmnError(Codes.ERROR_MESSAGE.getStringName(), "все поля, кроме ошибки, обязательны");
+            }
+
+            var moduleDto = NewModuleDto
+                    .builder()
+                    .name(exerciseName)
+                    .description(exerciseDescription)
+                    .build();
+            try {
+                newModuleService.createModule(moduleDto);
+                log.info("successfully created new module");
+            } catch (Exception e) {
+                log.error("failed to create new module: {}", e.getMessage());
+                throw new BpmnError(Codes.ERROR_MESSAGE.getStringName(), "не все поля заполеннны корректно");
+            }
+        } catch (BpmnError e) {
+            throw e;
         } catch (Exception e) {
-            log.error("failed to create new module: {}", e.getMessage());
-            throw new BpmnError(Codes.ERROR_MESSAGE.getStringName(), "не все поля заполеннны корректно");
+            throw new BpmnError(Codes.ERROR_MESSAGE.getStringName(), e.getMessage());
         }
     }
 }

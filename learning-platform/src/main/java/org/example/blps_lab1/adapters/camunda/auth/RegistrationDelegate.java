@@ -48,8 +48,9 @@ public class RegistrationDelegate implements JavaDelegate {
             } else {
                 authService.signUp(regDto, UUID.fromString(courseUUID));
             }
+        }catch (BpmnError e) {
+            throw e;
         }catch (Exception e) {
-            log.error(e.getMessage());
             throw new BpmnError(Codes.ERROR_MESSAGE.getStringName(), e.getMessage());
         }
     }

@@ -21,15 +21,21 @@ public class GetExerciseDelegate implements JavaDelegate {
 
     @Override
     public void execute(DelegateExecution execution) throws Exception {
-        String chosenModule = CamundaUtils.getVariableString(execution, "chosenModule");
+        try {
+            String chosenModule = CamundaUtils.getVariableString(execution, "chosenModule");
 
-        if (chosenModule == null || chosenModule.isEmpty()) {
-            log.warn("user didn't specify chosenModule field");
-            throw new BpmnError(Codes.ERROR_MESSAGE.getStringName(), "Модуль не выбран");
+            if (chosenModule == null || chosenModule.isEmpty()) {
+                log.warn("user didn't specify chosenModule field");
+                throw new BpmnError(Codes.ERROR_MESSAGE.getStringName(), "Модуль не выбран");
+            }
+            var module = newModuleService.getModuleByUUID(UUID.fromString(chosenModule));
+            log.info("Found new module {}", module);
+
+            execution.setVariable("exerciseList", module.getExercises().toString());
+        } catch (BpmnError e) {
+            throw e;
+        } catch (Exception e) {
+            throw new BpmnError(Codes.ERROR_MESSAGE.getStringName(), e.getMessage());
         }
-        var module = newModuleService.getModuleByUUID(UUID.fromString(chosenModule));
-        log.info("Found new module {}", module);
-
-        execution.setVariable("exerciseList", module.getExercises().toString());
     }
 }

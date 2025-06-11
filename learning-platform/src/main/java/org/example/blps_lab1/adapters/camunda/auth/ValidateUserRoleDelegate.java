@@ -19,17 +19,23 @@ public class ValidateUserRoleDelegate implements JavaDelegate {
 
     @Override
     public void execute(DelegateExecution execution) throws Exception {
-        String username = CamundaUtils.getVariableString(execution, "username");
-        var user = userService.getUserByEmail(username);
+        try {
+            String username = CamundaUtils.getVariableString(execution, "username");
+            var user = userService.getUserByEmail(username);
 
-        if (user == null) {
-            log.error("User not found: {}", username);
-            throw new BpmnError(Codes.ERROR_MESSAGE.getStringName(), "Внутренняя ошибка, пользователь не найден");
-        }
+            if (user == null) {
+                log.error("User not found: {}", username);
+                throw new BpmnError(Codes.ERROR_MESSAGE.getStringName(), "Внутренняя ошибка, пользователь не найден");
+            }
 
-        if(user.getRole() != Role.ROLE_ADMIN){
-            log.error("user has {} role, require role admin", user.getRole());
-            throw new BpmnError(Codes.ERROR_MESSAGE.getStringName(), "У вас недостаточно прав");
+            if (user.getRole() != Role.ROLE_ADMIN) {
+                log.error("user has {} role, require role admin", user.getRole());
+                throw new BpmnError(Codes.ERROR_MESSAGE.getStringName(), "У вас недостаточно прав");
+            }
+        } catch (BpmnError e) {
+            throw e;
+        } catch (Exception e) {
+            throw new BpmnError(Codes.ERROR_MESSAGE.getStringName(), e.getMessage());
         }
     }
 }

@@ -2,9 +2,11 @@ package org.example.blps_lab1.adapters.camunda.application;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.camunda.bpm.engine.delegate.BpmnError;
 import org.camunda.bpm.engine.delegate.DelegateExecution;
 import org.camunda.bpm.engine.delegate.JavaDelegate;
 import org.example.blps_lab1.adapters.camunda.util.CamundaUtils;
+import org.example.blps_lab1.adapters.camunda.util.Codes;
 import org.example.blps_lab1.core.domain.auth.Application;
 import org.example.blps_lab1.core.domain.auth.User;
 import org.example.blps_lab1.core.ports.auth.ApplicationService;
@@ -23,9 +25,15 @@ public class RequestApplicationDelegate implements JavaDelegate {
 
     @Override
     public void execute(DelegateExecution execution) throws Exception {
-        User currentUser = userService.getUserByEmail(CamundaUtils.getVariableString(execution,"username"));
+        try {
+            User currentUser = userService.getUserByEmail(CamundaUtils.getVariableString(execution, "username"));
 
-        List<Application> applicationList = applicationService.getByUserId(currentUser.getId());
-        execution.setVariable("applicationList", applicationList.toString());
+            List<Application> applicationList = applicationService.getByUserId(currentUser.getId());
+            execution.setVariable("applicationList", applicationList.toString());
+        } catch (BpmnError e) {
+            throw e;
+        } catch (Exception e) {
+            throw new BpmnError(Codes.ERROR_MESSAGE.getStringName(), e.getMessage());
+        }
     }
 }

@@ -21,28 +21,34 @@ public class ValidateAndCreateExerciseDelegate implements JavaDelegate {
 
     @Override
     public void execute(DelegateExecution execution) throws Exception {
-        String exerciseName = CamundaUtils.getVariableString(execution, "exerciseName");
-        String exerciseDescription = CamundaUtils.getVariableString(execution, "exerciseDescription");
-        String exerciseAnswer = CamundaUtils.getVariableString(execution, "exerciseAnswer");
-        Long exercisePoints = CamundaUtils.getVariableOrNull(execution, "exercisePoints");
-
-        if (exerciseName == null || exerciseDescription == null || exerciseAnswer == null || exercisePoints == null) {
-            throw new BpmnError(Codes.ERROR_MESSAGE.getStringName(), "все поля, кроме ошибки, обязательны");
-        }
-
-        var exerciseDto = NewExerciseDto
-                .builder()
-                .name(exerciseName)
-                .description(exerciseDescription)
-                .answer(exerciseAnswer)
-                .points(exercisePoints.intValue())
-                .build();
         try {
-            newExerciseService.createNewExercise(exerciseDto);
-            log.info("successfully created new exercise");
+            String exerciseName = CamundaUtils.getVariableString(execution, "exerciseName");
+            String exerciseDescription = CamundaUtils.getVariableString(execution, "exerciseDescription");
+            String exerciseAnswer = CamundaUtils.getVariableString(execution, "exerciseAnswer");
+            Long exercisePoints = CamundaUtils.getVariableOrNull(execution, "exercisePoints");
+
+            if (exerciseName == null || exerciseDescription == null || exerciseAnswer == null || exercisePoints == null) {
+                throw new BpmnError(Codes.ERROR_MESSAGE.getStringName(), "все поля, кроме ошибки, обязательны");
+            }
+
+            var exerciseDto = NewExerciseDto
+                    .builder()
+                    .name(exerciseName)
+                    .description(exerciseDescription)
+                    .answer(exerciseAnswer)
+                    .points(exercisePoints.intValue())
+                    .build();
+            try {
+                newExerciseService.createNewExercise(exerciseDto);
+                log.info("successfully created new exercise");
+            } catch (Exception e) {
+                log.error("failed to create new exercise: {}", e.getMessage());
+                throw new BpmnError(Codes.ERROR_MESSAGE.getStringName(), "не все поля заполеннны корректно");
+            }
+        } catch (BpmnError e) {
+            throw e;
         } catch (Exception e) {
-            log.error("failed to create new exercise: {}", e.getMessage());
-            throw new BpmnError(Codes.ERROR_MESSAGE.getStringName(), "не все поля заполеннны корректно");
+            throw new BpmnError(Codes.ERROR_MESSAGE.getStringName(), e.getMessage());
         }
     }
 }

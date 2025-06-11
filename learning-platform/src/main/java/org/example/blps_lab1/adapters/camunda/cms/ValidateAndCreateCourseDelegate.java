@@ -24,29 +24,35 @@ public class ValidateAndCreateCourseDelegate implements JavaDelegate {
 
     @Override
     public void execute(DelegateExecution execution) throws Exception {
-        String courseName = CamundaUtils.getVariableString(execution, "courseName");
-        String courseDescription = CamundaUtils.getVariableString(execution, "courseDescription");
-        Long coursePrice = CamundaUtils.getVariableOrNull(execution, "coursePrice");
-        String topic = CamundaUtils.getVariableString(execution, "topic");
-
-
-        if (courseName == null || courseDescription == null || coursePrice == null || topic == null) {
-            throw new BpmnError(Codes.ERROR_MESSAGE.getStringName(), "все поля, кроме ошибки, обязательны");
-        }
-
-        var courseDto = NewCourseDto
-                .builder()
-                .name(courseName)
-                .description(courseDescription)
-                .price(new BigDecimal(coursePrice))
-                .topic(Topic.valueOf(topic))
-                .build();
         try {
-            newCourseService.createCourse(courseDto);
-            log.info("successfully created new course");
+            String courseName = CamundaUtils.getVariableString(execution, "courseName");
+            String courseDescription = CamundaUtils.getVariableString(execution, "courseDescription");
+            Long coursePrice = CamundaUtils.getVariableOrNull(execution, "coursePrice");
+            String topic = CamundaUtils.getVariableString(execution, "topic");
+
+
+            if (courseName == null || courseDescription == null || coursePrice == null || topic == null) {
+                throw new BpmnError(Codes.ERROR_MESSAGE.getStringName(), "все поля, кроме ошибки, обязательны");
+            }
+
+            var courseDto = NewCourseDto
+                    .builder()
+                    .name(courseName)
+                    .description(courseDescription)
+                    .price(new BigDecimal(coursePrice))
+                    .topic(Topic.valueOf(topic))
+                    .build();
+            try {
+                newCourseService.createCourse(courseDto);
+                log.info("successfully created new course");
+            } catch (Exception e) {
+                log.error("failed to create new course: {}", e.getMessage());
+                throw new BpmnError(Codes.ERROR_MESSAGE.getStringName(), "не все поля заполеннны корректно");
+            }
+        } catch (BpmnError e) {
+            throw e;
         } catch (Exception e) {
-            log.error("failed to create new course: {}", e.getMessage());
-            throw new BpmnError(Codes.ERROR_MESSAGE.getStringName(), "не все поля заполеннны корректно");
+            throw new BpmnError(Codes.ERROR_MESSAGE.getStringName(), e.getMessage());
         }
     }
 }
